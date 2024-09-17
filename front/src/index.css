@@ -1,76 +1,43 @@
+/* src/index.css ou src/global.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
-
-
-
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Évite le défilement horizontal */
 }
 
 body {
-  margin: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Assurez-vous que le header est bien positionné */
+header {
+  position: relative;
+  z-index: 30; /* Assure que le header est au-dessus du body */
+  background-color: black; /* Assurez-vous que le background-color est appliqué */
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+/* Assurez-vous que l'image du header est bien positionnée */
+header img {
+  position: absolute;
+  top: -20px; /* Ajustez cette valeur selon vos besoins */
+  left: 0;
+  z-index: 10; /* L'image doit être sous la deuxième image mais au-dessus du body */
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Assurez-vous que la deuxième image du header est bien positionnée */
+/* src/index.css ou src/global.css */
+
+/* Assurez-vous que la deuxième image du header est bien positionnée */
+header .second-image {
+  position: absolute;
+  top: -30px; /* Ajustez cette valeur pour abaisser la deuxième image */
+  left: 95px; /* Ajustez cette valeur pour la positionnement à côté de la première image */
+  z-index: 10; /* L'image doit être au-dessus de la première image et du contenu du header */
 }
+
