@@ -8,7 +8,7 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center bg-cover bg-center h-screen text-center relative">
         <video 
-          className="absolute inset-0 w-full h-full object-cover clip-bottom" // Ajoutez la classe ici
+          className="absolute inset-0 w-full h-full object-cover clip-bottom mt-20" // Ajoutez mt-20 ici
           autoPlay 
           loop 
           muted
