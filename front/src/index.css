@@ -3,41 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden; /* Évite le défilement horizontal */
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Assurez-vous que le header est bien positionné */
-header {
-  position: relative;
-  z-index: 30; /* Assure que le header est au-dessus du body */
-  background-color: black; /* Assurez-vous que le background-color est appliqué */
-}
-
-/* Assurez-vous que l'image du header est bien positionnée */
-header img {
-  position: absolute;
-  top: -20px; /* Ajustez cette valeur selon vos besoins */
-  left: 0;
-  z-index: 10; /* L'image doit être sous la deuxième image mais au-dessus du body */
-}
-
-/* Assurez-vous que la deuxième image du header est bien positionnée */
-/* src/index.css ou src/global.css */
-
-/* Assurez-vous que la deuxième image du header est bien positionnée */
-header .second-image {
-  position: absolute;
-  top: -30px; /* Ajustez cette valeur pour abaisser la deuxième image */
-  left: 95px; /* Ajustez cette valeur pour la positionnement à côté de la première image */
-  z-index: 10; /* L'image doit être au-dessus de la première image et du contenu du header */
-}
-
+/* src/styles/global.css ou un fichier approprié */
+.clip-bottom {
+    clip-path: inset(0 0 10% 0); /* Ajustez la valeur pour couper la vidéo en bas */
+  }
+  

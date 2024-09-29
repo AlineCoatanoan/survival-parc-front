@@ -1,4 +1,4 @@
-// src/pages/HomePage.tsx
+// src/components/HomePage.tsx
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
@@ -7,6 +7,13 @@ const HomePage = () => {
     <div className="bg-black text-white min-h-screen flex flex-col overflow-x-hidden">
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center bg-cover bg-center h-screen text-center relative">
+        <video 
+          className="absolute inset-0 w-full h-full object-cover clip-bottom" // Ajoutez la classe ici
+          autoPlay 
+          loop 
+          muted
+          src="./src/assets/movies/quarantaine.mp4" // Assurez-vous que le chemin est correct
+        />
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <div className="relative p-6 rounded-lg z-10">
           <motion.h1
