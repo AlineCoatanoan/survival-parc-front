@@ -16,7 +16,8 @@ const Header = () => {
   };
 
   return (
-    <header className="relative bg-black text-white py-4 shadow-lg">
+    <header className="fixed top-0 left-0 w-full bg-black text-white py-4 shadow-lg z-20">
+
       <div className="absolute inset-x-0 top-[-30px] flex items-center justify-start p-3 z-10">
         <Link to="/" className="block">
           <img 
