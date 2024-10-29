@@ -1,0 +1,1 @@
+export const Hotels = () => <div>Hotels</div>;

@@ -1,0 +1,15 @@
+/* src/index.css ou src/global.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* src/styles/global.css ou un fichier approprié */
+.clip-bottom {
+    clip-path: inset(0 0 10% 0); /* Ajustez la valeur pour couper la vidéo en bas */
+  }
+  
+  /* CSS dans votre fichier de styles global */
+main {
+    padding-top: 80px; /* Ajustez cette valeur en fonction de la hauteur de votre header */
+  }
+  

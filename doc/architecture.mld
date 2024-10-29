@@ -1,0 +1,35 @@
+src/
+│
+├── assets/                  # Images, SVGs, et autres fichiers statiques
+│   ├── logo.svg
+│   └── react.svg
+│
+├── components/              # Composants réutilisables
+│   ├── Header.tsx
+│   ├── Footer.tsx
+│   ├── Button.tsx
+│   └── Form.tsx
+│
+├── pages/                   # Composants pour les pages du site
+│   ├── Home.tsx
+│   ├── Attractions.tsx
+│   ├── Hotels.tsx
+│   ├── Profile.tsx
+│   ├── Reservations.tsx
+│   └── ErrorPage.tsx         # Page d'erreur 404 ou autres erreurs
+│
+├── routes/                  # Définition des routes de l'application
+│   └── AppRouter.tsx
+│
+├── services/                # Services pour les appels API
+│   └── apiService.ts         # Configurations Axios et fonctions d'appel API
+│
+├── hooks/                   # Hooks personnalisés
+│   └── useAuth.ts            # Hook pour la gestion de l'authentification
+│
+├── styles/                  # Fichiers CSS et configuration Tailwind
+│   └── index.css
+│
+├── App.tsx                  # Composant racine de l'application
+├── main.tsx                 # Point d'entrée de l'application
+└── vite-env.d.ts            # Typings pour Vite
