@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { FiShoppingCart } from 'react-icons/fi';
 
-const Header = () => {
+export const Header = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   const handleMouseEnter = (menu: string) => {
@@ -42,7 +42,7 @@ const Header = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="hover:text-[#FF7828] cursor-pointer"
             >
-              <h1 className="mx-6">Activités du parc</h1>
+              <h1 className="mx-6">Animations du parc</h1>
             </motion.div>
             {activeMenu === 'attractions' && (
               <div 
@@ -50,9 +50,10 @@ const Header = () => {
                 onMouseLeave={handleMouseLeave}
               >
                 <div className="flex flex-col space-y-2"> {/* Espacement des sous-liens */}
-                  <Link to="/attraction1" className="block hover:text-[#FF7828]">Attractions</Link>
-                  <Link to="/attraction2" className="block hover:text-[#FF7828]">Cinéma</Link>
-                  <Link to="/attraction3" className="block hover:text-[#FF7828]">Escape Game</Link>
+                  <Link to="/attractions" className="block hover:text-[#FF7828]">Attractions</Link>
+                  <Link to="/labyrinthe" className="block hover:text-[#FF7828]">Labyrinthe</Link>
+                  <Link to="/cinema" className="block hover:text-[#FF7828]">Cinéma</Link>
+                  <Link to="/escape" className="block hover:text-[#FF7828]">Escape Game</Link>
                 </div>
               </div>
             )}
@@ -121,7 +122,7 @@ const Header = () => {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="hover:text-[#FF7828] cursor-pointer"
             >
-              <h1 className="mx-6">Billeterie</h1>
+              <h1 className="mx-6">Billetterie</h1>
             </motion.div>
             {activeMenu === 'reservations' && (
               <div 
@@ -151,4 +152,3 @@ const Header = () => {
   );
 };
 
-export default Header;

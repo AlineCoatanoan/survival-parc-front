@@ -1,2 +1,1 @@
-const Hotels = () => <div>Hotels</div>;
-export default Hotels;
+export const Hotels = () => <div>Hotels</div>;

@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const HomePage = () => {
+export const HomePage = () => {
   return (
     <div className="bg-black text-white min-h-screen flex flex-col overflow-x-hidden">
       {/* Hero Section */}
@@ -32,14 +32,14 @@ const HomePage = () => {
           >
             Vivez l'expérience ultime dans une zone de quarantaine post-apocalyptique.
           </motion.p>
-          <Link to="/attractions">
+          <Link to="/animations">
             <motion.button
               className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              Découvrez Nos Attractions
+              Découvrez Toutes Les Animations
             </motion.button>
           </Link>
         </div>
@@ -96,4 +96,3 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
