@@ -16,6 +16,12 @@ export const AnimationService = {
     return response.data.data;
   },
 
+  getAnimationsByType: async (type: string): Promise<IAnimation[]> => {
+    const response = await axios.get(`${API_URL}/${type}`); // Pas besoin de params ici
+    return response.data.data;
+  },
+  
+
   // Crée une nouvelle animation
   createAnimation: async (animationData: Partial<IAnimation>): Promise<IAnimation> => {
     const response = await axios.post(API_URL, animationData);

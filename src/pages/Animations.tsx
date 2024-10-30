@@ -8,9 +8,10 @@ export const Animations = () => {
 
     const imageMap: { [key: string]: string[] } = {
         1: ['./src/assets/images/grand8.png'],
-        2: ['./src/assets/images/labyrinthe.png'],
-        3: ['./src/assets/images/escape.webp'],
-        4: ['./src/assets/images/cinema.png'],
+        2: ['./src/assets/images/trainzombie.webp'],
+        3: ['./src/assets/images/labyrinthe.png'],
+        4: ['./src/assets/images/escape.webp'],
+        5: ['./src/assets/images/cinema.png'],
     };
 
     const fetchAnimations = async () => {
