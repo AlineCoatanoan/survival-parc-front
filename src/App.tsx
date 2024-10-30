@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
 import { Animations } from './pages/Animations';
+import { Labyrinthe } from './pages/Labyrinthe';
 import { Hotels } from './pages/Hotels';
 import { Plan } from './pages/Plan';
 import { Reservations } from './pages/Reservations';
@@ -14,6 +15,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/Animations" element={<Animations />} />
+          <Route path="/animations/labyrinthe" element={<Labyrinthe />} />
           <Route path="/Hotels" element={<Hotels />} />
           <Route path="/Plan" element={<Plan />} />
           <Route path="/Reservations" element={<Reservations />} />

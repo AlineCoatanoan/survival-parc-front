@@ -1,4 +1,3 @@
-// Card.tsx
 import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -6,12 +5,13 @@ import { Link } from 'react-router-dom';
 interface CardProps {
     title: string;
     description: string;
-    image: string;
+    image?: string[]; // Rendre l'image optionnelle
     link?: string;
     reverse?: boolean;
+    className?: string; // Ajout de la propriété className
 }
 
-export const Card: React.FC<CardProps> = ({ title, description, image, link, reverse }) => {
+export const Card: React.FC<CardProps> = ({ title, description, image, link, reverse, className }) => {
     const [isVisible, setIsVisible] = useState(false);
     const cardRef = useRef<HTMLDivElement | null>(null);
 
@@ -27,12 +27,12 @@ export const Card: React.FC<CardProps> = ({ title, description, image, link, rev
             },
             { threshold: 0.2 }
         );
-    
+
         const currentRef = cardRef.current;
         if (currentRef) {
             observer.observe(currentRef);
         }
-    
+
         return () => {
             if (currentRef) {
                 observer.unobserve(currentRef);
@@ -40,7 +40,6 @@ export const Card: React.FC<CardProps> = ({ title, description, image, link, rev
         };
     }, []);
     
-
     const cardVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0 },
@@ -50,16 +49,13 @@ export const Card: React.FC<CardProps> = ({ title, description, image, link, rev
     return (
         <motion.div
             ref={cardRef}
-            className={`card bg-base-100 shadow-xl flex flex-col ${reverse ? 'md:flex-row-reverse' : 'md:flex-row'} md:items-center w-5/6 mx-auto h-[500px]`}
+            className={`card bg-base-100 shadow-xl flex flex-col ${reverse ? 'md:flex-row-reverse' : 'md:flex-row'} md:items-center w-5/6 mx-auto h-auto ${className}`} // Utilisation de className
             initial="hidden"
             animate={isVisible ? "visible" : "hidden"}
             variants={cardVariants}
             whileHover="hover"
             transition={{ duration: 0.5 }}
         >
-            <figure className="md:w-1/2">
-                <img src={image} alt={title} className="w-full h-64 object-cover" />
-            </figure>
             <div className="card-body md:w-1/2 flex flex-col justify-center p-4">
                 <h2 className="card-title">{title}</h2>
                 <p>{description}</p>
@@ -67,6 +63,14 @@ export const Card: React.FC<CardProps> = ({ title, description, image, link, rev
                     <Link to={link} className="text-blue-500 hover:underline mt-4">
                         Plus d'informations
                     </Link>
+                )}
+                {/* Affichage des images si elles existent */}
+                {image && (
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                        {image.map((img, index) => (
+                            <img key={index} src={img} alt={`image-${index}`} className="w-full h-auto object-cover" />
+                        ))}
+                    </div>
                 )}
             </div>
         </motion.div>
