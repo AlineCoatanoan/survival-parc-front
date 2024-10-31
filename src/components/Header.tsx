@@ -79,8 +79,8 @@ export const Header = () => {
                 onMouseLeave={handleMouseLeave}
               >
                 <div className="flex flex-col space-y-2">
-                  <Link to="/hotel1" className="block hover:text-[#FF7828]">Hôtel Zone Securisée</Link>
-                  <Link to="/hotel2" className="block hover:text-[#FF7828]">Hôtel Post-Apocalyptique</Link>
+                  <Link to="/refuge" className="block hover:text-[#FF7828]">Hôtel Le refuge des survivants</Link>
+                  <Link to="/postapo" className="block hover:text-[#FF7828]">Hôtel Post-Apocalyptique</Link>
                 </div>
               </div>
             )}

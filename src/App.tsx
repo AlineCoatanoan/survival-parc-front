@@ -5,7 +5,8 @@ import { Attraction } from './pages/Attractions';
 import { Labyrinthe } from './pages/Labyrinthe';
 import { Cinema } from './pages/Cinema';
 import { Escape } from './pages/Escape';
-import { Hotels } from './pages/Hotels';
+import { Postapo } from './pages/HotelPostapo';
+import { Refuge } from './pages/HotelRefuge';
 import { Plan } from './pages/Plan';
 import { Reservations } from './pages/Reservations';
 import  { Header } from './components/Header';
@@ -22,7 +23,8 @@ export function App() {
           <Route path="/labyrinthe" element={<Labyrinthe />} />
           <Route path="/cinema" element={<Cinema />} />
           <Route path="/escape" element={<Escape />} />
-          <Route path="/Hotels" element={<Hotels />} />
+          <Route path="/postapo" element={<Postapo />} />
+          <Route path="/refuge" element={<Refuge />} />
           <Route path="/Plan" element={<Plan />} />
           <Route path="/Reservations" element={<Reservations />} />
         </Routes>

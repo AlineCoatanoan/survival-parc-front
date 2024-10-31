@@ -1,7 +1,7 @@
 import axios from "axios";
 import { IHotel } from "../@types";
 
-const API_URL = "http://localhost:3000/api/hotels"; // Remplacez par l'URL de l'API
+const API_URL = "http://localhost:3000/api/hotel"; // Remplacez par l'URL de l'API
 
 export const HotelService = {
   // Récupère tous les hôtels
@@ -13,6 +13,12 @@ export const HotelService = {
   // Récupère un hôtel par son ID
   getHotelById: async (id: number): Promise<IHotel> => {
     const response = await axios.get(`${API_URL}/${id}`);
+    return response.data.data;
+  },
+
+  // Récupère un hôtel par son name
+  getHotelByName: async (name: string): Promise<IHotel> => {
+    const response = await axios.get(`${API_URL}?name=${name}`);
     return response.data.data;
   },
 
