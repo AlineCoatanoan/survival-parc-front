@@ -32,24 +32,23 @@ export const Labyrinthe = () => {
 
     return (
         <div className="bg-black text-white min-h-screen p-8 flex flex-col items-center">
-            {/* Titre de la section */}
+            {/* Titre de la section et description dynamiques */}
             <motion.h1
-                className="text-5xl font-bold mb-4 text-center mt-20" // Centre le titre
+                className="text-5xl font-bold mb-4 text-center mt-20"
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                Le Passage Secret
+                {labyrintheAnimation[0].name}
             </motion.h1>
 
-            {/* Phrase d'accroche */}
             <motion.p
-                className="text-lg mb-6 text-center" // Centre la phrase d'accroche
+                className="text-lg mb-6 text-center"
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
             >
-                Un labyrinthe sombre où les visiteurs doivent utiliser des indices pour trouver leur chemin tout en évitant des obstacles et des créatures dangereuses.
+                {labyrintheAnimation[0].description}
             </motion.p>
 
             {/* Texte de description */}
@@ -72,14 +71,14 @@ export const Labyrinthe = () => {
                     transition={{ duration: 0.5 }}
                 >
                     <img
-                        src="./src/assets/images/labyrinthe.png"
+                        src="./src/assets/images/labyrinthe.png" // Image principale en dur
                         alt="Labyrinthe"
                         className="h-auto rounded-lg shadow-lg"
-                        style={{ width: '300px' }} // Taille fixe pour cohérence
+                        style={{ width: '300px' }}
                     />
                 </motion.div>
 
-                {/* Images supplémentaires sous le texte */}
+                {/* Images supplémentaires en dur */}
                 {[2, 3].map((index) => (
                     <motion.div
                         key={index}
@@ -89,10 +88,10 @@ export const Labyrinthe = () => {
                         transition={{ duration: 0.5 }}
                     >
                         <img
-                            src={`./src/assets/images/labyrinthe${index}.png`} // Chemin pour les images supplémentaires
+                            src={`./src/assets/images/labyrinthe${index}.png`} // Chemins fixes pour les images supplémentaires
                             alt={`Image ${index}`}
                             className="h-auto rounded-lg shadow-lg"
-                            style={{ width: '300px' }} // Taille fixe pour cohérence
+                            style={{ width: '300px' }}
                         />
                     </motion.div>
                 ))}

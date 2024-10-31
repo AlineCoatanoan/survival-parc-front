@@ -13,7 +13,7 @@ export const Cinema = () => {
         const animations = await AnimationService.getAnimationsByType("cinema");
         setCinemaAnimations(animations);
       } catch (error) {
-        console.error("Erreur lors de la récupération des animations cinéma :", error);
+        console.error("Erreur lors de la récupération de l'animation cinéma :", error);
       } finally {
         setLoading(false);
       }
@@ -27,7 +27,7 @@ export const Cinema = () => {
   }
 
   if (cinemaAnimation.length === 0) {
-    return <div className="text-white text-center">Aucune donnée trouvée pour les animations cinéma.</div>;
+    return <div className="text-white text-center">Aucune donnée trouvée pour l'animation cinéma.</div>;
   }
 
   return (
@@ -39,17 +39,19 @@ export const Cinema = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Cinéma 4DX
+        {cinemaAnimation[0].name}
       </motion.h1>
 
-      {/* Phrase d'accroche */}
+      {/* Texte d'accroche */}
       <motion.p
         className="text-lg mb-6 text-center"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        Une expérience cinématographique unique, avec des effets 4D qui vous plongent au cœur de l’action !
+        Découvrez une expérience cinématographique inégalée avec le cinéma 3D 4DX. Vos sièges dynamiques bougent en synchronisation avec l’action à l’écran, vous plongeant au cœur de chaque scène. Les écrans, non seulement en face de vous mais aussi sur les côtés, créent une immersion à 360 degrés.
+
+        Des effets multisensoriels, tels que des gouttes d'eau, des parfums et des mouvements d'air, intensifient votre expérience, vous permettant de vivre chaque film comme une aventure mémorable. Préparez-vous à ressentir le cinéma d'une manière totalement nouvelle !
       </motion.p>
 
       {/* Texte de description */}
@@ -59,8 +61,7 @@ export const Cinema = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
       >
-        Vivez une immersion totale dans notre cinéma 4DX, où chaque scène est ressentie intensément grâce à des effets
-        multisensoriels. Préparez-vous à une expérience captivante où le cinéma prend vie autour de vous.
+        {cinemaAnimation[0].description}
       </motion.p>
 
       {/* Conteneur des images alignées à gauche */}

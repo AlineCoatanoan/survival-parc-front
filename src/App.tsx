@@ -3,6 +3,7 @@ import { HomePage } from './pages/HomePage';
 import { Animations } from './pages/Animations';
 import { Labyrinthe } from './pages/Labyrinthe';
 import { Cinema } from './pages/Cinema';
+import { Escape } from './pages/Escape';
 import { Hotels } from './pages/Hotels';
 import { Plan } from './pages/Plan';
 import { Reservations } from './pages/Reservations';
@@ -18,6 +19,7 @@ export function App() {
           <Route path="/Animations" element={<Animations />} />
           <Route path="/labyrinthe" element={<Labyrinthe />} />
           <Route path="/cinema" element={<Cinema />} />
+          <Route path="/escape" element={<Escape />} />
           <Route path="/Hotels" element={<Hotels />} />
           <Route path="/Plan" element={<Plan />} />
           <Route path="/Reservations" element={<Reservations />} />
