@@ -73,3 +73,15 @@ export interface IPass {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface IPlan {
+  id?: number;
+  name: string;
+  description?: string;
+  position?: {
+    top: string;
+    left: string;
+    zone?: string;
+  };
+  img?: string;
+}

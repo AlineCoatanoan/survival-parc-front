@@ -25,7 +25,7 @@ export function App() {
           <Route path="/escape" element={<Escape />} />
           <Route path="/postapo" element={<Postapo />} />
           <Route path="/refuge" element={<Refuge />} />
-          <Route path="/Plan" element={<Plan />} />
+          <Route path="/plan" element={<Plan />} />
           <Route path="/Reservations" element={<Reservations />} />
         </Routes>
       </div>
