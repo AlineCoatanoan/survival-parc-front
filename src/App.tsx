@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
 import { Animations } from './pages/Animations';
+import { Attraction } from './pages/Attractions';
 import { Labyrinthe } from './pages/Labyrinthe';
 import { Cinema } from './pages/Cinema';
 import { Escape } from './pages/Escape';
@@ -17,6 +18,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/Animations" element={<Animations />} />
+          <Route path="/Attractions" element={<Attraction />} />
           <Route path="/labyrinthe" element={<Labyrinthe />} />
           <Route path="/cinema" element={<Cinema />} />
           <Route path="/escape" element={<Escape />} />
