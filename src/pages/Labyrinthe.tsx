@@ -4,11 +4,11 @@ import { IAnimation } from '../@types';
 import { motion } from 'framer-motion';
 
 export const Labyrinthe = () => {
-    const [labyrinthes, setLabyrinthes] = useState<IAnimation[]>([]);
+    const [labyrintheAnimation, setLabyrinthes] = useState<IAnimation[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        const fetchLabyrinthes = async () => {
+        const fetchLabyrintheAnimation = async () => {
             try {
                 const animations = await AnimationService.getAnimationsByType('labyrinthe');
                 setLabyrinthes(animations);
@@ -19,14 +19,14 @@ export const Labyrinthe = () => {
             }
         };
 
-        fetchLabyrinthes();
+        fetchLabyrintheAnimation();
     }, []);
 
     if (loading) {
         return <div>Chargement...</div>;
     }
 
-    if (labyrinthes.length === 0) {
+    if (labyrintheAnimation.length === 0) {
         return <div>Aucune donnée trouvée pour le labyrinthe.</div>;
     }
 
