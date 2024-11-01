@@ -8,6 +8,7 @@ import { Escape } from './pages/Escape';
 import { Postapo } from './pages/HotelPostapo';
 import { Refuge } from './pages/HotelRefuge';
 import { Plan } from './pages/Plan';
+import { Calendrier } from './pages/Calendrier';
 import { Reservations } from './pages/Reservations';
 import  { Header } from './components/Header';
 
@@ -26,6 +27,7 @@ export function App() {
           <Route path="/postapo" element={<Postapo />} />
           <Route path="/refuge" element={<Refuge />} />
           <Route path="/plan" element={<Plan />} />
+          <Route path="/calendrier" element={<Calendrier />} />
           <Route path="/Reservations" element={<Reservations />} />
         </Routes>
       </div>

@@ -105,7 +105,7 @@ export const Header = () => {
               >
                 <div className="flex flex-col space-y-2">
                   <Link to="/plan" className="block hover:text-[#FF7828]">Plan du parc</Link>
-                  <Link to="/calendrier" className="block hover:text-[#FF7828]">Calendrier</Link>
+                  <Link to="/calendrier" className="block hover:text-[#FF7828]">Dates et horaires d'ouverture</Link>
                   <Link to="/acces" className="block hover:text-[#FF7828]">Accès</Link>
                 </div>
               </div>
