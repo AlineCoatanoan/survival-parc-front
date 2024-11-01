@@ -3,8 +3,11 @@ import { useEffect, useRef, useCallback } from 'react';
 
 // Définition des types pour les props
 interface LoginModalProps {
-  onClose: () => void; // onClose est une fonction qui ne prend aucun argument et ne retourne rien
+  onClose: () => void;      // Fonction pour fermer le modal
+  onSuccess: () => void;    // Fonction à appeler lors d'une connexion réussie
+  loading: boolean;         // État de chargement
 }
+
 
 export const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
   const modalRef = useRef<HTMLDivElement | null>(null);

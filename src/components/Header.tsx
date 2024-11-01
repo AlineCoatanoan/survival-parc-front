@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { FiShoppingCart } from 'react-icons/fi';
-import { LoginModal } from './LoginModal'; // Assurez-vous que le chemin d'importation est correct
-import { SignUpModal } from './SignUpModal'; // Assurez-vous que le chemin d'importation est correct
+import SignUpModal from './SignUpModal';
 
 export const Header = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -13,6 +12,8 @@ export const Header = () => {
   const [showSignupModal, setShowSignupModal] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
   const profileIconRef = useRef<HTMLDivElement | null>(null);
+  const loginModalRef = useRef<HTMLDivElement | null>(null);
+  const signupModalRef = useRef<HTMLDivElement | null>(null);
 
   const handleMouseEnter = (menu: string) => {
     setActiveMenu(menu);
@@ -28,7 +29,8 @@ export const Header = () => {
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
     const target = event.target as HTMLElement;
-  
+
+    // Ferme le menu de profil si le clic est à l'extérieur
     if (
       profileMenuRef.current &&
       !profileMenuRef.current.contains(target) &&
@@ -37,16 +39,26 @@ export const Header = () => {
     ) {
       setProfileMenuVisible(false);
     }
-  
+
+    // Ferme la modale de connexion si le clic est à l'extérieur
     if (
-      (showLoginModal && !target.closest('.login-modal')) ||
-      (showSignupModal && !target.closest('.signup-modal'))
+      showLoginModal &&
+      loginModalRef.current &&
+      !loginModalRef.current.contains(target)
     ) {
       setShowLoginModal(false);
+    }
+
+    // Ferme la modale d'inscription si le clic est à l'extérieur
+    if (
+      showSignupModal &&
+      signupModalRef.current &&
+      !signupModalRef.current.contains(target)
+    ) {
       setShowSignupModal(false);
     }
-  }, [profileMenuRef, profileIconRef, showLoginModal, showSignupModal]);
-  
+  }, [profileMenuRef, profileIconRef, showLoginModal, loginModalRef, showSignupModal, signupModalRef]);
+
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -55,8 +67,12 @@ export const Header = () => {
   }, [handleClickOutside]);
 
   const ProfileMenu = () => (
-    <div
+    <motion.div
       ref={profileMenuRef}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
       className="absolute right-0 mt-2 w-40 bg-black text-white p-2 rounded shadow-lg z-10"
     >
       <button onClick={() => setShowLoginModal(true)} className="block px-4 py-2 hover:text-[#FF7828]">
@@ -65,7 +81,7 @@ export const Header = () => {
       <button onClick={() => setShowSignupModal(true)} className="block px-4 py-2 hover:text-[#FF7828]">
         Inscription
       </button>
-    </div>
+    </motion.div>
   );
 
   return (
@@ -103,8 +119,8 @@ export const Header = () => {
                 <div className="flex flex-col space-y-2">
                   <Link to="/attractions" className="block hover:text-[#FF7828]">Attractions</Link>
                   <Link to="/labyrinthe" className="block hover:text-[#FF7828]">Labyrinthe</Link>
-                  <Link to="/cinema" className="block hover:text-[#FF7828]">Cinéma</Link>
-                  <Link to="/escape" className="block hover:text-[#FF7828]">Escape Game</Link>
+                  <Link to="/cinema" className="block hover:text-[#FF78228]">Cinéma</Link>
+                  <Link to="/escape" className="block hover:text-[#FF78228]">Escape Game</Link>
                 </div>
               </div>
             )}
@@ -186,24 +202,58 @@ export const Header = () => {
           </div>
         </nav>
 
-        <div className="flex items-center space-x-4">
-          <div ref={profileIconRef} className="relative">
-            <button
-              className="flex items-center hover:text-[#FF7828]"
-              onClick={toggleProfileMenu}
-            >
-              <FaRegUser className="text-2xl" />
-            </button>
+        <div className="flex items-center">
+          <div
+            ref={profileIconRef}
+            onClick={toggleProfileMenu}
+            className="relative cursor-pointer mx-6"
+          >
+            <FaRegUser className="text-3xl" />
             {profileMenuVisible && <ProfileMenu />}
           </div>
-          <Link to="/panier" className="flex items-center hover:text-[#FF7828]">
-            <FiShoppingCart className="text-2xl" />
+          <Link to="/panier">
+            <FiShoppingCart className="text-3xl" />
           </Link>
         </div>
       </div>
 
-      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
-      {showSignupModal && <SignUpModal onClose={() => setShowSignupModal(false)} />}
+      {/* Modale de connexion */}
+      {showLoginModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-30">
+          <div
+            ref={loginModalRef}
+            className="bg-white rounded shadow-lg p-8"
+          >
+            {/* Contenu de votre modale de connexion ici */}
+            <h2 className="text-2xl mb-4">Connexion</h2>
+            {/* Exemple de formulaire de connexion */}
+            <form>
+              <div className="mb-4">
+                <label htmlFor="email" className="block text-sm">Email:</label>
+                <input type="email" id="email" className="border border-gray-300 rounded p-2 w-full" />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="password" className="block text-sm">Mot de passe:</label>
+                <input type="password" id="password" className="border border-gray-300 rounded p-2 w-full" />
+              </div>
+              <button type="submit" className="bg-[#FF7828] text-white py-2 px-4 rounded">Se connecter</button>
+            </form>
+            <button onClick={() => setShowLoginModal(false)} className="mt-4 text-red-600">Fermer</button>
+          </div>
+        </div>
+      )}
+
+      {/* Modale d'inscription */}
+      {showSignupModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-30">
+          <div
+            ref={signupModalRef}
+            className="bg-white rounded shadow-lg p-8"
+          >
+            <SignUpModal onClose={() => setShowSignupModal(false)} />
+          </div>
+        </div>
+      )}
     </header>
   );
 };

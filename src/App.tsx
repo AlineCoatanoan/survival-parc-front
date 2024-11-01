@@ -10,6 +10,7 @@ import { Refuge } from './pages/HotelRefuge';
 import { Plan } from './pages/Plan';
 import { Calendrier } from './pages/Calendrier';
 import { Reservations } from './pages/Reservations';
+import { Profile } from './pages/Profile';
 import  { Header } from './components/Header';
 
 export function App() {
@@ -29,6 +30,7 @@ export function App() {
           <Route path="/plan" element={<Plan />} />
           <Route path="/calendrier" element={<Calendrier />} />
           <Route path="/Reservations" element={<Reservations />} />
+          <Route path="/Profile" element={<Profile />} />
         </Routes>
       </div>
     </Router>
