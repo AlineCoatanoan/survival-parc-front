@@ -25,7 +25,7 @@ export const Calendrier: React.FC = () => {
   const horaires = selectedDate ? getHorairesOuverture(selectedDate) : '';
 
   return (
-    <div className="flex flex-col items-center p-8 bg-gray-800 text-white min-h-screen">
+    <div className="flex flex-col items-center p-8 bg-gray-800 text-white min-h-screen mt-16">
       <h1 className="text-4xl font-bold mb-6 animate-bounce">Calendrier d'ouverture du parc</h1>
       <div className="flex w-full max-w-5xl shadow-lg bg-gray-900 rounded-lg overflow-hidden">
         {/* Tableau à gauche */}
