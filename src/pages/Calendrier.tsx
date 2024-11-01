@@ -1,36 +1,66 @@
-import React, { useState } from "react";
-import Calendar from "react-calendar";
-import { format } from "date-fns";
-import 'react-calendar/dist/Calendar.css'; // Styles par défaut pour le calendrier
+import React, { useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { motion } from 'framer-motion'; // Assurez-vous d'installer framer-motion
 
-const horairesOuverture = {
-  "2024-11-01": "10h00 - 18h00",
-  "2024-11-02": "10h00 - 20h00",
-  "2024-11-03": "10h00 - 18h00",
-  // Ajoutez d'autres dates et horaires ici
-};
+export const Calendrier: React.FC = () => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-export const Calendrier = () => {
-  const [date, setDate] = useState<Date>(new Date());
-
-  const handleDateChange = (newDate: Date) => {
-    setDate(newDate);
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
   };
 
-  const formattedDate = format(date, "yyyy-MM-dd");
-  const horaire = horairesOuverture[formattedDate] || "Fermé"; // Récupérer l'horaire ou indiquer "Fermé"
+  const getHorairesOuverture = (date: Date): string => {
+    const jour = date.toLocaleDateString('fr-FR', { weekday: 'long' });
+    
+    switch (jour) {
+      case 'samedi':
+      case 'dimanche':
+        return '10h00 - 20h00'; // Horaires pour le weekend
+      default:
+        return '10h00 - 18h00'; // Horaires pour les jours de semaine
+    }
+  };
+
+  const horaires = selectedDate ? getHorairesOuverture(selectedDate) : '';
 
   return (
-    <div className="calendrier-container min-h-screen bg-black text-white p-4 sm:p-8">
-      <h1 className="text-3xl font-bold mb-6 text-center">Calendrier d'Ouverture</h1>
-      <Calendar
-        onChange={handleDateChange}
-        value={date}
-        className="bg-[#1f2937] text-white rounded-lg p-4 shadow-lg" // Style du calendrier
-      />
-      <div className="text-center mt-4">
-        <h2 className="text-xl font-bold">Horaires pour le {formattedDate} :</h2>
-        <p className="mt-2 text-lg">{horaire}</p>
+    <div className="flex flex-col items-center p-8 bg-gray-800 text-white min-h-screen">
+      <h1 className="text-4xl font-bold mb-6 animate-bounce">Calendrier d'ouverture du parc</h1>
+      <div className="flex w-full max-w-5xl shadow-lg bg-gray-900 rounded-lg overflow-hidden">
+        {/* Tableau à gauche */}
+        <div className="flex-none w-1/2 p-6 bg-gradient-to-br from-green-500 to-blue-500">
+          <h2 className="text-2xl font-semibold mb-4">Sélectionnez une date</h2>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="border rounded-lg overflow-hidden"
+          >
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              inline
+              className="border-0 p-4 w-full text-black"
+              calendarClassName="bg-gray-200"
+              dayClassName={(date) =>
+                date.getDay() === 0 || date.getDay() === 6 ? 'bg-gray-300' : ''
+              } // Retourne une chaîne vide au lieu de undefined
+            />
+          </motion.div>
+        </div>
+        {/* Informations à droite */}
+        <div className="flex-grow bg-gray-800 p-6">
+          {selectedDate && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="mt-4 border-l-2 pl-4 border-green-500"
+            >
+              <h2 className="text-2xl">Horaires d'ouverture</h2>
+              <p className="text-lg">{horaires}</p>
+            </motion.div>
+          )}
+        </div>
       </div>
     </div>
   );
