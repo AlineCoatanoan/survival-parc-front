@@ -19,7 +19,7 @@ export interface IProfile {
   address: string;
   postalCode: string;
   city: string;
-  user?: IUser; // Association vers User
+  user?: IUser; 
   createdAt?: Date;
   updatedAt?: Date;
 }

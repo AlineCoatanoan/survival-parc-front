@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { IReservation } from '../@types';
 
-const API_URL = 'http://localhost:3001/reservations'; // Remplacez par l'URL de votre API
+const API_URL = 'http://localhost:3000/api/reservations'; // Remplacez par l'URL de votre API
 
 // Récupérer toutes les réservations
 export const getAllReservations = async (): Promise<IReservation[]> => {
