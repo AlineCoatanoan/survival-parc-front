@@ -33,7 +33,17 @@ export const createAccount = async (data: {
   password: string;
 }): Promise<RegisterResponse> => {
   try {
-    const response = await axios.post<{ user: IUser }>(
+    const response = await axios.post<{
+      message: string;
+      data: {
+        id: number; // Utilisation de 'number'
+        email: string;
+        role: string;
+        createdAt: string; // Date en tant que chaîne
+        updatedAt: string; // Date en tant que chaîne
+        password: string; // Ajout du mot de passe
+      };
+    }>(
       `${apiBaseUrl}/api/user/register`,
       data,
       {
@@ -41,10 +51,20 @@ export const createAccount = async (data: {
         withCredentials: true,
       }
     );
+
     return {
       success: true,
-      message: "Compte créé avec succès",
-      data: response.data,
+      message: response.data.message,
+      data: {
+        user: {
+          id: response.data.data.id, // Assurez-vous que c'est bien un 'number'
+          email: response.data.data.email,
+          role: response.data.data.role,
+          createdAt: new Date(response.data.data.createdAt), // Conversion en 'Date'
+          updatedAt: new Date(response.data.data.updatedAt), // Conversion en 'Date'
+          password: response.data.data.password, // Assurez-vous que le mot de passe est inclus ici
+        },
+      },
     };
   } catch (error) {
     let errorMessage = "Une erreur est survenue, veuillez réessayer.";
@@ -60,6 +80,9 @@ export const createAccount = async (data: {
     return { success: false, message: errorMessage, data: null };
   }
 };
+
+
+
 
 // Fonction pour connecter un utilisateur
 export const loginUser = async (

@@ -2,11 +2,13 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { FiShoppingCart } from 'react-icons/fi';
-import { LoginModal } from './LoginModal'; // Assurez-vous que le chemin est correct
+import { LoginModal } from './LoginModal'; 
+import { SignUpModal } from './SignUpModal'
 
 export const Header = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // État pour suivre si l'utilisateur est connecté
   const loginModalRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -23,8 +25,9 @@ export const Header = () => {
     // Logique de déconnexion ici
     console.log('Déconnexion réussie');
     setIsLoggedIn(false); // Met à jour l'état de connexion
+    navigate('/'); // Redirige vers la page d'accueil
   };
-
+  
   const handleClickOutside = useCallback((event: MouseEvent) => {
     const target = event.target as HTMLElement;
 
@@ -65,6 +68,7 @@ export const Header = () => {
 
       <div className="container mx-auto flex justify-between items-center px-4 pt-4 max-w-screen-xl relative z-20">
         <nav className="flex items-center justify-center space-x-8 flex-grow">
+          {/* Menu des attractions */}
           <div
             onMouseEnter={() => handleMouseEnter('attractions')}
             className="relative group"
@@ -92,6 +96,7 @@ export const Header = () => {
             )}
           </div>
 
+          {/* Menu des hôtels */}
           <div
             onMouseEnter={() => handleMouseEnter('hotels')}
             className="relative group"
@@ -117,6 +122,7 @@ export const Header = () => {
             )}
           </div>
 
+          {/* Menu des infos pratiques */}
           <div
             onMouseEnter={() => handleMouseEnter('infos')}
             className="relative group"
@@ -143,6 +149,7 @@ export const Header = () => {
             )}
           </div>
 
+          {/* Menu des réservations */}
           <div
             onMouseEnter={() => handleMouseEnter('reservations')}
             className="relative group"
@@ -185,9 +192,14 @@ export const Header = () => {
               </button>
             </>
           ) : (
-            <button onClick={() => setShowLoginModal(true)} className="ml-6 hover:text-[#FF7828]">
-              Connexion
-            </button>
+            <>
+              <button onClick={() => setShowLoginModal(true)} className="ml-6 hover:text-[#FF7828]">
+                Connexion
+              </button>
+              <button onClick={() => setShowSignUpModal(true)} className="ml-6 hover:text-[#FF7828]">
+                Inscription
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -197,6 +209,13 @@ export const Header = () => {
         <LoginModal 
           onLoginSuccess={handleLoginSuccess} 
           onClose={() => setShowLoginModal(false)} // Passer la fonction pour fermer la modale
+        />
+      )}
+
+      {/* Modal d'inscription */}
+      {showSignUpModal && (
+        <SignUpModal 
+          onClose={() => setShowSignUpModal(false)} // Passer la fonction pour fermer la modale
         />
       )}
     </header>

@@ -105,7 +105,70 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
             {errors.firstName && <p className="text-red-500 text-xs italic">{errors.firstName.message}</p>}
           </div>
           
-          {/* Other form fields go here */}
+          <div className="mb-4">
+            <label className="block text-sm font-bold mb-2" htmlFor="lastName">
+              Nom
+            </label>
+            <input
+              {...register("lastName", { required: "Ce champ est requis" })}
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.lastName ? 'border-red-500' : ''}`}
+              id="lastName"
+              type="text"
+              placeholder="Votre nom"
+            />
+            {errors.lastName && <p className="text-red-500 text-xs italic">{errors.lastName.message}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-bold mb-2" htmlFor="email">
+              Email
+            </label>
+            <input
+              {...register("email", { 
+                required: "Ce champ est requis",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Email invalide"
+                }
+              })}
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.email ? 'border-red-500' : ''}`}
+              id="email"
+              type="email"
+              placeholder="Votre email"
+            />
+            {errors.email && <p className="text-red-500 text-xs italic">{errors.email.message}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-bold mb-2" htmlFor="password">
+              Mot de passe
+            </label>
+            <input
+              {...register("password", { required: "Ce champ est requis", minLength: { value: 6, message: "Le mot de passe doit contenir au moins 6 caractères" } })}
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.password ? 'border-red-500' : ''}`}
+              id="password"
+              type="password"
+              placeholder="Votre mot de passe"
+            />
+            {errors.password && <p className="text-red-500 text-xs italic">{errors.password.message}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-bold mb-2" htmlFor="confirmPassword">
+              Confirmer le mot de passe
+            </label>
+            <input
+              {...register("confirmPassword", {
+                required: "Ce champ est requis",
+                validate: value => value === password.current || "Les mots de passe ne correspondent pas"
+              })}
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.confirmPassword ? 'border-red-500' : ''}`}
+              id="confirmPassword"
+              type="password"
+              placeholder="Confirmer votre mot de passe"
+            />
+            {errors.confirmPassword && <p className="text-red-500 text-xs italic">{errors.confirmPassword.message}</p>}
+          </div>
 
           <button
             type="submit"
@@ -126,4 +189,4 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
   );
 });
 
-SignUpModal.displayName = 'SignUpModal'; 
+SignUpModal.displayName = 'SignUpModal';
