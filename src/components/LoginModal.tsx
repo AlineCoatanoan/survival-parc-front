@@ -23,7 +23,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose 
 
             if (userId && userId > 0) {
                 onLoginSuccess(); // Appeler la fonction de succès
-                navigate(`/Profile`);
+                navigate(`/mon-compte/${userId}`);
             } else {
                 console.error("Aucun utilisateur trouvé dans la réponse.");
             }

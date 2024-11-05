@@ -65,7 +65,7 @@ export const Card: React.FC<CardProps> = ({ title, description, image, link, rev
                     </Link>
                 )}
                 {/* Affichage des images si elles existent */}
-                {image && (
+                {image && image.length > 0 && ( // Vérifiez que le tableau d'images n'est pas vide
                     <div className="grid grid-cols-2 gap-4 mt-4">
                         {image.map((img, index) => (
                             <img key={index} src={img} alt={`image-${index}`} className="w-full h-auto object-cover" />

@@ -37,7 +37,10 @@ export function AppRouter() {
 
             {/* Routes protégées */}
             <Route element={<PrivateRoute />}>
-              <Route path="/profile" element={<Profile />} />
+            <Route element={<PrivateRoute />}>
+              <Route path="/mon-compte/:userId" element={<Profile />} /> {/* Assurez-vous que le chemin est correct */}
+            </Route>
+
               {/*<Route path="/commande-confirmation/:id" element={<OrderConfirmationPage />} />*/}
               <Route path="/Reservations" element={<Reservations />} />
             </Route>

@@ -9,7 +9,7 @@ export default function PrivateRoute({ allowedRoles }: PrivateRouteProps) {
   const { isAuthenticated, user } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/" />;
+    return <Navigate to="/mon-compte" />;
   }
 
   // Vérifie si l'utilisateur a le rôle requis

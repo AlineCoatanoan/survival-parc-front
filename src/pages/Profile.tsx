@@ -1,41 +1,53 @@
-
-
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { AnimationService } from '../services/animationService';
-import { IAnimation } from '../@types';
 
-export const Profile = () => {
-    const [labyrintheAnimation, setLabyrinthes] = useState<IAnimation[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+interface UserData {
+  id: number;
+  name: string;
+  email: string;
+}
 
-    useEffect(() => {
-        const fetchLabyrintheAnimation = async () => {
-            try {
-                const animations = await AnimationService.getAnimationsByType('labyrinthe');
-                setLabyrinthes(animations);
-            } catch (error) {
-                console.error('Erreur lors de la récupération des labyrinthes:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+export function Profile() {
+  const { userId } = useParams();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-        fetchLabyrintheAnimation();
-    }, []);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/user/${userId}`);
+        if (!response.ok) {
+          throw new Error('Erreur lors de la récupération des données de l\'utilisateur');
+        }
+        const data: UserData = await response.json();
+        setUserData(data);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Une erreur inconnue est survenue');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (loading) {
-        return <div>Chargement...</div>;
-    }
+    fetchUserData();
+  }, [userId]);
 
-    if (labyrintheAnimation.length === 0) {
-        return <div>Aucune donnée trouvée pour le labyrinthe.</div>;
-    }
+  if (loading) return <div>Chargement...</div>;
+  if (error) return <div>Erreur: {error}</div>;
 
-    return (
-        <div className="bg-black text-white min-h-screen p-8 flex flex-col items-center">
-           
-        <h1>Profil de l'utilisateur</h1>
+  return (
+    <div>
+      <h1>Mon compte pour l'utilisateur ID: {userId}</h1>
+      {userData && (
+        <div>
+          <p>Nom: {userData.name}</p>
+          <p>Email: {userData.email}</p>
         </div>
-        
-    );
-};
+      )}
+    </div>
+  );
+}
