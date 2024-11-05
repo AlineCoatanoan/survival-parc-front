@@ -1,15 +1,17 @@
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { FiShoppingCart } from 'react-icons/fi';
+import { FiShoppingCart, FiSearch } from 'react-icons/fi';
 import { LoginModal } from './LoginModal'; 
-import { SignUpModal } from './SignUpModal'
+import { SignUpModal } from './SignUpModal';
+import { SearchBar } from './SearchBar';
 
 export const Header = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // État pour suivre si l'utilisateur est connecté
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const loginModalRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
@@ -27,19 +29,15 @@ export const Header = () => {
     setIsLoggedIn(false); // Met à jour l'état de connexion
     navigate('/'); // Redirige vers la page d'accueil
   };
-  
+
   const handleClickOutside = useCallback((event: MouseEvent) => {
     const target = event.target as HTMLElement;
 
     // Ferme la modale de connexion si le clic est à l'extérieur
-    if (
-      showLoginModal &&
-      loginModalRef.current &&
-      !loginModalRef.current.contains(target)
-    ) {
+    if (showLoginModal && loginModalRef.current && !loginModalRef.current.contains(target)) {
       setShowLoginModal(false);
     }
-  }, [showLoginModal, loginModalRef]);
+  }, [showLoginModal]);
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
@@ -48,10 +46,13 @@ export const Header = () => {
     };
   }, [handleClickOutside]);
 
-  // Fonction pour gérer le succès de la connexion
   const handleLoginSuccess = () => {
     setIsLoggedIn(true); // Mettre à jour l'état de connexion
     setShowLoginModal(false); // Fermer la modale
+  };
+
+  const toggleSearch = () => {
+    setShowSearch(!showSearch);
   };
 
   return (
@@ -89,8 +90,8 @@ export const Header = () => {
                 <div className="flex flex-col space-y-2">
                   <Link to="/attractions" className="block hover:text-[#FF7828]">Attractions</Link>
                   <Link to="/labyrinthe" className="block hover:text-[#FF7828]">Labyrinthe</Link>
-                  <Link to="/cinema" className="block hover:text-[#FF78228]">Cinéma</Link>
-                  <Link to="/escape" className="block hover:text-[#FF78228]">Escape Game</Link>
+                  <Link to="/cinema" className="block hover:text-[#FF7828]">Cinéma</Link>
+                  <Link to="/escape" className="block hover:text-[#FF7828]">Escape Game</Link>
                 </div>
               </div>
             )}
@@ -107,7 +108,7 @@ export const Header = () => {
               transition={{ duration: 0.5, delay: 0.4 }}
               className="hover:text-[#FF7828] cursor-pointer"
             >
-              <h1 className="mx-6">Hotels</h1>
+              <h1 className="mx-6">Hôtels</h1>
             </motion.div>
             {activeMenu === 'hotels' && (
               <div
@@ -143,7 +144,7 @@ export const Header = () => {
                 <div className="flex flex-col space-y-2">
                   <Link to="/plan" className="block hover:text-[#FF7828]">Plan du parc</Link>
                   <Link to="/calendrier" className="block hover:text-[#FF7828]">Dates et horaires d'ouverture</Link>
-                  <Link to="/acces" className="block hover:text-[#FF78228]">Accès</Link>
+                  <Link to="/acces" className="block hover:text-[#FF7828]">Accès</Link>
                 </div>
               </div>
             )}
@@ -168,8 +169,8 @@ export const Header = () => {
                 onMouseLeave={handleMouseLeave}
               >
                 <div className="flex flex-col space-y-2">
-                  <Link to="/mes-reservations" className="block hover:text-[#FF78228]">Mes réservations</Link>
-                  <Link to="/annuler" className="block hover:text-[#FF78228]">Annuler une réservation</Link>
+                  <Link to="/mes-reservations" className="block hover:text-[#FF7828]">Mes réservations</Link>
+                  <Link to="/annuler" className="block hover:text-[#FF7828]">Annuler une réservation</Link>
                 </div>
               </div>
             )}
@@ -181,24 +182,37 @@ export const Header = () => {
             <FiShoppingCart className="text-2xl" />
           </Link>
 
+          {/* Ajout de l'icône de recherche */}
+          <div className="relative flex items-center">
+            <button 
+              onClick={toggleSearch} 
+              className="flex items-center ml-4" 
+              aria-expanded={showSearch} 
+              aria-controls="search-bar"
+            >
+              <FiSearch className="text-2xl hover:text-[#FF7828]" />
+            </button>
+            
+            {showSearch && (
+              <div className="absolute left-0 mt-20 w-40"> {/* Augmenté de mt-2 à mt-4 pour descendre la barre de recherche */}
+                <SearchBar 
+                  showSearch={showSearch} 
+                  setShowSearch={setShowSearch} 
+                />
+              </div>
+            )}
+          </div>
+
           {/* Liens de profil */}
           {isLoggedIn ? (
             <>
-              <Link to="/mon-compte" className="ml-6 hover:text-[#FF7828]">
-                Mon compte
-              </Link>
-              <button onClick={handleLogout} className="ml-2 hover:text-[#FF7828]">
-                Déconnexion
-              </button>
+              <Link to="/mon-compte" className="ml-4 hover:text-[#FF7828]">Mon Compte</Link>
+              <button onClick={handleLogout} className="ml-4 hover:text-[#FF7828]">Déconnexion</button>
             </>
           ) : (
             <>
-              <button onClick={() => setShowLoginModal(true)} className="ml-6 hover:text-[#FF7828]">
-                Connexion
-              </button>
-              <button onClick={() => setShowSignUpModal(true)} className="ml-6 hover:text-[#FF7828]">
-                Inscription
-              </button>
+              <button onClick={() => setShowLoginModal(true)} className="ml-4 hover:text-[#FF7828]">Connexion</button>
+              <button onClick={() => setShowSignUpModal(true)} className="ml-4 hover:text-[#FF7828]">Inscription</button>
             </>
           )}
         </div>
