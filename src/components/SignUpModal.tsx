@@ -1,8 +1,8 @@
-import { useState, useRef, useCallback, useEffect, forwardRef } from 'react';
+import { useState, useRef, useEffect, forwardRef } from 'react';
 import { motion } from 'framer-motion';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { createAccount } from '../features/auth/authService'; 
-import { RegisterResponse } from '../features/auth/authService';
+import { createAccount, loginUser } from '../features/auth/authService'; 
+import { RegisterResponse, LoginResponse } from '../features/auth/authService';
 
 interface ISignUpFormData {
   firstName: string;
@@ -13,7 +13,9 @@ interface ISignUpFormData {
 }
 
 interface SignUpModalProps {
+  isOpen: boolean;
   onClose: () => void;
+  onSuccess: () => void;
 }
 
 export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClose }, ref) => {
@@ -25,24 +27,18 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
   const password = useRef({});
   password.current = watch("password", "");
 
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-      onClose();
-    }
-  }, [onClose]);
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [handleClickOutside]);
-
-  const onSubmit: SubmitHandler<ISignUpFormData> = async (data) => {
+  const onSubmit: SubmitHandler<ISignUpFormData> = async (data: ISignUpFormData) => {
+    console.log('Form Data:', data);  // Vérifie ce qui est envoyé
     setLoading(true);
     setError(null);
-    setSuccessMessage(null); 
-  
+    setSuccessMessage(null);
+
+    if (data.password !== data.confirmPassword) {
+      setError("Les mots de passe ne correspondent pas");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response: RegisterResponse = await createAccount({
         firstName: data.firstName,
@@ -50,14 +46,20 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
         email: data.email,
         password: data.password,
       });
-  
+
       if (response.success) {
-        if (response.data && response.data.user) {
-          setSuccessMessage("Inscription réussie, bienvenue !");
-          console.log("Inscription réussie, ID utilisateur:", response.data.user.id);
-          setTimeout(onClose, 2000); 
+        setSuccessMessage("Inscription réussie, bienvenue !");
+        localStorage.setItem("isRegistered", "true");
+
+        // Connexion automatique après l'inscription
+        const loginResponse: LoginResponse = await loginUser(data.email, data.password);
+        if (loginResponse.success) {
+          localStorage.setItem("authToken", loginResponse.data.token || '');
+          setTimeout(() => {
+            onClose(); // Ferme la modal après un délai
+          }, 2000);
         } else {
-          setError("L'utilisateur a été créé, mais aucune donnée n'a été retournée.");
+          setError("Erreur de connexion après l'inscription.");
         }
       } else {
         setError(response.message || "Une erreur est survenue lors de l'inscription.");
@@ -70,8 +72,25 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
     }
   };
 
+  // Fermer la modale si on clique en dehors de celle-ci
+  const handleClickOutside = (event: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    // Ajouter un gestionnaire d'événement lors de l'ouverture de la modale
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Nettoyer l'événement lorsqu'on ferme la modale
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 text-black">
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 z-50 text-white">
       <motion.div
         ref={(node) => {
           modalRef.current = node;
@@ -85,33 +104,35 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
         animate={{ scale: 1 }}
         exit={{ scale: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-white rounded-lg p-6 shadow-lg"
+        className="bg-gray-900 rounded-lg p-8 shadow-lg w-96 relative"
       >
-        <h2 className="text-xl font-bold mb-4">Inscription</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-extrabold text-center text-red-500">Rejoignez la Zone de Quarantaine</h2>
+        </div>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md mx-auto">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-full mx-auto">
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2" htmlFor="firstName">
               Prénom
             </label>
             <input
               {...register("firstName", { required: "Ce champ est requis" })}
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.firstName ? 'border-red-500' : ''}`}
+              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
               id="firstName"
               type="text"
               placeholder="Votre prénom"
             />
             {errors.firstName && <p className="text-red-500 text-xs italic">{errors.firstName.message}</p>}
           </div>
-          
+
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2" htmlFor="lastName">
               Nom
             </label>
             <input
               {...register("lastName", { required: "Ce champ est requis" })}
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.lastName ? 'border-red-500' : ''}`}
+              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.lastName ? 'border-red-500' : 'border-gray-300'}`}
               id="lastName"
               type="text"
               placeholder="Votre nom"
@@ -125,13 +146,13 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
             </label>
             <input
               {...register("email", { 
-                required: "Ce champ est requis",
+                required: "Ce champ est requis", 
                 pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "Email invalide"
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                  message: "Veuillez entrer une adresse email valide"
                 }
               })}
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.email ? 'border-red-500' : ''}`}
+              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
               id="email"
               type="email"
               placeholder="Votre email"
@@ -144,8 +165,8 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
               Mot de passe
             </label>
             <input
-              {...register("password", { required: "Ce champ est requis", minLength: { value: 6, message: "Le mot de passe doit contenir au moins 6 caractères" } })}
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.password ? 'border-red-500' : ''}`}
+              {...register("password", { required: "Ce champ est requis" })}
+              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
               id="password"
               type="password"
               placeholder="Votre mot de passe"
@@ -155,38 +176,39 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
 
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2" htmlFor="confirmPassword">
-              Confirmer le mot de passe
+              Confirmez le mot de passe
             </label>
             <input
-              {...register("confirmPassword", {
-                required: "Ce champ est requis",
+              {...register("confirmPassword", { 
+                required: "Ce champ est requis", 
                 validate: value => value === password.current || "Les mots de passe ne correspondent pas"
               })}
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.confirmPassword ? 'border-red-500' : ''}`}
+              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
               id="confirmPassword"
               type="password"
-              placeholder="Confirmer votre mot de passe"
+              placeholder="Confirmez votre mot de passe"
             />
             {errors.confirmPassword && <p className="text-red-500 text-xs italic">{errors.confirmPassword.message}</p>}
           </div>
 
-          <button
-            type="submit"
-            className="bg-slate-50 text-stone-950 hover:bg-[#B4C636] font-semibold w-full py-2 px-4 my-4 rounded transition duration-300 ease-in-out"
-            disabled={loading}
-          >
-            {loading ? "Inscription..." : "Valider"}
-          </button>
+          <div className="flex items-center justify-between">
+            <button
+              type="submit"
+              className={`bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={loading}
+            >
+              {loading ? "Chargement..." : "S'inscrire"}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-sm text-gray-400 hover:text-white"
+            >
+              Fermer
+            </button>
+          </div>
         </form>
-        <button
-          onClick={onClose}
-          className="mt-4 text-red-500 hover:text-red-700"
-        >
-          Fermer
-        </button>
       </motion.div>
     </div>
   );
 });
-
-SignUpModal.displayName = 'SignUpModal';

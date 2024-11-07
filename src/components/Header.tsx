@@ -1,19 +1,12 @@
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { FiShoppingCart, FiSearch } from 'react-icons/fi';
-import { LoginModal } from './LoginModal'; 
-import { SignUpModal } from './SignUpModal';
 import { SearchBar } from './SearchBar';
 
 export const Header = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignUpModal, setShowSignUpModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const loginModalRef = useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
 
   const handleMouseEnter = (menu: string) => {
     setActiveMenu(menu);
@@ -23,33 +16,7 @@ export const Header = () => {
     setActiveMenu(null);
   };
 
-  const handleLogout = () => {
-    // Logique de déconnexion ici
-    console.log('Déconnexion réussie');
-    setIsLoggedIn(false); // Met à jour l'état de connexion
-    navigate('/'); // Redirige vers la page d'accueil
-  };
 
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-
-    // Ferme la modale de connexion si le clic est à l'extérieur
-    if (showLoginModal && loginModalRef.current && !loginModalRef.current.contains(target)) {
-      setShowLoginModal(false);
-    }
-  }, [showLoginModal]);
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [handleClickOutside]);
-
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true); // Mettre à jour l'état de connexion
-    setShowLoginModal(false); // Fermer la modale
-  };
 
   const toggleSearch = () => {
     setShowSearch(!showSearch);
@@ -203,35 +170,13 @@ export const Header = () => {
             )}
           </div>
 
-          {/* Liens de profil */}
-          {isLoggedIn ? (
-            <>
-              <Link to="/mon-compte" className="ml-4 hover:text-[#FF7828]">Mon Compte</Link>
-              <button onClick={handleLogout} className="ml-4 hover:text-[#FF7828]">Déconnexion</button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => setShowLoginModal(true)} className="ml-4 hover:text-[#FF7828]">Connexion</button>
-              <button onClick={() => setShowSignUpModal(true)} className="ml-4 hover:text-[#FF7828]">Inscription</button>
-            </>
-          )}
+          
+            
+          
         </div>
       </div>
 
-      {/* Modal de connexion */}
-      {showLoginModal && (
-        <LoginModal 
-          onLoginSuccess={handleLoginSuccess} 
-          onClose={() => setShowLoginModal(false)} // Passer la fonction pour fermer la modale
-        />
-      )}
 
-      {/* Modal d'inscription */}
-      {showSignUpModal && (
-        <SignUpModal 
-          onClose={() => setShowSignUpModal(false)} // Passer la fonction pour fermer la modale
-        />
-      )}
     </header>
   );
 };

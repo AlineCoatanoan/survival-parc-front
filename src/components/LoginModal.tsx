@@ -1,16 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 interface LoginModalProps {
-    onLoginSuccess: () => void; // Prop pour notifier le Header
-    onClose: () => void; // Prop pour fermer la modale
+    isOpen: boolean;
+    onLoginSuccess: (email: string, password: string) => void; 
+    onClose: () => void;
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -22,8 +21,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose 
             console.log("Utilisateur connecté :", userId);
 
             if (userId && userId > 0) {
-                onLoginSuccess(); // Appeler la fonction de succès
-                navigate(`/mon-compte/${userId}`);
+                onLoginSuccess(); 
             } else {
                 console.error("Aucun utilisateur trouvé dans la réponse.");
             }

@@ -15,7 +15,7 @@ export interface LoginResponse {
 export interface RegisterResponse {
   success: boolean;
   message: string;
-  data: { user: IUser } | null;
+  data: { user: IUser; token?: string } | null;
 }
 
 export interface LogoutResponse {
@@ -36,51 +36,48 @@ export const createAccount = async (data: {
     const response = await axios.post<{
       message: string;
       data: {
-        id: number; // Utilisation de 'number'
+        id: number;
         email: string;
         role: string;
-        createdAt: string; // Date en tant que chaîne
-        updatedAt: string; // Date en tant que chaîne
-        password: string; // Ajout du mot de passe
+        createdAt: string;
+        updatedAt: string;
+        token?: string; // Prévoit le token dans la réponse
       };
-    }>(
-      `${apiBaseUrl}/api/user/register`,
-      data,
-      {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      }
-    );
+    }>(`${apiBaseUrl}/api/user/register`, data, {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
+    });
+
+    // Vérification si un token est présent dans la réponse
+    const token = response.data.data.token;
+    if (token) {
+      localStorage.setItem("authToken", token); // Stocke le token dans localStorage (ou sessionStorage si temporaire)
+    }
 
     return {
       success: true,
       message: response.data.message,
       data: {
         user: {
-          id: response.data.data.id, // Assurez-vous que c'est bien un 'number'
+          id: response.data.data.id,
           email: response.data.data.email,
           role: response.data.data.role,
-          createdAt: new Date(response.data.data.createdAt), // Conversion en 'Date'
-          updatedAt: new Date(response.data.data.updatedAt), // Conversion en 'Date'
-          password: response.data.data.password, // Assurez-vous que le mot de passe est inclus ici
+          createdAt: new Date(response.data.data.createdAt),
+          updatedAt: new Date(response.data.data.updatedAt),
         },
+        token: token, // Ajoute le token dans la réponse
       },
     };
   } catch (error) {
     let errorMessage = "Une erreur est survenue, veuillez réessayer.";
-
     if (error instanceof AxiosError && error.response) {
       const validationErrors =
-        error.response.data.errors ||
-        error.response.data.message ||
-        error.message;
+        error.response.data.errors || error.response.data.message || error.message;
       errorMessage = validationErrors;
     }
-
     return { success: false, message: errorMessage, data: null };
   }
 };
-
 
 
 
@@ -95,6 +92,13 @@ export const loginUser = async (
       { email, password },
       { withCredentials: true }
     );
+
+    // Récupération et stockage du token si présent dans la réponse
+    const token = response.data.data.token;
+    if (token) {
+      localStorage.setItem("authToken", token); // Stocke le token pour la session de l'utilisateur
+    }
+
     return {
       success: true,
       message: "Connexion réussie",
@@ -113,6 +117,7 @@ export const loginUser = async (
   }
 };
 
+
 // Fonction pour déconnecter l'utilisateur
 export const logoutUser = async (): Promise<LogoutResponse> => {
   try {
@@ -121,6 +126,9 @@ export const logoutUser = async (): Promise<LogoutResponse> => {
       {}, // corps de requette vide
       { withCredentials: true }
     );
+
+    // Nettoyage du token dans le localStorage
+    localStorage.removeItem("authToken");
 
     if (response.status === 200) {
       return {
@@ -134,12 +142,14 @@ export const logoutUser = async (): Promise<LogoutResponse> => {
       };
     }
   } catch (error) {
-    console.log(error);
     let errorMessage = "Erreur lors de la déconnexion.";
 
     if (axios.isAxiosError(error)) {
       errorMessage = error.response?.data.message || "Erreur réseau";
     }
+
+    // Assure-toi que le token est bien supprimé même en cas d'erreur
+    localStorage.removeItem("authToken");
 
     return {
       success: false,

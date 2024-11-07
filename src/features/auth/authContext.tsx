@@ -16,11 +16,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<IUser | null>(null);
 
+  // Fonction de connexion
   const loginUser = async (email: string, password: string) => {
     try {
       const response = await loginUserService(email, password);
       if (response.success && response.data) {
-        setUser(response.data.user); // Assurez-vous que user est bien défini dans response.data
+        setUser(response.data.user);
         console.log("Connexion réussie:", response.data.user);
 
         localStorage.setItem("token", response.data.token);
@@ -34,6 +35,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // Fonction de déconnexion
   const logoutUser = async () => {
     try {
       await logoutUserService();
@@ -46,11 +48,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // Fonction d'inscription
   const registerUser = async (firstName: string, lastName: string, email: string, password: string) => {
     try {
       const response = await registerUserService({ firstName, lastName, email, password });
       if (response.success && response.data) {
-        await loginUser(email, password); // Connexion automatique après inscription réussie
+        // Connexion automatique après inscription réussie
+        await loginUser(email, password);
       } else {
         throw new Error(response.message || "Échec de l'inscription");
       }
@@ -60,15 +64,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // Vérification du rôle admin
   const isAdmin = () => {
-    return user?.role === 'admin'; // Assurez-vous que le rôle est bien dans l'objet user
+    return user?.role === 'admin';
   };
 
+  // Récupération des données utilisateur au démarrage de l'application
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
     if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(JSON.parse(storedUser)); // Récupérer les infos utilisateur du localStorage
     }
   }, []);
 
