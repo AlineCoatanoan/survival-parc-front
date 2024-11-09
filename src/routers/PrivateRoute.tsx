@@ -12,10 +12,10 @@ export default function PrivateRoute({ allowedRoles }: PrivateRouteProps) {
     return <Navigate to="/mon-compte" />;
   }
 
-  // Vérifie si l'utilisateur a le rôle requis
   if (allowedRoles && (!user || !allowedRoles.includes(user.role))) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/Dashboard" />; // Redirige vers l'accueil si l'utilisateur n'a pas les droits
   }
 
-  return <Outlet />; // Rendre les enfants ici
+  return <Outlet />;
 }
+

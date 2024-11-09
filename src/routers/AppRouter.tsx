@@ -9,10 +9,11 @@ import { Postapo } from '../pages/HotelPostapo';
 import { Refuge } from '../pages/HotelRefuge';
 import { Plan } from '../pages/Plan';
 import { Calendrier } from '../pages/Calendrier';
-import { Reservations } from '../pages/Reservations';
 import { Profile } from '../pages/Profile';
+import { Dashboard } from '../pages/Dashboard';
+import { Reservations } from '../pages/Reservations';
 import { Header } from '../components/Header';
-import { FixedModal } from '../components/SideBar';  // Importer la Sidebar ici
+import { FixedModal } from '../components/SideBar';  
 import { AuthProvider } from '../features/auth/authContext';
 import PrivateRoute from '../routers/PrivateRoute';
 
@@ -44,7 +45,7 @@ export function AppRouter() {
 
               {/* Route protégée pour la page de dashboard */}
               <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
-                {/*<Route path="/dashboard" element={<DashboardPage />} />*/}
+              {<Route path="/Dashboard" element={<Dashboard />} />}
               </Route>
             </Routes>
           </div>

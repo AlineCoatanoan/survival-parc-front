@@ -1,17 +1,19 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { loginUser as loginUserService, logoutUser as logoutUserService, createAccount as registerUserService } from "./authService"; // Assurez-vous d'importer le bon service
+import React, { createContext, useState, ReactNode, useEffect, useContext } from "react";
+import { loginUser as loginUserService, logoutUser as logoutUserService, createAccount as registerUserService } from "./authService";
 import { IUser } from "../../@types";
 
-interface AuthContextType {
+// Export de AuthContextType
+export interface AuthContextType {
   user: IUser | null;
   loginUser: (email: string, password: string) => Promise<void>;
   logoutUser: () => Promise<void>;
   registerUser: (firstName: string, lastName: string, email: string, password: string) => Promise<void>;
   isAuthenticated: boolean;
-  isAdmin: () => boolean;
+  isAdmin: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Création du contexte et exportation
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -53,8 +55,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const response = await registerUserService({ firstName, lastName, email, password });
       if (response.success && response.data) {
-        // Connexion automatique après inscription réussie
-        await loginUser(email, password);
+        await loginUser(email, password); // Connexion automatique après inscription
       } else {
         throw new Error(response.message || "Échec de l'inscription");
       }
@@ -64,17 +65,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // Vérification du rôle admin
-  const isAdmin = () => {
-    return user?.role === 'admin';
-  };
+  // Détermine si l'utilisateur est administrateur
+  const isAdmin = user?.role === 'admin';
 
   // Récupération des données utilisateur au démarrage de l'application
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
     if (token && storedUser) {
-      setUser(JSON.parse(storedUser)); // Récupérer les infos utilisateur du localStorage
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
@@ -85,10 +84,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
+// Définir la fonction `useAuth` et l'exporter
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useAuth doit être utilisé dans un AuthProvider");
   }
   return context;
 };

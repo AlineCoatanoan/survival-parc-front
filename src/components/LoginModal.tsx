@@ -1,33 +1,75 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 interface LoginModalProps {
     isOpen: boolean;
-    onLoginSuccess: (email: string, password: string) => void; 
+    onLoginSuccess: () => void;
     onClose: () => void;
+    setLoginCredentials: React.Dispatch<React.SetStateAction<{ email: string; password: string }>>; // Prop modifiée
 }
 
-export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose }) => {
+export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose, setLoginCredentials }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+    
+        // Vérification des valeurs des champs
+        console.log("Email:", email);
+        console.log("Password:", password);
+    
+        if (!email || !password) {
+            console.error("Email et mot de passe sont requis");
+            return; // Empêche l'envoi de la requête si les données sont manquantes
+        }
+    
         try {
-            const response = await axios.post('http://localhost:3000/api/auth/login', { email, password });
-            const userId = response.data.data.user.id;
-
-            console.log("Utilisateur connecté :", userId);
-
-            if (userId && userId > 0) {
-                onLoginSuccess(); 
+            const response = await axios.post(
+                'http://localhost:3000/api/auth/login',
+                { email, password },
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+    
+            // Vérification de la réponse du backend
+            console.log("Réponse de l'API:", response.data);
+    
+            const { success, message, data } = response.data;
+            
+            if (success) {
+                const { id, role } = data.user; // Utilisation des informations de l'utilisateur
+                const token = data.token; // Récupération du token
+    
+                // Vous pouvez stocker le token dans le localStorage ou un autre endroit sécurisé
+                localStorage.setItem('authToken', token);
+                console.log("Token enregistré:", token);
+    
+                if (role === "admin") {
+                    console.log("Connexion réussie en tant qu'admin :", id);
+                } else {
+                    console.log("Connexion réussie en tant qu'utilisateur :", id);
+                }
+    
+                onLoginSuccess(); // Appel de la fonction pour mettre à jour l'état de la connexion
             } else {
-                console.error("Aucun utilisateur trouvé dans la réponse.");
+                console.error("Erreur de connexion:", message);
             }
         } catch (error) {
             console.error("Erreur lors de la connexion :", error);
         }
+    };
+
+    // Mise à jour des champs de connexion à chaque changement
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newEmail = e.target.value;
+        setEmail(newEmail);
+        setLoginCredentials((prev) => ({ ...prev, email: newEmail })); // Mettre à jour les informations dans setLoginCredentials
+    };
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newPassword = e.target.value;
+        setPassword(newPassword);
+        setLoginCredentials((prev) => ({ ...prev, password: newPassword })); // Mettre à jour les informations dans setLoginCredentials
     };
 
     return (
@@ -39,7 +81,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose 
                     <input 
                         type="email" 
                         value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
+                        onChange={handleEmailChange} // Utiliser la fonction de mise à jour
                         placeholder="Email" 
                         required 
                         className="w-full p-2 border border-gray-300 rounded"
@@ -47,7 +89,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose 
                     <input 
                         type="password" 
                         value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
+                        onChange={handlePasswordChange} // Utiliser la fonction de mise à jour
                         placeholder="Mot de passe" 
                         required 
                         className="w-full p-2 border border-gray-300 rounded"

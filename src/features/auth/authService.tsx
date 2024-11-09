@@ -87,6 +87,12 @@ export const loginUser = async (
   password: string
 ): Promise<LoginResponse> => {
   try {
+    // Avant d'envoyer les données, ajoutez une vérification que les valeurs sont bien présentes
+    if (!email.trim() || !password.trim()) {
+      throw new Error("Email et mot de passe sont requis.");
+    }
+
+
     const response = await axios.post<LoginResponse>(
       `${apiBaseUrl}/api/auth/login`,
       { email, password },
@@ -106,16 +112,24 @@ export const loginUser = async (
     };
   } catch (error) {
     let errorMessage = "Une erreur inconnue s'est produite.";
+
+    // Si l'erreur est liée à Axios, on extrait les erreurs du serveur
     if (axios.isAxiosError(error)) {
-      errorMessage =
-        error.response?.data.message || "Erreur lors de la connexion";
+      errorMessage = error.response?.data.message || "Erreur lors de la connexion";
       console.error("Erreur API :", error.response?.data);
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
+
+    // Gestion de l'erreur personnalisée : Email et mot de passe manquants
+    if (errorMessage.includes("Email et mot de passe sont requis")) {
+      console.error("Erreur de validation : Email et mot de passe sont requis.");
+    }
+
     throw new Error(errorMessage);
   }
 };
+
 
 
 // Fonction pour déconnecter l'utilisateur

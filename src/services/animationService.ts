@@ -22,11 +22,20 @@ export const AnimationService = {
   },
   
 
-  // Crée une nouvelle animation
-  createAnimation: async (animationData: Partial<IAnimation>): Promise<IAnimation> => {
-    const response = await axios.post(API_URL, animationData);
-    return response.data.data;
+  // Créer une animation
+  createAnimation: async (animation: { name: string; type: string; description: string }) => {
+    try {
+      const response = await axios.post(API_URL, animation);
+  // POST vers l'API pour créer l'animation
+      return response.data;  // Retourne la réponse de l'API qui contient l'animation avec l'ID
+    } catch (error) {
+      console.error('Erreur lors de la création de l\'animation :', error);
+      throw error; // Relance l'erreur pour qu'elle soit captée dans le Dashboard
+    }
   },
+  
+  
+  
 
   // Met à jour une animation existante
   updateAnimation: async (id: number, animationData: Partial<IAnimation>): Promise<IAnimation> => {

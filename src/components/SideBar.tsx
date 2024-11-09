@@ -1,45 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { LoginModal } from './LoginModal';
 import { SignUpModal } from '../components/SignUpModal';
-import { useAuth } from '../features/auth/authContext'; // Assurez-vous que le chemin est correct
+import { useAuth } from '../features/auth/authContext';
 
 export const FixedModal = () => {
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setSignupModalOpen] = useState(false);
+
+  // Définir les états pour loginCredentials et signUpCredentials
   const [loginCredentials, setLoginCredentials] = useState({ email: '', password: '' });
   const [signUpCredentials, setSignUpCredentials] = useState({ firstName: '', lastName: '', email: '', password: '' });
 
-  const { loginUser, logoutUser, registerUser, isAuthenticated } = useAuth(); // Assurez-vous que setIsAuthenticated est inclus
+  const { loginUser, logoutUser, registerUser, isAuthenticated } = useAuth();
 
-  // Suivi de l'état de l'authentification
   useEffect(() => {
-    console.log("Authentification mise à jour:", isAuthenticated);  // Debug
+    console.log("Authentification mise à jour:", isAuthenticated);
   }, [isAuthenticated]);
 
-  // Fonction pour ouvrir la modale de connexion
   const openLoginModal = () => {
     setLoginModalOpen(true);
     setSignupModalOpen(false); // Fermer la modal d'inscription si elle est ouverte
   };
 
-  // Fonction pour fermer la modale de connexion
   const closeLoginModal = () => setLoginModalOpen(false);
 
-  // Fonction pour ouvrir la modale d'inscription
   const openSignupModal = () => {
     setSignupModalOpen(true);
     setLoginModalOpen(false); // Fermer la modal de connexion si elle est ouverte
   };
 
-  // Fonction pour fermer la modale d'inscription
   const closeSignupModal = () => setSignupModalOpen(false);
 
-  // Lorsqu'un utilisateur se connecte
   const handleLoginSuccess = () => {
     const { email, password } = loginCredentials;
+
+    if (!email || !password) {
+      console.error("Erreur : Email et mot de passe sont requis");
+      return;
+    }
+
     loginUser(email, password)
       .then(() => {
-        setIsAuthenticated(true);  // Mettez à jour l'authentification après la connexion
         closeLoginModal();
       })
       .catch((error) => {
@@ -47,12 +48,11 @@ export const FixedModal = () => {
       });
   };
 
-  // Lorsqu'un utilisateur s'inscrit et se connecte immédiatement
   const handleSignUpSuccess = () => {
     const { firstName, lastName, email, password } = signUpCredentials;
+
     registerUser(firstName, lastName, email, password)
       .then(() => {
-        setIsAuthenticated(true);  // Mettez à jour l'authentification après l'inscription
         closeSignupModal();
       })
       .catch((error) => {
@@ -60,11 +60,9 @@ export const FixedModal = () => {
       });
   };
 
-  // Fonction pour gérer la déconnexion de l'utilisateur
   const handleLogout = async () => {
     try {
-      await logoutUser(); // Utilisez la fonction du context pour déconnecter l'utilisateur
-      setIsAuthenticated(false); // Mettez à jour l'authentification lors de la déconnexion
+      await logoutUser();
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);
     }
@@ -72,7 +70,6 @@ export const FixedModal = () => {
 
   return (
     <div className="fixed right-4 bottom-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg z-10">
-      {/* Vérification de l'état d'authentification et affichage des boutons correspondants */}
       {!isAuthenticated ? (
         <>
           <button
@@ -111,6 +108,7 @@ export const FixedModal = () => {
           isOpen={isLoginModalOpen}
           onClose={closeLoginModal}
           onLoginSuccess={handleLoginSuccess} // Appel sans paramètres, juste la fonction de succès
+          setLoginCredentials={setLoginCredentials} // Passage de setLoginCredentials pour gérer les modifications d'email et password
         />
       )}
 
@@ -120,6 +118,7 @@ export const FixedModal = () => {
           isOpen={isSignupModalOpen}
           onClose={closeSignupModal}
           onSuccess={handleSignUpSuccess} // Appel sans paramètres, juste la fonction de succès
+          setSignUpCredentials={setSignUpCredentials} // Passage de setSignUpCredentials pour gérer les modifications d'email, password, etc.
         />
       )}
     </div>

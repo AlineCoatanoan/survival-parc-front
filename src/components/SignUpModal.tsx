@@ -16,6 +16,7 @@ interface SignUpModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  setSignUpCredentials: React.Dispatch<React.SetStateAction<{ firstName: string; lastName: string; email: string; password: string }>>; // Prop modifiée
 }
 
 export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClose }, ref) => {

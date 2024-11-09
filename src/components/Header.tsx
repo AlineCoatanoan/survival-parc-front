@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { FiShoppingCart, FiSearch } from 'react-icons/fi';
 import { SearchBar } from './SearchBar';
+import { useAuth } from '../features/auth/authContext';
 
 export const Header = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [showSearch, setShowSearch] = useState(false);
+  const { isAuthenticated, isAdmin } = useAuth();
 
   const handleMouseEnter = (menu: string) => {
     setActiveMenu(menu);
@@ -167,6 +169,10 @@ export const Header = () => {
                   setShowSearch={setShowSearch} 
                 />
               </div>
+            )}
+
+            {isAuthenticated && isAdmin && (
+              <Link to="/dashboard">Dashboard</Link>
             )}
           </div>
 
