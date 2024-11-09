@@ -138,8 +138,8 @@ export const Header = () => {
                 onMouseLeave={handleMouseLeave}
               >
                 <div className="flex flex-col space-y-2">
-                  <Link to="/mes-reservations" className="block hover:text-[#FF7828]">Mes réservations</Link>
-                  <Link to="/annuler" className="block hover:text-[#FF7828]">Annuler une réservation</Link>
+                  <Link to="/Ticket" className="block hover:text-[#FF7828]">Ticket journée(s)</Link>
+                  <Link to="/Pass" className="block hover:text-[#FF7828]">Pass</Link>
                 </div>
               </div>
             )}

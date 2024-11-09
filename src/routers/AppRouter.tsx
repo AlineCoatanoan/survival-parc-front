@@ -9,6 +9,7 @@ import { Postapo } from '../pages/HotelPostapo';
 import { Refuge } from '../pages/HotelRefuge';
 import { Plan } from '../pages/Plan';
 import { Calendrier } from '../pages/Calendrier';
+import { Ticket } from '../pages/Ticket';
 import { Profile } from '../pages/Profile';
 import { Dashboard } from '../pages/Dashboard';
 import { Reservations } from '../pages/Reservations';
@@ -36,6 +37,7 @@ export function AppRouter() {
               <Route path="/refuge" element={<Refuge />} />
               <Route path="/plan" element={<Plan />} />
               <Route path="/calendrier" element={<Calendrier />} />
+              <Route path="/Ticket" element={<Ticket />} />
 
               {/* Routes protégées */}
               <Route element={<PrivateRoute />}>
