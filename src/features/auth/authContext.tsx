@@ -5,11 +5,13 @@ import { IUser } from "../../@types";
 // Export de AuthContextType
 export interface AuthContextType {
   user: IUser | null;
+  userId: string | null;  // userId est maintenant obligatoire
   loginUser: (email: string, password: string) => Promise<void>;
   logoutUser: () => Promise<void>;
   registerUser: (firstName: string, lastName: string, email: string, password: string) => Promise<void>;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  loading: boolean;  // Ajouter un état de chargement
 }
 
 // Création du contexte et exportation
@@ -17,6 +19,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<IUser | null>(null);
+  const [loading, setLoading] = useState(true);  // Initialiser l'état de chargement à true
 
   // Fonction de connexion
   const loginUser = async (email: string, password: string) => {
@@ -24,10 +27,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await loginUserService(email, password);
       if (response.success && response.data) {
         setUser(response.data.user);
-        console.log("Connexion réussie:", response.data.user);
-
+        console.log("Connexion réussie:", response.data.user); // Vérifie si l'utilisateur est bien mis à jour
+  
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
+  
+        console.log("Token et utilisateur enregistrés dans localStorage");
       } else {
         throw new Error(response.message || "Échec de la connexion");
       }
@@ -36,6 +41,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw error;
     }
   };
+  
 
   // Fonction de déconnexion
   const logoutUser = async () => {
@@ -75,12 +81,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (token && storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    setLoading(false);  // Une fois que l'état utilisateur est initialisé, on peut arrêter le chargement
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loginUser, logoutUser, registerUser, isAuthenticated: !!user, isAdmin }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider 
+  value={{ 
+    user, 
+    userId: user ? user.id.toString() : null,  // Conversion en chaîne de caractères
+    loginUser, 
+    logoutUser, 
+    registerUser, 
+    isAuthenticated: !!user, 
+    isAdmin, 
+    loading 
+  }}
+>
+  {children}
+</AuthContext.Provider>
+
   );
 };
 

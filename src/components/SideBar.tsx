@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LoginModal } from './LoginModal';
 import { SignUpModal } from '../components/SignUpModal';
 import { useAuth } from '../features/auth/authContext';
+import { useNavigate } from 'react-router-dom';
 
 export const FixedModal = () => {
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
@@ -11,7 +12,8 @@ export const FixedModal = () => {
   const [loginCredentials, setLoginCredentials] = useState({ email: '', password: '' });
   const [signUpCredentials, setSignUpCredentials] = useState({ firstName: '', lastName: '', email: '', password: '' });
 
-  const { loginUser, logoutUser, registerUser, isAuthenticated } = useAuth();
+  const { loginUser, logoutUser, registerUser, isAuthenticated, userId } = useAuth();
+  const navigate = useNavigate(); // Utilisation de useNavigate pour rediriger
 
   useEffect(() => {
     console.log("Authentification mise à jour:", isAuthenticated);
@@ -63,9 +65,16 @@ export const FixedModal = () => {
   const handleLogout = async () => {
     try {
       await logoutUser();
+      // Redirection vers la page d'accueil après la déconnexion
+      navigate('/'); 
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);
     }
+  };
+
+  const handleGoToProfile = () => {
+    // Rediriger vers la page du profil avec l'ID utilisateur
+    navigate(`/mon-compte/${userId}`);
   };
 
   return (
@@ -94,7 +103,7 @@ export const FixedModal = () => {
             Déconnexion
           </button>
           <button
-            onClick={() => console.log("Accéder au profil")}
+            onClick={handleGoToProfile} // Appel à la fonction de redirection vers le profil
             className="block w-full py-2 px-4 text-center bg-secondary hover:bg-secondary-focus rounded text-white"
           >
             Mon compte

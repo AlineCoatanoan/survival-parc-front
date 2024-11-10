@@ -1,5 +1,7 @@
 export interface IUser {
   id: number;
+  firstName: string;
+  lastName: string;
   email: string;
   password?: string;
   role: string;
@@ -26,6 +28,7 @@ export interface IProfile {
 
 export interface IReservation {
   id: number;
+  date: Date;
   description: string;
   startDate: Date;
   endDate: Date;

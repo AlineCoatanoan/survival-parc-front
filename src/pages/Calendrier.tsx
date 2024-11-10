@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CalendrierPicker } from '../components/Calendar'; 
-import { getHorairesOuverture } from '../components/Calendar';
 
 export const Calendrier: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date[] | null>(null);
 
-  const handleDateChange = (date: Date | null) => {
+  const handleDateChange = (date: Date[] | null) => {
     setSelectedDate(date);
   };
-
-
 
   return (
     <div className="flex flex-col items-center p-8 bg-gray-800 text-white min-h-screen pt-[200px]">
@@ -30,8 +27,7 @@ export const Calendrier: React.FC = () => {
               transition={{ duration: 0.5 }}
               className="mt-4 border-l-2 pl-4 border-green-500"
             >
-              <h2 className="text-2xl">Horaires d'ouverture</h2>
-              <p className="text-lg">{getHorairesOuverture(selectedDate)}</p>
+              {/* Vous pouvez ici retirer la section des horaires */}
             </motion.div>
           )}
         </div>

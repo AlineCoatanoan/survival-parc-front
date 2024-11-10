@@ -18,20 +18,18 @@ export const Header = () => {
     setActiveMenu(null);
   };
 
-
-
   const toggleSearch = () => {
     setShowSearch(!showSearch);
   };
 
   return (
     <header className="fixed top-0 left-0 w-full bg-black text-white py-4 shadow-lg z-20">
-      <div className="absolute inset-x-0 top-[-30px] flex items-center justify-start p-3 z-10">
+      <div className="absolute inset-x-0 top-[-10px] flex items-center justify-start p-3 z-10">
         <Link to="/" className="block">
           <img
             src="./src/assets/images/logo.png"
             alt="Survival Parc Logo"
-            className="w-[250px] h-auto"
+            className="w-[220px] h-auto"
           />
         </Link>
       </div>
@@ -147,7 +145,7 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center">
-          <Link to="/panier" className="relative z-10">
+          <Link to="/Reservations" className="relative z-10">
             <FiShoppingCart className="text-2xl" />
           </Link>
 
@@ -172,17 +170,15 @@ export const Header = () => {
             )}
 
             {isAuthenticated && isAdmin && (
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/dashboard" className="ml-4 text-[#FF7828]">
+                Dashboard
+              </Link>
             )}
-          </div>
 
-          
-            
-          
+             
+          </div>
         </div>
       </div>
-
-
     </header>
   );
 };
