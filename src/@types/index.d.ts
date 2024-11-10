@@ -37,9 +37,11 @@ export interface IReservation {
   price: number;
   userId?: number;
   hotelId?: number;
+  passId?: number;
   animationId?: number;
   user?: IUser; // Association vers User
   hotel?: IHotel; // Association vers Hotel
+  pass?: IPass; // Association vers Pass
   animation?: IAnimation; // Association vers Animation
   createdAt?: Date;
   updatedAt?: Date;

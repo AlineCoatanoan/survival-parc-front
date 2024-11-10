@@ -44,7 +44,10 @@ export function AppRouter() {
                 {/* Routes protégées */}
                 <Route element={<PrivateRoute />}>
                 <Route path="/mon-compte/:userId" element={<Profile />} />
-                  <Route path="/Reservations" element={<Reservations />} />
+                </Route>
+
+                <Route element={<PrivateRoute />}>
+                  <Route path="/reservations/:userId" element={<Reservations />} />
                 </Route>
 
                 {/* Route protégée pour la page de dashboard */}

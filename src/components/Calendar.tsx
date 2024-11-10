@@ -32,49 +32,59 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
     setNumberOfPeople(Number(e.target.value));
   };
 
-  const handleReservation = () => {
-    if (!isAuthenticated) {  // Vérifie si l'utilisateur est authentifié
+  const handleReservation = async () => {
+    if (!isAuthenticated) {  
       setShowWarning(true); // Affiche l'alerte de non-authentification
       return;
     }
-
-    // Vérifier si la date est valide avant d'ajouter la réservation
+  
+    // Vérifier si la date est valide
     if (!selectedDate || (selectedDate instanceof Date && isNaN(selectedDate.getTime()))) {
       console.log('Veuillez sélectionner une date valide.');
       return;
     }
-
-    // Si l'utilisateur est connecté, créez une réservation et ajoutez-la au panier
+  
     const startDate = selectedDate instanceof Date ? selectedDate : selectedDate[0];
     const endDate = selectedDate instanceof Date ? selectedDate : selectedDate[1];
-
+  
     // Calcul du nombre de nuits
     const nights = (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24);
-
+  
     const reservation: IReservation = {
-      id: Date.now(), // Utilisez un ID temporaire pour l'instant
-      date: new Date(),
-      description: 'Réservation de parc', // Remplissez avec une description appropriée
+      description: 'Réservation', // Description statique, à adapter si nécessaire
       startDate,
       endDate,
       nights: Math.ceil(nights),
       person: numberOfPeople,
       price: totalPrice,
-      userId: undefined, // Remplissez si vous avez l'ID de l'utilisateur
-      hotelId: undefined, // Remplissez si vous avez l'ID de l'hôtel
-      animationId: undefined, // Remplissez si vous avez l'ID de l'animation
+      userId: Number(userId), 
     };
-
-    addItemToCart(reservation); // Ajoutez la réservation au panier
-
-    // Affichez la confirmation de réservation
-    setShowConfirmation(true);
-
-    // Cacher le message après 3 secondes
-    setTimeout(() => {
-      setShowConfirmation(false);
-    }, 3000);
+  
+    try {
+      const response = await fetch(`http://localhost:3000/api/reservation/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reservation),
+      });
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        setShowConfirmation(true);
+        addItemToCart(reservation); // Ajouter au panier local si nécessaire
+  
+        // Cacher la confirmation après 3 secondes
+        setTimeout(() => setShowConfirmation(false), 3000);
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Une erreur s\'est produite lors de la réservation.');
+    }
   };
+  
 
   return (
     <motion.div

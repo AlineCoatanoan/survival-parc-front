@@ -8,7 +8,7 @@ import { useAuth } from '../features/auth/authContext';
 export const Header = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [showSearch, setShowSearch] = useState(false);
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin, user } = useAuth();
 
   const handleMouseEnter = (menu: string) => {
     setActiveMenu(menu);
@@ -21,6 +21,9 @@ export const Header = () => {
   const toggleSearch = () => {
     setShowSearch(!showSearch);
   };
+
+  // Assure-toi que userId est défini et accessible
+  const userId = user ? user.id : null;
 
   return (
     <header className="fixed top-0 left-0 w-full bg-black text-white py-4 shadow-lg z-20">
@@ -145,9 +148,12 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center">
-          <Link to="/Reservations" className="relative z-10">
-            <FiShoppingCart className="text-2xl" />
-          </Link>
+          {/* Lien de réservation avec userId dynamique */}
+          {userId && (
+            <Link to={`/reservations/${userId}`} className="relative z-10">
+              <FiShoppingCart className="text-2xl" />
+            </Link>
+          )}
 
           {/* Ajout de l'icône de recherche */}
           <div className="relative flex items-center">
@@ -174,8 +180,6 @@ export const Header = () => {
                 Dashboard
               </Link>
             )}
-
-             
           </div>
         </div>
       </div>
