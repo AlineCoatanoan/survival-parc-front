@@ -17,16 +17,16 @@ export function Reservations() {
       setLoading(false);
       return;
     }
-
+  
     setLoading(true);
     setError(null);
-
+  
     try {
       const response = await fetch(`http://localhost:3000/api/reservation/${userId}`);
       if (!response.ok) {
         throw new Error(`Erreur HTTP : ${response.status}`);
       }
-
+  
       const data = await response.json();
       if (data.success) {
         setReservations(data.data as IReservation[]);
@@ -39,6 +39,8 @@ export function Reservations() {
       setLoading(false);
     }
   }, [userId]);
+  
+  
 
   const handleDeleteRequest = (reservationId: number) => {
     setReservationToDelete(reservationId);
@@ -102,10 +104,11 @@ export function Reservations() {
         </div>
       )}
 
-<div className="ml-0">
-  <h2 className="text-xl font-bold text-gray-800 mb-4 mt-10 ml-60">Tickets sans hôtels</h2>
+      {/* Section pour les tickets sans hôtels */}
+      <div className="ml-0">
+  <h2 className="text-xl font-bold text-gray-800 mb-4 mt-10 mr-2 ml-60">Tickets sans hôtels</h2>
   {reservations.length > 0 ? (
-    <ul className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-4 space-y-4 mr-20">
+    <ul className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-4 space-y-4">
       {reservations.map((reservation) => (
         <li key={reservation.id} className="flex justify-between items-center p-4 bg-gray-50 border rounded-lg hover:bg-gray-200">
           <div className="flex flex-col">
@@ -113,6 +116,10 @@ export function Reservations() {
             <span className="text-gray-500 text-sm">
               {reservation.startDate ? new Date(reservation.startDate).toLocaleDateString() : 'Date inconnue'} - 
               {reservation.endDate ? new Date(reservation.endDate).toLocaleDateString() : 'Date inconnue'}
+            </span>
+            <span className="text-gray-500 text-sm">
+              {reservation.person} personne(s)
+              {reservation.isHotelIncluded === false && " (Ticket sans hôtel)"}
             </span>
           </div>
           <span className="text-xl font-semibold text-gray-800">{reservation.price} €</span>
@@ -128,8 +135,9 @@ export function Reservations() {
 </div>
 
 
-</div>
 
 
+
+    </div>
   );
 }

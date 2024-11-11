@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { CalendrierPicker } from '../components/CalendarTicket';
+import { CalendrierPicker } from '../components/CalendarTicket'; // Utilisation de CalendrierPicker au lieu de Calendrier
 
+// Définir un type pour la réservation
 interface Reservation {
   numberOfPeople: number;
   selectedDate: Date | null;
   totalPrice: number;
-  ticketType: string; // Ajout d'un type de ticket (1 jour ou 2 jours)
 }
 
 export const Ticket = () => {
@@ -15,39 +15,44 @@ export const Ticket = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [cart, setCart] = useState<Reservation[]>([]);
   const [showWarning, setShowWarning] = useState(false);
-  const [pricePerPerson, setPricePerPerson] = useState(25);
-  const [ticketType, setTicketType] = useState('1 Jour'); // État pour gérer le type de ticket
+  const [pricePerPerson, setPricePerPerson] = useState(25); // État pour gérer le prix par personne
 
+  // Fonction pour ajouter une réservation au panier
   const addToCart = (reservation: Reservation) => {
     setCart((prevCart) => [...prevCart, reservation]);
   };
 
+  // Fonction de gestion de la fermeture de la modale et de la réservation
   const handleReserve = () => {
+    // Si l'utilisateur n'est pas authentifié, afficher l'alerte
     if (!isAuthenticated) {
       setShowWarning(true);
       setTimeout(() => setShowWarning(false), 3000);
       return;
     }
-
+  
+    // Vérification de la validité de la date
     if (!selectedDate || (Array.isArray(selectedDate) && selectedDate.some(date => isNaN(date.getTime())))) {
       console.log('Veuillez sélectionner une date valide.');
       return;
     }
-
+  
     const reservation: Reservation = {
       numberOfPeople,
       selectedDate,
       totalPrice: numberOfPeople * pricePerPerson,
-      ticketType, // Inclure le type de ticket dans la réservation
     };
-
+  
     addToCart(reservation);
     handleCloseCalendrier();
   };
+  
+  
+  
+  
 
-  const handleShowCalendrier = (price: number, type: string) => {
-    setPricePerPerson(price);
-    setTicketType(type); // Mettez à jour le type de ticket
+  const handleShowCalendrier = (price: number) => {
+    setPricePerPerson(price); // Mettez à jour le prix par personne
     setShowCalendrier(true);
   };
 
@@ -89,7 +94,7 @@ export const Ticket = () => {
             <button
               type="button"
               className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md w-full max-w-[48%]"
-              onClick={() => handleShowCalendrier(25, '1 Jour')} // Définit le prix à 25 et le type de ticket à 1 Jour
+              onClick={() => handleShowCalendrier(25)} // Définit le prix à 25
             >
               Réserver Maintenant
             </button>
@@ -118,7 +123,7 @@ export const Ticket = () => {
             <button
               type="button"
               className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md w-full max-w-[48%]"
-              onClick={() => handleShowCalendrier(40, '2 Jours')} // Définit le prix à 40 et le type de ticket à 2 Jours
+              onClick={() => handleShowCalendrier(40)} // Définit le prix à 40
             >
               Réserver Maintenant
             </button>
@@ -148,12 +153,14 @@ export const Ticket = () => {
           <div className="bg-gray-800 p-4 rounded-lg w-[70%] max-w-2xl max-h-[70vh] overflow-hidden">
             <h2 className="text-2xl font-semibold text-center mb-4">Sélectionnez une date</h2>
             <div className="w-full rounded-md overflow-hidden">
-              <CalendrierPicker
-                selectedDate={selectedDate}
-                handleDateChange={handleDateChange}
-                isReservationPage={true}
-                pricePerPerson={pricePerPerson}
-              />
+            <CalendrierPicker
+              selectedDate={selectedDate}
+              handleDateChange={handleDateChange}
+              isReservationPage={true}
+              pricePerPerson={pricePerPerson} // Passe le prix mis à jour
+              hotelId={1} // Remplacez `1` par l'ID de l'hôtel réel si disponible
+            />
+
             </div>
             <div className="flex justify-between mt-4">
               <button
@@ -162,10 +169,13 @@ export const Ticket = () => {
               >
                 Fermer
               </button>
+              
             </div>
           </div>
         </div>
       )}
+
+      
     </div>
   );
 };

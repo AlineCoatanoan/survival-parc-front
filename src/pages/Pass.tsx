@@ -1,4 +1,3 @@
-// Pass component
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { IHotel, IPass } from "../@types";
@@ -9,7 +8,8 @@ export const Pass = () => {
   const [selectedPass, setSelectedPass] = useState<IPass | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [showModal, setShowModal] = useState(false);
-  const [calendarPrice, setCalendarPrice] = useState(80); // État pour stocker le prix du calendrier
+  const [calendarPrice, setCalendarPrice] = useState(80);
+  const [hotelName, setHotelName] = useState<string>("");
 
   // Fetch des hôtels depuis l'API
   useEffect(() => {
@@ -24,14 +24,20 @@ export const Pass = () => {
     fetchHotels();
   }, []);
 
-  const handlePassSelection = (pass: IPass, price: number) => {
+  const handlePassSelection = (pass: IPass, price: number, hotelName: string) => {
+    console.log("Sélection du pass :", pass);
+    console.log("Prix défini :", price);
+    console.log("Nom de l'hôtel défini :", hotelName);
+
     setSelectedPass(pass);
     setCalendarPrice(price); // Définir le prix du calendrier en fonction du pass
     setShowModal(true);
+    setHotelName(hotelName); // Enregistrer le nom de l'hôtel
   };
 
-  const handleDateChange = (dates: [Date | null, Date | null]) => {
-    setSelectedDateRange(dates);
+  const handleDateChange = (dates: [Date | null, Date | null] | null) => {
+    console.log("Dates sélectionnées :", dates);
+    setSelectedDateRange(dates || [null, null]);
   };
 
   const closeModal = (event: React.MouseEvent) => {
@@ -62,9 +68,10 @@ export const Pass = () => {
                 type="button"
                 className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md w-full max-w-[48%]"
                 onClick={() => handlePassSelection(
-                  { id: hotel.id, name: hotel.name, description: hotel.description, price: hotel.priceByNight || 0 },
-                  index === 0 ? 80 : 60  // Utilisez 80€ pour le premier pass, 60€ pour le second
-                )}
+                    { id: hotel.id, name: hotel.name, description: hotel.description, price: hotel.priceByNight || 0 },
+                    index === 0 ? 80 : 60,
+                    hotel.name
+                  )}
               >
                 Réserver Maintenant
               </button>
@@ -89,13 +96,16 @@ export const Pass = () => {
           onClick={closeModal}
         >
           <div className="bg-white p-6 rounded-lg max-w-[1000px] mx-auto mt-24">
-            <h3 className="text-2xl mb-4">Choisir la plage de dates</h3>
+            <h3 className="text-2xl mb-4">Choisir la plage de dates pour {hotelName}</h3>
             <CalendarPass
-              selectedDate={selectedDateRange}
-              handleDateChange={handleDateChange}
-              isReservationPage={true}
-              pricePerNight={calendarPrice} // Passer le prix spécifique ici
+            selectedDate={selectedDateRange}
+            handleDateChange={handleDateChange}
+            isReservationPage={true}
+            pricePerNight={calendarPrice}
+            hotelName={hotelName}
             />
+
+
             <button
               type="button"
               className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md"

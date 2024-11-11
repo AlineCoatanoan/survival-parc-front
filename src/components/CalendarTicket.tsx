@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { motion } from 'framer-motion';
-import { useAuth } from '../features/auth/authContext';  
-import { useCart } from '../features/auth/cartContext'; 
+import { useAuth } from '../features/auth/authContext';
+import { useCart } from '../features/auth/cartContext';
 import axios from 'axios';
 
 interface CalendrierPickerProps {
@@ -11,6 +11,7 @@ interface CalendrierPickerProps {
   handleDateChange: (date: Date | Date[] | null) => void;
   isReservationPage?: boolean;
   pricePerPerson?: number;
+  hotelId: string | number;  // Ajout d'un hotelId en prop pour récupérer l'ID de l'hôtel
 }
 
 export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
@@ -18,15 +19,15 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
   handleDateChange,
   isReservationPage = false,
   pricePerPerson = 25,
+  hotelId, // Récupération de l'ID d'hôtel en prop
 }) => {
-  const { user, isAuthenticated } = useAuth(); // Ajoutez user ici
-  const { addItemToCart } = useCart();  // Ajoutez des éléments au panier
+  const { user, isAuthenticated } = useAuth();
+  const { addItemToCart } = useCart();
 
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const totalPrice = numberOfPeople * pricePerPerson;
-
-  const [showConfirmation, setShowConfirmation] = useState(false);  // Ajoutez un état pour afficher la confirmation
-  const [showWarning, setShowWarning] = useState(false); // État pour le message d'avertissement
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
 
   const handlePeopleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumberOfPeople(Number(e.target.value));
@@ -38,62 +39,109 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       setTimeout(() => setShowWarning(false), 3000);
       return;
     }
-
-    if (!selectedDate || (selectedDate instanceof Date && isNaN(selectedDate.getTime()))) {
-      console.log('Veuillez sélectionner une date valide.');
+  
+    if (!selectedDate || numberOfPeople <= 0) {
+      console.log('Veuillez remplir tous les champs nécessaires.');
       return;
     }
-
-    const startDate = selectedDate instanceof Date ? selectedDate : selectedDate[0];
-    const endDate = selectedDate instanceof Date ? selectedDate : selectedDate[1];
+  
+    let startDate: Date | null = null;
+    let endDate: Date | null = null;
+  
+    if (Array.isArray(selectedDate)) {
+      startDate = selectedDate[0];
+      endDate = selectedDate[1];
+    } else {
+      startDate = selectedDate;
+      endDate = null;
+    }
+  
+    if (!startDate || (endDate && startDate.getTime() === endDate.getTime())) {
+      console.log('Les dates doivent être distinctes.');
+      return;
+    }
+  
+    if (!endDate) {
+      endDate = new Date(startDate.getTime());
+      endDate.setDate(startDate.getDate() + 1); // Ajoute un jour
+    }
+  
     const nights = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
-
+    if (nights <= 0) {
+      console.log('Le nombre de nuits doit être supérieur à 0.');
+      return;
+    }
+  
+    // Ajout de la vérification de `userId` pour s'assurer qu'il n'est pas `null`
+    const userId = user ? user.id : null;
+    if (!userId) {
+      console.log('Utilisateur non connecté. Impossible de procéder à la réservation.');
+      return;
+    }
+  
+    // Utilisation de l'hotelId récupéré depuis les props
     const reservationData = {
-      startDate,
-      endDate,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
       nights,
       person: numberOfPeople,
       price: totalPrice,
-      userId: user ? user.id : null, // Utilisez user.id si user est défini
+      userId: userId,
+      hotelId: hotelId,  // Utilisation de l'ID de l'hôtel passé en prop
     };
 
+    console.log("Données envoyées à l'API :", reservationData); // Ajout du log pour vérifier les données envoyées
+  
     try {
       const response = await axios.post('http://localhost:3000/api/reservation', reservationData);
-      console.log("Réservation enregistrée avec succès : ", response.data);
-      addItemToCart(response.data.data); // Assurez-vous que la réponse contient bien les données nécessaires
+      console.log("Réservation enregistrée avec succès :", response.data);
+      addItemToCart(response.data.data);
       setShowConfirmation(true);
       setTimeout(() => setShowConfirmation(false), 3000);
+  
+      // Réinitialisation des champs après succès
+      setNumberOfPeople(1);
+      handleDateChange(null);
     } catch (error) {
-      console.error("Erreur lors de l'enregistrement de la réservation :", error);
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.error("Erreur lors de l'enregistrement de la réservation :", error.response.data);
+          console.log("Détails de l'erreur:", error.response);
+        } else {
+          console.error("Erreur Axios sans réponse :", error.message);
+        }
+      } else if (error instanceof Error) {
+        console.error("Erreur générale:", error.message);
+      } else {
+        console.error("Erreur inconnue :", error);
+      }
     }
   };
+  
 
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
       className={`border rounded-lg overflow-hidden p-4 ${isReservationPage ? 'bg-gray-800' : 'bg-white'} flex items-start justify-between`}
     >
-      {/* Alerte de non-authentification */}
       {showWarning && (
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-warning text-white p-4 rounded-lg shadow-lg z-20">
           <p>Merci de vous connecter pour effectuer une réservation !</p>
         </div>
       )}
 
-      {/* Alerte de confirmation */}
       {showConfirmation && (
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white p-4 rounded-lg shadow-lg z-20">
           <p>Votre réservation a bien été ajoutée au panier !</p>
         </div>
       )}
 
-      {/* Calendrier à gauche */}
       <div className="w-[60%]">
         <DatePicker
           selected={selectedDate instanceof Date ? selectedDate : undefined}
           onChange={handleDateChange}
           inline
-          selectsRange={pricePerPerson === 40} // Permet la sélection de plage uniquement pour le ticket 2 jours
+          selectsRange={pricePerPerson === 40}
           startDate={Array.isArray(selectedDate) ? selectedDate[0] : undefined}
           endDate={Array.isArray(selectedDate) ? selectedDate[1] : undefined}
           className={`border-0 p-4 w-full ${isReservationPage ? 'text-white' : 'text-black'}`}
@@ -104,7 +152,6 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
         />
       </div>
 
-      {/* Affichage conditionnel pour le nombre de personnes et le prix */}
       {isReservationPage && selectedDate && (
         <div className="mt-4 w-full">
           <label className={`block text-lg font-medium mb-2 ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
@@ -121,7 +168,6 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
             Prix total : {totalPrice} €
           </p>
 
-          {/* Affichage de la plage de dates sélectionnées */}
           {Array.isArray(selectedDate) && selectedDate[0] && selectedDate[1] && (
             <div className="mt-4 text-lg text-gray-700">
               <p className={`font-medium ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
@@ -131,17 +177,15 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
             </div>
           )}
 
-          {/* Affichage de la date sélectionnée si ce n'est pas une plage */}
           {selectedDate instanceof Date && (
             <div className="mt-4 text-lg text-gray-700">
-              <p className={`font-medium ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
+              <p className={`font-medium ${isReservationPage ? 'text-yellow-400' : 'text-black'}`} >
                 Date sélectionnée:
               </p>
               <p>{formatDate(selectedDate)}</p>
             </div>
           )}
 
-          {/* Ajouter un bouton pour lancer la réservation */}
           <button
             onClick={handleReservation}
             className={`mt-4 px-6 py-2 rounded-md ${isReservationPage ? 'bg-yellow-400 text-black' : 'bg-black text-white'}`}
@@ -154,11 +198,6 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
   );
 };
 
-const formatDate = (date: Date) => {
-  return date.toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-};
+function formatDate(date: Date) {
+  return date.toLocaleDateString('fr-FR');
+}

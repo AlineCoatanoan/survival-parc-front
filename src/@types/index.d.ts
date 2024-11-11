@@ -5,8 +5,11 @@ export interface IUser {
   email: string;
   password?: string;
   role: string;
-  profile?: IProfile; // Association vers Profile
-  reservations?: IReservation[]; // Association vers plusieurs Reservations
+  profile?: IProfile; 
+  reservations?: IReservation[]; 
+  hotelId?: number;    // Ajout de la propriété hotelId
+  passId?: number;     // Ajout de la propriété passId
+  hotelName?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -41,6 +44,7 @@ export interface IReservation {
   animationId?: number;
   user?: IUser; // Association vers User
   hotel?: IHotel; // Association vers Hotel
+  hotelName?: string;
   pass?: IPass; // Association vers Pass
   animation?: IAnimation; // Association vers Animation
   createdAt?: Date;
