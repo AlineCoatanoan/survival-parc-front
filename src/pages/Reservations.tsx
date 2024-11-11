@@ -29,7 +29,22 @@ export function Reservations() {
   
       const data = await response.json();
       if (data.success) {
-        setReservations(data.data as IReservation[]);
+        // Récupérer les réservations et ajouter le nom de l'hôtel
+        const reservationsWithHotelName = await Promise.all(
+          data.data.map(async (reservation: IReservation) => {
+            // Récupérer le nom de l'hôtel en utilisant l'hotelId
+            const hotelResponse = await fetch(`http://localhost:3000/api/hotel/${reservation.hotelId}`);
+            if (!hotelResponse.ok) {
+              throw new Error(`Erreur lors de la récupération du nom de l'hôtel : ${hotelResponse.status}`);
+            }
+            const hotelData = await hotelResponse.json();
+            const hotelName = hotelData.name; // Supposons que le nom de l'hôtel soit dans la clé 'name'
+  
+            // Retourner la réservation avec l'ajout du nom de l'hôtel
+            return { ...reservation, hotelName };
+          })
+        );
+        setReservations(reservationsWithHotelName);
       } else {
         throw new Error(data.message || 'Erreur lors de la récupération des réservations');
       }
@@ -39,7 +54,6 @@ export function Reservations() {
       setLoading(false);
     }
   }, [userId]);
-  
   
 
   const handleDeleteRequest = (reservationId: number) => {
@@ -91,9 +105,7 @@ export function Reservations() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 pt-40">
-
-    <h1 className="text-3xl font-semibold text-gray-800 mb-6 mx-auto w-fit">Mes réservations</h1>
-
+      <h1 className="text-3xl font-semibold text-gray-800 mb-6 mx-auto w-fit">Mes réservations</h1>
 
       {warning && (
         <div
@@ -106,38 +118,37 @@ export function Reservations() {
 
       {/* Section pour les tickets sans hôtels */}
       <div className="ml-0">
-  <h2 className="text-xl font-bold text-gray-800 mb-4 mt-10 mr-2 ml-60">Tickets sans hôtels</h2>
-  {reservations.length > 0 ? (
-    <ul className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-4 space-y-4">
-      {reservations.map((reservation) => (
-        <li key={reservation.id} className="flex justify-between items-center p-4 bg-gray-50 border rounded-lg hover:bg-gray-200">
-          <div className="flex flex-col">
-            <span className="font-medium text-gray-700">{reservation.description}</span>
-            <span className="text-gray-500 text-sm">
-              {reservation.startDate ? new Date(reservation.startDate).toLocaleDateString() : 'Date inconnue'} - 
-              {reservation.endDate ? new Date(reservation.endDate).toLocaleDateString() : 'Date inconnue'}
-            </span>
-            <span className="text-gray-500 text-sm">
-              {reservation.person} personne(s)
-              {reservation.isHotelIncluded === false && " (Ticket sans hôtel)"}
-            </span>
-          </div>
-          <span className="text-xl font-semibold text-gray-800">{reservation.price} €</span>
-          <button onClick={() => handleDeleteRequest(reservation.id)} className="text-red-500 hover:text-red-700">
-            <FaTrashAlt />
-          </button>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <p className="text-lg text-gray-600 mt-4">Aucune réservation trouvée</p>
-  )}
-</div>
+        <h2 className="text-xl font-bold text-gray-800 mb-4 mt-10 mr-2 ml-60">Tickets sans hôtels</h2>
+        {reservations.length > 0 ? (
+          <ul className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-4 space-y-4">
+            {reservations.map((reservation) => (
+              <li key={reservation.id} className="flex justify-between items-center p-4 bg-gray-50 border rounded-lg hover:bg-gray-200">
+                <div className="flex flex-col">
+                  <span className="font-medium text-gray-700">{reservation.description}</span>
+                  <span className="text-gray-500 text-sm">
+                    {reservation.startDate ? new Date(reservation.startDate).toLocaleDateString() : 'Date inconnue'} - 
+                    {reservation.endDate ? new Date(reservation.endDate).toLocaleDateString() : 'Date inconnue'}
+                  </span>
+                  <span className="text-gray-500 text-sm">
+                    {reservation.person} personne(s)
+                    {reservation.isHotelIncluded === false && " (Ticket sans hôtel)"}
+                  </span>
+                  {/* Afficher le nom de l'hôtel */}
+                  <span className="text-sm text-gray-600">Hôtel: {reservation.hotelName}</span>
+                </div>
+                <span className="text-xl font-semibold text-gray-800">{reservation.price} €</span>
+                <button onClick={() => handleDeleteRequest(reservation.id)} className="text-red-500 hover:text-red-700">
+                  <FaTrashAlt />
+                </button>
+              </li>
+            ))}
 
 
-
-
-
+          </ul>
+        ) : (
+          <p className="text-lg text-gray-600 mt-4">Aucune réservation trouvée</p>
+        )}
+      </div>
     </div>
   );
 }
