@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../features/auth/authContext';  // Assurez-vous d'importer le contexte Auth
 import { useCart } from '../features/auth/cartContext';  // Assurez-vous d'importer le contexte Cart
 import { IReservation } from '../@types';
+import axios from 'axios';
 
 interface CalendrierPickerProps {
   selectedDate: Date | Date[] | null;
@@ -19,7 +20,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
   isReservationPage = false,
   pricePerPerson = 25,
 }) => {
-  const { isAuthenticated } = useAuth();  // Remplacer isLoggedIn par isAuthenticated
+  const { user, isAuthenticated } = useAuth(); // Ajoutez user ici
   const { addItemToCart } = useCart();  // Ajoutez des éléments au panier
 
   const [numberOfPeople, setNumberOfPeople] = useState(1);
@@ -33,12 +34,12 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
   };
 
   const handleReservation = async () => {
-    if (!isAuthenticated) {  
-      setShowWarning(true); // Affiche l'alerte de non-authentification
+    if (!isAuthenticated) {
+      setShowWarning(true);
+      setTimeout(() => setShowWarning(false), 3000);
       return;
     }
   
-    // Vérifier si la date est valide
     if (!selectedDate || (selectedDate instanceof Date && isNaN(selectedDate.getTime()))) {
       console.log('Veuillez sélectionner une date valide.');
       return;
@@ -46,46 +47,28 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
   
     const startDate = selectedDate instanceof Date ? selectedDate : selectedDate[0];
     const endDate = selectedDate instanceof Date ? selectedDate : selectedDate[1];
+    const nights = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
   
-    // Calcul du nombre de nuits
-    const nights = (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24);
-  
-    const reservation: IReservation = {
-      description: 'Réservation', // Description statique, à adapter si nécessaire
+    const reservationData = {
       startDate,
       endDate,
-      nights: Math.ceil(nights),
+      nights,
       person: numberOfPeople,
       price: totalPrice,
-      userId: Number(userId), 
+      userId: user ? user.id : null, // Utilisez user.id si user est défini
     };
   
     try {
-      const response = await fetch(`http://localhost:3000/api/reservation/${userId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reservation),
-      });
-  
-      const data = await response.json();
-  
-      if (data.success) {
-        setShowConfirmation(true);
-        addItemToCart(reservation); // Ajouter au panier local si nécessaire
-  
-        // Cacher la confirmation après 3 secondes
-        setTimeout(() => setShowConfirmation(false), 3000);
-      } else {
-        throw new Error(data.message);
-      }
-    } catch (err: unknown) {
-      setError((err as Error).message || 'Une erreur s\'est produite lors de la réservation.');
+      const response = await axios.post('http://localhost:3000/api/reservation', reservationData);
+      console.log("Réservation enregistrée avec succès : ", response.data);
+      addItemToCart(response.data.data); // Assurez-vous que la réponse contient bien les données nécessaires
+      setShowConfirmation(true);
+      setTimeout(() => setShowConfirmation(false), 3000);
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement de la réservation :", error);
     }
   };
   
-
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}

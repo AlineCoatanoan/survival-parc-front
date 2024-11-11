@@ -28,7 +28,6 @@ export interface IProfile {
 
 export interface IReservation {
   id: number;
-  date: Date;
   description: string;
   startDate: Date;
   endDate: Date;
