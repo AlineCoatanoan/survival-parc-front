@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CalendrierPicker } from '../components/Calendar'; 
+import { CalendrierPicker } from '../components/CalendarTicket'; 
 
 export const Calendrier: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date[] | null>(null);

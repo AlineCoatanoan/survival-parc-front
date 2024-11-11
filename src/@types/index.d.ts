@@ -32,6 +32,7 @@ export interface IReservation {
   startDate: Date;
   endDate: Date;
   nights: number;
+  isHotelIncluded: boolean;
   person: number;
   price: number;
   userId?: number;
@@ -53,7 +54,7 @@ export interface IHotel {
   address: string;
   postalCode: string;
   city: string;
-  priceByNight: number;
+  priceByNight?: number;
   reservations?: IReservation[]; // Association vers plusieurs Reservations
   createdAt?: Date;
   updatedAt?: Date;

@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { motion } from 'framer-motion';
-import { useAuth } from '../features/auth/authContext';  // Assurez-vous d'importer le contexte Auth
-import { useCart } from '../features/auth/cartContext';  // Assurez-vous d'importer le contexte Cart
-import { IReservation } from '../@types';
+import { useAuth } from '../features/auth/authContext';  
+import { useCart } from '../features/auth/cartContext'; 
 import axios from 'axios';
 
 interface CalendrierPickerProps {
@@ -39,16 +38,16 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       setTimeout(() => setShowWarning(false), 3000);
       return;
     }
-  
+
     if (!selectedDate || (selectedDate instanceof Date && isNaN(selectedDate.getTime()))) {
       console.log('Veuillez sélectionner une date valide.');
       return;
     }
-  
+
     const startDate = selectedDate instanceof Date ? selectedDate : selectedDate[0];
     const endDate = selectedDate instanceof Date ? selectedDate : selectedDate[1];
     const nights = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
-  
+
     const reservationData = {
       startDate,
       endDate,
@@ -57,7 +56,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       price: totalPrice,
       userId: user ? user.id : null, // Utilisez user.id si user est défini
     };
-  
+
     try {
       const response = await axios.post('http://localhost:3000/api/reservation', reservationData);
       console.log("Réservation enregistrée avec succès : ", response.data);
@@ -68,7 +67,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       console.error("Erreur lors de l'enregistrement de la réservation :", error);
     }
   };
-  
+
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
