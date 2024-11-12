@@ -56,7 +56,7 @@ export const Animations = () => {
     }
 
     return (
-        <div className="p-4 bg-black">
+        <div className="p-4 bg-gradient-to-b from-black via-[#1F2937] via-10% to-[#1F2937]">
             <h1 className="text-3xl font-bold mb-6 text-center mt-[150px] text-white">
                 Toutes nos animations
             </h1>
@@ -70,7 +70,8 @@ export const Animations = () => {
                 >
                     <option value="">Tous les types</option>
                     {animationTypes.map((type, index) => (
-                        <option key={index} value={type}>{type}</option>
+                        <option key={index} value={type}>{type}
+                        </option>
                     ))}
                 </select>
             </div>
@@ -81,11 +82,12 @@ export const Animations = () => {
                         <Card
                             title={animation.name}
                             description={animation.description}
-                            image={imageMap[animation.id.toString()] || ['path/to/default/image.png']}
+                            image={imageMap[animation.id.toString()] || []}
                             link={`/animations/${animation.id}`}
-                            reverse={false} // Vous pouvez ajuster cela selon vos besoins
-                            className="custom-class" // Ajoutez des classes personnalisées ici si nécessaire
+                            reverse={false}
+                            className="w-2/3 p-4"  // Réduit la taille de la carte
                         />
+
                     </div>
                 ))}
             </div>

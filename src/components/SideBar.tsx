@@ -78,18 +78,18 @@ export const FixedModal = () => {
   };
 
   return (
-    <div className="fixed right-4 bottom-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg z-10">
+    <div className="fixed right-4 top-40 bg-gray-800 text-white p-4 rounded-lg shadow-lg z-10">
       {!isAuthenticated ? (
         <>
           <button
             onClick={openLoginModal}
-            className="block w-full py-2 px-4 mb-2 text-center bg-primary hover:bg-primary-focus rounded text-white"
+            className="block w-full py-2 px-4 mb-2 text-center bg-[#FF7828] hover:bg-[#FF7828]-focus rounded text-white"
           >
             Connexion
           </button>
           <button
             onClick={openSignupModal}
-            className="block w-full py-2 px-4 text-center bg-secondary hover:bg-secondary-focus rounded text-white"
+            className="block w-full py-2 px-4 text-center bg-[#075D2C] hover:bg-[#075D2C]-focus rounded text-white"
           >
             Inscription
           </button>

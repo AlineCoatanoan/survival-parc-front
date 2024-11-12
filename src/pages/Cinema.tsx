@@ -31,73 +31,74 @@ export const Cinema = () => {
   }
 
   return (
-    <div className="bg-black text-white min-h-screen p-8 flex flex-col items-center">
-      {/* Titre de la section */}
-      <motion.h1
-        className="text-5xl font-bold mb-4 text-center mt-20"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        {cinemaAnimation[0].name}
-      </motion.h1>
+    <div className="bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937] text-white min-h-screen p-8 pt-40 flex flex-col items-center">
+      {/* Image en haut à gauche, plus bas et pivotée dans l'autre sens */}
+      <div className="absolute top-32 left-32 p-4 z-10">
+        <img
+          src="./src/assets/images/zonequarantaine.jpg"
+          alt="Zone Infectée"
+          style={{ width: '350px', height: 'auto' }}
+          className="transform rotate-[-30deg]"
+        />
+      </div>
 
-      {/* Texte d'accroche */}
-      <motion.p
-        className="text-lg mb-6 text-center"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        Découvrez une expérience cinématographique inégalée avec le cinéma 3D 4DX. Vos sièges dynamiques bougent en synchronisation avec l’action à l’écran, vous plongeant au cœur de chaque scène. Les écrans, non seulement en face de vous mais aussi sur les côtés, créent une immersion à 360 degrés.
-
-        Des effets multisensoriels, tels que des gouttes d'eau, des parfums et des mouvements d'air, intensifient votre expérience, vous permettant de vivre chaque film comme une aventure mémorable. Préparez-vous à ressentir le cinéma d'une manière totalement nouvelle !
-      </motion.p>
-
-      {/* Texte de description */}
-      <motion.p
-        className="text-lg mb-12 text-center max-w-2xl"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-      >
-        {cinemaAnimation[0].description}
-      </motion.p>
-
-      {/* Conteneur des images alignées à gauche */}
-      <div className="flex flex-col items-start w-full">
-        {/* Image principale à gauche */}
+      {/* Conteneur général */}
+      <div className="max-w-6xl w-full space-y-16 mt-20 pt-50">
+        {/* Section titre */}
         <motion.div
-          className="relative mb-4"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          className="text-center space-y-8"
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
         >
-          <img
-            src="./src/assets/images/cinema.png"
-            alt="Cinéma"
-            className="h-auto rounded-lg shadow-lg"
-            style={{ width: "300px" }}
-          />
+          <motion.h1
+            className="text-5xl font-extrabold mb-4 text-gradient bg-clip-text bg-gradient-to-r from-green-400 to-yellow-500"
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {cinemaAnimation[0].name}
+          </motion.h1>
+
+          {/* Texte de description avec interligne et centrage */}
+          <motion.p
+            className="text-lg mb-12 text-center max-w-2xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            {cinemaAnimation[0].description}
+          </motion.p>
         </motion.div>
 
-        {/* Images supplémentaires sous le texte */}
-        {[2].map((index) => (
+        {/* Section images avec mise en page améliorée */}
+        <div className="flex justify-center space-x-8">
           <motion.div
-            key={index}
-            className="relative mb-4"
+            className="relative"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
           >
             <img
-              src={`./src/assets/images/cinema2.webp`}
-              alt={`cinema2`}
-              className="h-auto rounded-lg shadow-lg"
-              style={{ width: "300px" }}
+              src="./src/assets/images/cinema.png"
+              alt="Cinéma"
+              className="w-full max-w-[800px] h-auto object-contain rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
             />
           </motion.div>
-        ))}
+
+          <motion.div
+            className="relative"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <img
+              src="./src/assets/images/cinema2.webp"
+              alt="Cinéma 2"
+              className="w-full max-w-[800px] h-auto object-contain rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
+            />
+          </motion.div>
+        </div>
       </div>
     </div>
   );

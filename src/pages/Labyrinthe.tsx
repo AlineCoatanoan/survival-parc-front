@@ -31,70 +31,85 @@ export const Labyrinthe = () => {
     }
 
     return (
-        <div className="bg-black text-white min-h-screen p-8 flex flex-col items-center">
-            {/* Titre de la section et description dynamiques */}
-            <motion.h1
-                className="text-5xl font-bold mb-4 text-center mt-20"
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-            >
-                {labyrintheAnimation[0].name}
-            </motion.h1>
+        <div className="bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937] text-white min-h-screen p-8 pt-40 flex flex-col items-center">
+            {/* Image en haut à gauche, plus bas et pivotée dans l'autre sens */}
+            <div className="absolute top-32 left-32 p-4 z-10">
+    <img
+        src="./src/assets/images/zoneinfectee.jpg"
+        alt="Zone Infectée"
+        style={{ width: '250px', height: 'auto' }}
+        className="transform rotate-[-30deg]"
+    />
+</div>
 
-            <motion.p
-                className="text-lg mb-6 text-center"
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-            >
-                {labyrintheAnimation[0].description}
-            </motion.p>
 
-            {/* Texte de description */}
-            <motion.p
-                className="text-lg mb-12 text-center max-w-2xl" // Centre le texte de description
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-            >
-                Entrez dans le Passage Secret, une expérience immersive où la nature a repris ses droits. Niché dans un centre commercial abandonné, ce labyrinthe luxuriant vous plonge dans un dédale de lianes et d'arbres envahissants. Les boutiques désertées sont désormais recouvertes de végétation, créant une atmosphère intrigante et inquiétante. Serez-vous capable de naviguer à travers ce royaume sauvage ? Affrontez des défis et des énigmes tout en évitant les infectés qui rôdent. Venez découvrir cette aventure palpitante au Survival Parc, où la survie est la seule option. Préparez-vous à une expérience inoubliable !
-            </motion.p>
-
-            {/* Conteneur des images alignées à gauche */}
-            <div className="flex flex-col items-start w-full">
-                {/* Image principale à gauche */}
+            {/* Conteneur général, descendu mais pas trop avec pt-56 */}
+            <div className="max-w-6xl w-full space-y-16 mt-20 pt-50">
+                {/* Section titre */}
                 <motion.div
-                    className="relative mb-4"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
+                    className="text-center space-y-8"
+                    initial={{ opacity: 0, y: -50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
                 >
-                    <img
-                        src="./src/assets/images/labyrinthe.png" // Image principale en dur
-                        alt="Labyrinthe"
-                        className="h-auto rounded-lg shadow-lg"
-                        style={{ width: '300px' }}
-                    />
+                    <motion.h1
+                        className="text-5xl font-extrabold mb-4 text-gradient bg-clip-text bg-gradient-to-r from-green-400 to-yellow-500"
+                        initial={{ opacity: 0, y: -50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        {labyrintheAnimation[0].name}
+                    </motion.h1>
+                    <motion.p
+                        className="text-xl italic text-gray-300 mb-20"
+                        style={{ marginTop: '60px', lineHeight: '1.8' }}  // Valeur personnalisée en px
+                        initial={{ opacity: 0, y: -50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                    >
+                        {labyrintheAnimation[0].description}
+                    </motion.p>
+
                 </motion.div>
 
-                {/* Images supplémentaires en dur */}
-                {[2, 3].map((index) => (
+                {/* Section images avec une belle mise en page */}
+                <motion.div
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.7 }}
+                >
+                    {/* Image principale */}
                     <motion.div
-                        key={index}
-                        className="relative mb-4"
+                        className="relative"
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5 }}
                     >
                         <img
-                            src={`./src/assets/images/labyrinthe${index}.png`} // Chemins fixes pour les images supplémentaires
-                            alt={`Image ${index}`}
-                            className="h-auto rounded-lg shadow-lg"
-                            style={{ width: '300px' }}
+                            src="./src/assets/images/labyrinthe.png"
+                            alt="Labyrinthe"
+                            className="w-full h-auto rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
                         />
                     </motion.div>
-                ))}
+
+                    {/* Images supplémentaires */}
+                    {[2, 3].map((index) => (
+                        <motion.div
+                            key={index}
+                            className="relative"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <img
+                                src={`./src/assets/images/labyrinthe${index}.png`}
+                                alt={`Image ${index}`}
+                                className="w-full h-auto rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
+                            />
+                        </motion.div>
+                    ))}
+                </motion.div>
             </div>
         </div>
     );
