@@ -1,64 +1,285 @@
-import { useParams } from 'react-router-dom'; // Pour récupérer les paramètres de l'URL
-import { useEffect, useState } from 'react'; // Pour gérer l'état et les effets
-import { format } from 'date-fns'; // Pour formater les dates
-import { IProfile } from '../@types'; // Types de profil
+import { useParams } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
+import { format } from 'date-fns';
+import axios from 'axios'; 
+import { IProfile, IReservation } from '../@types';
 
 export function Profile() {
-  const { userId } = useParams<{ userId: string }>(); // Récupère userId de l'URL
+  const { userId } = useParams<{ userId: string }>();
   const [profileData, setProfileData] = useState<IProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [reservations, setReservations] = useState<IReservation[]>([]);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isEditable, setIsEditable] = useState(false); // Permet de contrôler l'édition du profil
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    birthDate: '',
+    phone: '',
+    address: '',
+    postalCode: '',
+    city: '',
+  });
+
+  const fetchUserInfo = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const response = await axios.get(`http://localhost:3000/api/user/${userId}`);
+      if (response.data.success) {
+        setFormData((prevState) => ({
+          ...prevState,
+          firstName: response.data.data.firstName,
+          lastName: response.data.data.lastName,
+          email: response.data.data.email,
+        }));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [userId]);
+
+  const fetchProfileData = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const response = await axios.get(`http://localhost:3000/api/profile/${userId}`);
+      if (response.data.success) {
+        setProfileData(response.data.data);
+        setFormData((prevState) => ({
+          ...prevState,
+          firstName: response.data.data.firstName,
+          lastName: response.data.data.lastName,
+          birthDate: response.data.data.birthDate,
+          phone: response.data.data.phone,
+          address: response.data.data.address,
+          postalCode: response.data.data.postalCode,
+          city: response.data.data.city,
+        }));
+      } else {
+        setProfileData(null);
+      }
+    } catch (err) {
+      console.error(err);
+      setProfileData(null);
+    }
+  }, [userId]);
+
+  const fetchReservations = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const response = await axios.get(`http://localhost:3000/api/reservations/${userId}`);
+      if (response.data.success) {
+        setReservations(response.data.data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [userId]);
 
   useEffect(() => {
-    if (!userId) return; // Si pas de userId dans l'URL, on ne fait pas la requête
+    fetchUserInfo();
+    fetchProfileData();
+    fetchReservations();
+  }, [fetchUserInfo, fetchProfileData, fetchReservations]);
 
-    const fetchProfileData = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/api/profile/${userId}`); // Envoi de la requête pour récupérer le profil
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération du profil");
-        }
-        const data = await response.json(); // Récupère les données JSON de l'API
-        if (data.success) { // Si la réponse est réussie
-          setProfileData(data.data); // On met à jour l'état avec les données de l'utilisateur
-        } else {
-          throw new Error("Erreur : " + data.message); // Si l'API renvoie un message d'erreur
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message); // Affiche l'erreur si une erreur survient
-        } else {
-          setError("Une erreur inconnue est survenue");
-        }
-      } finally {
-        setLoading(false); // Arrête de charger une fois la requête terminée
+  const handleUpdateProfile = async () => {
+    try {
+      setIsCreating(true);
+      const response = await axios.put(`http://localhost:3000/api/profile/${userId}`, formData);
+      if (response.status === 200 && response.data.success) {
+        setProfileData(response.data.data); // Mettez à jour les données du profil
+        setFormData({
+          ...formData,
+          firstName: response.data.data.firstName,
+          lastName: response.data.data.lastName,
+          email: response.data.data.email,
+          phone: response.data.data.phone,
+          address: response.data.data.address,
+          postalCode: response.data.data.postalCode,
+          city: response.data.data.city,
+          birthDate: response.data.data.birthDate,
+        });
+      } else {
+        console.error('Erreur lors de la mise à jour du profil.');
       }
-    };
+    } catch (err) {
+      console.error('Erreur réseau:', err);
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
-    fetchProfileData(); // Appel à la fonction pour récupérer les données
-  }, [userId]); // Cette fonction se réexécute chaque fois que userId change
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
-  if (loading) return <div className="text-center py-10 text-lg">Chargement...</div>;
-  if (error) return <div className="text-center py-10 text-lg text-red-500">Erreur: {error}</div>;
+  const handleDeleteProfile = async () => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer votre profil ?')) {
+      try {
+        const response = await axios.delete(`http://localhost:3000/api/profile/${userId}`);
+        if (response.status === 200) {
+          alert('Profil supprimé');
+          // Rediriger ou faire d'autres actions après la suppression
+        } else {
+          alert('Erreur lors de la suppression du profil');
+        }
+      } catch (error) {
+        console.error('Erreur de suppression:', error);
+        alert('Erreur de suppression du profil');
+      }
+    }
+  };
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-10 mt-20">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-        <h1 className="text-3xl font-semibold text-center mb-6">Mon profil</h1>
-        {profileData ? (
-          <div>
-            <p className="text-xl mb-4">Nom: <span className="font-bold">{profileData.firstName} {profileData.lastName}</span></p>
-            <p className="text-xl mb-4">Email: <span className="font-bold">{profileData.userId}</span></p> {/* Vous pouvez remplacer par l'email réel si vous avez cette information */}
-            <p className="text-xl mb-4">Téléphone: <span className="font-bold">{profileData.phone}</span></p>
-            <p className="text-xl mb-4">Adresse: <span className="font-bold">{profileData.address}</span></p>
-            <p className="text-xl mb-4">Code Postal: <span className="font-bold">{profileData.postalCode}</span></p>
-            <p className="text-xl mb-4">Ville: <span className="font-bold">{profileData.city}</span></p>
-            <p className="text-xl mb-4">Date de naissance: <span className="font-bold">{profileData.birthDate ? format(new Date(profileData.birthDate), 'dd/MM/yyyy') : 'Inconnue'}</span></p>
-          </div>
+  const renderEditProfileForm = () => (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (isEditable) handleUpdateProfile(); // Appel de la fonction pour mettre à jour le profil
+      }}
+      className="bg-[#374151] p-6 rounded-lg shadow-lg w-96 mx-auto"
+    >
+      {/* Form Fields */}
+      <div className="mb-4">
+        <label className="block text-sm font-semibold text-gray-800">Prénom</label>
+        <input
+          className="w-full border p-2 rounded-md focus:outline-none focus:ring-4 focus:ring-[#095F2D] bg-[#1F2937]"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          disabled={!isEditable} // Champs non modifiable si "isEditable" est false
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-semibold text-gray-800">Nom</label>
+        <input
+          className="w-full border p-2 rounded-md focus:outline-none focus:ring-4 focus:ring-[#095F2D] bg-[#1F2937]"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          disabled={!isEditable} // Champs non modifiable si "isEditable" est false
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-semibold text-gray-800">Email</label>
+        <input
+          className="w-full border p-2 rounded-md focus:outline-none focus:ring-4 focus:ring-[#095F2D] bg-[#1F2937]"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          disabled={!isEditable} // Champs non modifiable si "isEditable" est false
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-semibold text-gray-800">Téléphone</label>
+        <input
+          className="w-full border p-2 rounded-md focus:outline-none focus:ring-4 focus:ring-[#095F2D] bg-[#1F2937]"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          disabled={!isEditable} // Champs non modifiable si "isEditable" est false
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-semibold text-gray-800">Adresse</label>
+        <input
+          className="w-full border p-2 rounded-md focus:outline-none focus:ring-4 focus:ring-[#095F2D] bg-[#1F2937]"
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          disabled={!isEditable} // Champs non modifiable si "isEditable" est false
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-semibold text-gray-800">Code Postal</label>
+        <input
+          className="w-full border p-2 rounded-md focus:outline-none focus:ring-4 focus:ring-[#095F2D] bg-[#1F2937]"
+          name="postalCode"
+          value={formData.postalCode}
+          onChange={handleChange}
+          disabled={!isEditable} // Champs non modifiable si "isEditable" est false
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-semibold text-gray-800">Ville</label>
+        <input
+          className="w-full border p-2 rounded-md focus:outline-none focus:ring-4 focus:ring-[#095F2D] bg-[#1F2937]"
+          name="city"
+          value={formData.city}
+          onChange={handleChange}
+          disabled={!isEditable} // Champs non modifiable si "isEditable" est false
+        />
+      </div>
+
+      <div className="flex justify-between">
+        <button
+          type="button"
+          onClick={() => setIsEditable(!isEditable)} // Bascule l'état d'édition
+          className="bg-[#FF7828] text-white px-4 py-2 rounded-md"
+        >
+          {isEditable ? 'Annuler' : 'Modifier'}
+        </button>
+        <button
+          type="submit"
+          disabled={!isEditable || isCreating} // Désactive le bouton si non modifiable
+          className="bg-[#095F2D] text-white px-4 py-2 rounded-md"
+        >
+          {isCreating ? 'Enregistrement...' : 'Sauvegarder'}
+        </button>
+      </div>
+      {/* Bouton de suppression */}
+    <div className="mt-4">
+      <button
+        type="button"
+        onClick={handleDeleteProfile}
+        className="bg-red-500 text-white px-4 py-2 rounded-md w-full"
+      >
+        Supprimer le profil
+      </button>
+    </div>
+    </form>
+  );
+
+  const renderReservations = () => (
+    <div className="ml-10">
+      <h2 className="text-xl font-semibold pt-8">Mes réservations</h2>
+      <div>
+        {reservations.length === 0 ? (
+          <p>Aucune réservation</p>
         ) : (
-          <div className="text-center text-lg text-red-500">Aucun profil trouvé.</div>
+          <ul>
+            {reservations.map((reservation) => (
+              <li key={reservation.id} className="mb-4">
+                <p><strong>Date:</strong> {format(new Date(reservation.startDate), 'dd/MM/yyyy')}</p>
+                <p><strong>Hôtel:</strong> {reservation.hotelName}</p>
+                <p><strong>Ticket:</strong> {reservation.description}</p>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </div>
   );
+  return (
+    <div className="flex pt-32 pb-12 bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937]">
+      <div className="flex-1 text-center"> {/* Utilisation de text-center pour centrer le texte */}
+        <h1 className="text-2xl font-semibold pt-10">Mon profil</h1>
+        <div className="mt-[80px]">
+          {profileData ? (
+            renderEditProfileForm() // Affichage du formulaire d'édition
+          ) : (
+            <p>Votre profil est en cours de création.</p>
+          )}
+        </div>
+      </div>
+
+      <div className="w-1/3 mt-6">
+        {renderReservations()} {/* Affichage des réservations */}
+      </div>
+    </div>
+  );
+  
+  
 }

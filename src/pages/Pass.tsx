@@ -47,7 +47,7 @@ export const Pass = () => {
   };
 
   return (
-    <div className="container mx-auto p-6" style={{ marginTop: "200px" }}>
+    <div className="bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937] text-white min-h-screen p-6" style={{ paddingTop: "210px" }}>
       <h1 className="text-3xl font-bold text-center mb-8">Choisissez votre Pass</h1>
 
       {hotels.length > 0 ? (
@@ -59,7 +59,6 @@ export const Pass = () => {
             </div>
 
             <div className="text-lg mb-6">
-              <p><strong>Description:</strong> {hotel.description}</p>
               <p><strong>Prix:</strong> {hotel.priceByNight ? `${hotel.priceByNight}€ par personne` : "Prix non disponible"}</p>
             </div>
 

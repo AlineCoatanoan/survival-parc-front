@@ -33,79 +33,83 @@ export const Escape = () => {
   const animation = escapeGameAnimation[0]; // Prenons la première animation récupérée
 
   return (
-    <div className="bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937] text-white min-h-screen p-8 pt-40 flex flex-col items-center">
-      {/* Image en haut à gauche, plus bas et pivotée dans l'autre sens */}
-      <div className="absolute top-32 left-32 p-4 z-10">
-        <img
-          src="./src/assets/images/zonequarantaine.jpg"
-          alt="Zone Infectée"
-          style={{ width: '350px', height: 'auto' }}
-          className="transform rotate-[-30deg]"
-        />
-      </div>
-
-      {/* Conteneur général */}
-      <div className="max-w-6xl w-full space-y-16 mt-20 pt-50">
-        {/* Section titre */}
-        <motion.div
-          className="text-center space-y-8"
+    <div className="bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937] text-white min-h-screen p-8 flex flex-col items-center">
+    {/* Image en haut à gauche */}
+    <div className="absolute top-36 sm:top-32 left-8 sm:left-32 p-4 z-10">
+      <img
+        src="./src/assets/images/zonequarantaine.jpg"
+        alt="Zone Infectée"
+        className="transform rotate-[-30deg] 
+          w-[110px]      // Taille mobile réduite
+          sm:w-[250px]   // Taille desktop
+        "
+      />
+    </div>
+  
+    {/* Conteneur principal */}
+    <div
+      className="max-w-6xl w-full space-y-16 
+        mt-10 sm:mt-20 // Décale le contenu vers le haut en mobile
+        pt-8 sm:pt-12  // Ajuste le padding en haut
+      "
+    >
+      {/* Titre */}
+      <motion.div
+        className="text-center space-y-8"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <motion.h1
+          className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 text-gradient bg-clip-text bg-gradient-to-r from-green-400 to-yellow-500"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
         >
-          <motion.h1
-            className="text-5xl font-extrabold mb-4 text-gradient bg-clip-text bg-gradient-to-r from-green-400 to-yellow-500"
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {animation.name} {/* Dynamique en fonction de l'animation */}
-          </motion.h1>
-
-          {/* Texte de description avec interligne et centrage */}
-          <motion.p
-            className="text-lg mb-12 text-center max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            Durée : 1h
-            <br />
-            <br />
-            <br />
-            {animation.description} {/* Dynamique pour la description */}
-          </motion.p>
+          {animation.name}
+        </motion.h1>
+        <motion.p
+          className="text-lg sm:text-xl mb-12 text-center max-w-2xl mx-auto leading-relaxed"
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          Durée : 1h
+          <br />
+          <br />
+          {animation.description}
+        </motion.p>
+      </motion.div>
+  
+      {/* Images */}
+      <div className="flex flex-col sm:flex-row justify-center space-y-8 sm:space-x-8 sm:space-y-0">
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <img
+            src="./src/assets/images/escape.webp"
+            alt="Escape Game"
+            className="w-full max-w-[100%] sm:max-w-[800px] h-auto object-contain rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
+          />
         </motion.div>
-
-        {/* Section images avec mise en page améliorée */}
-        <div className="flex justify-center space-x-8">
-          <motion.div
-            className="relative"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <img
-              src="./src/assets/images/escape.webp" // Image rétablie
-              alt="Escape Game"
-              className="w-full max-w-[800px] h-auto object-contain rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
-            />
-          </motion.div>
-
-          <motion.div
-            className="relative"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <img
-              src="./src/assets/images/escape2.jpg" // Image rétablie
-              alt="Escape Game 2"
-              className="w-full max-w-[800px] h-auto object-contain rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
-            />
-          </motion.div>
-        </div>
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <img
+            src="./src/assets/images/escape2.jpg"
+            alt="Escape Game 2"
+            className="w-full max-w-[100%] sm:max-w-[800px] h-auto object-contain rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
+          />
+        </motion.div>
       </div>
     </div>
+  </div>
+  
   );
 };

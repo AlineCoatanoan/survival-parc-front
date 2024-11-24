@@ -91,7 +91,7 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
   }, []);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 z-50 text-white">
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 z-50 text-white pt-14">
       <motion.div
         ref={(node) => {
           modalRef.current = node;
@@ -105,10 +105,10 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
         animate={{ scale: 1 }}
         exit={{ scale: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-gray-900 rounded-lg p-8 shadow-lg w-96 relative"
+        className="bg-[#1F2937] rounded-lg p-8 shadow-lg w-96 relative"
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-extrabold text-center text-red-500">Rejoignez la Zone de Quarantaine</h2>
+          <h2 className="text-2xl font-extrabold text-center text-white">Rejoignez la Zone de Quarantaine</h2>
         </div>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
@@ -119,7 +119,7 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
             </label>
             <input
               {...register("firstName", { required: "Ce champ est requis" })}
-              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
+              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-[#075D2C] focus:border-transparent ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
               id="firstName"
               type="text"
               placeholder="Votre prénom"
@@ -133,7 +133,7 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
             </label>
             <input
               {...register("lastName", { required: "Ce champ est requis" })}
-              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.lastName ? 'border-red-500' : 'border-gray-300'}`}
+              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-[#075D2C] focus:border-transparent ${errors.lastName ? 'border-red-500' : 'border-gray-300'}`}
               id="lastName"
               type="text"
               placeholder="Votre nom"
@@ -153,7 +153,7 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
                   message: "Veuillez entrer une adresse email valide"
                 }
               })}
-              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#075D2C] focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
               id="email"
               type="email"
               placeholder="Votre email"
@@ -167,7 +167,7 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
             </label>
             <input
               {...register("password", { required: "Ce champ est requis" })}
-              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#075D2C] focus:border-transparent ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
               id="password"
               type="password"
               placeholder="Votre mot de passe"
@@ -184,7 +184,7 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
                 required: "Ce champ est requis", 
                 validate: value => value === password.current || "Les mots de passe ne correspondent pas"
               })}
-              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+              className={`shadow appearance-none border-2 rounded w-full py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#075D2C] focus:border-transparent ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
               id="confirmPassword"
               type="password"
               placeholder="Confirmez votre mot de passe"
@@ -195,7 +195,7 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
           <div className="flex items-center justify-between">
             <button
               type="submit"
-              className={`bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`bg-[#075D2C] hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               disabled={loading}
             >
               {loading ? "Chargement..." : "S'inscrire"}

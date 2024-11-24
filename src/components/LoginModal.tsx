@@ -64,8 +64,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose,
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
-      <div className="bg-white rounded-lg shadow-lg p-8 z-10 w-full max-w-sm">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Connexion</h2>
+      <div className="bg-[#1F2937] rounded-lg shadow-lg p-8 z-10 w-full max-w-sm">
+        <h2 className="text-2xl font-semibold mb-6 text-center ">Connexion</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <input 
             type="email" 
@@ -85,7 +85,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose,
           />
           <button 
             type="submit" 
-            className="w-full bg-[#BF2D6E] text-white py-2 rounded hover:bg-[#FF7828] transition"
+            className="w-full bg-[#FF7828] text-white py-2 rounded hover:bg-orange-400 transition"
           >
             Se connecter
           </button>

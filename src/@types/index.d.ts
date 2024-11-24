@@ -25,6 +25,7 @@ export interface IProfile {
   postalCode: string;
   city: string;
   user?: IUser; 
+  hotel?: IHotel;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -46,10 +46,6 @@ export const Ticket = () => {
     addToCart(reservation);
     handleCloseCalendrier();
   };
-  
-  
-  
-  
 
   const handleShowCalendrier = (price: number) => {
     setPricePerPerson(price); // Mettez à jour le prix par personne
@@ -71,7 +67,7 @@ export const Ticket = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 pt-[200px]">
+    <div className="min-h-screen bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937] text-white p-6 pt-[200px]">
       <h1 className="text-4xl font-bold text-center mb-6">Billetterie</h1>
       <p className="text-center text-lg mb-6">
         Retrouvez nos offres disponibles en ligne et/ou en caisse pour une exploration adaptée à vos besoins !
@@ -160,7 +156,6 @@ export const Ticket = () => {
               pricePerPerson={pricePerPerson} // Passe le prix mis à jour
               hotelId={1} // Remplacez `1` par l'ID de l'hôtel réel si disponible
             />
-
             </div>
             <div className="flex justify-between mt-4">
               <button
@@ -169,13 +164,10 @@ export const Ticket = () => {
               >
                 Fermer
               </button>
-              
             </div>
           </div>
         </div>
       )}
-
-      
     </div>
   );
 };

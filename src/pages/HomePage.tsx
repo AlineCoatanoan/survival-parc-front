@@ -1,4 +1,3 @@
-// src/components/HomePage.tsx
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
@@ -6,7 +5,6 @@ import { useState } from 'react';
 export const HomePage = () => {
   const [index, setIndex] = useState(0);
 
-  // Tableau d'objets contenant les informations des attractions
   const items = [
     { image: './src/assets/images/carrousel/1.jpg', title: 'Parc' },
     { image: './src/assets/images/carrousel/2.jpg', title: 'Camp de Survivants' },
@@ -34,15 +32,19 @@ export const HomePage = () => {
   return (
     <div className="bg-black text-white min-h-screen flex flex-col overflow-hidden">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center bg-cover bg-center h-screen text-center relative">
-        <video 
-          className="absolute inset-0 w-full h-full object-cover clip-bottom mt-20" 
-          autoPlay 
-          loop 
-          muted
-          src="./src/assets/movies/quarantaine.mp4"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <section className="flex flex-col items-center justify-center bg-cover bg-center h-screen text-center relative mt-20 sm:mt-[80px] md:mt-[100px]">
+        {/* Vidéo pour grand écran */}
+        <div className="absolute inset-0 w-full h-full object-cover z-0">
+          <video
+            className="hidden md:block w-full h-full object-cover"
+            autoPlay
+            loop
+            muted
+            src="./src/assets/movies/quarantaine.mp4"
+            style={{ objectPosition: 'center -1%' }} // Coupe le bas de la vidéo
+          />
+        </div>
+
         <div className="relative p-6 rounded-lg z-10">
           <motion.h1
             className="text-4xl md:text-6xl font-bold mb-4"
@@ -64,7 +66,7 @@ export const HomePage = () => {
       </section>
 
       {/* Attractions Section */}
-      <section className="p-6 md:p-12 bg-gray-800 relative">
+      <section className="p-6 md:p-12 bg-gray-800 relative mt-[80px]">
         <div className="container mx-auto">
           <motion.h2
             className="text-3xl font-bold mb-6 text-center"
@@ -90,12 +92,12 @@ export const HomePage = () => {
                 {items.map((item, i) => (
                   <motion.div
                     key={i}
-                    className="w-1/3 flex-shrink-0 bg-gray-700 p-6 rounded-lg mx-2"
+                    className="w-full sm:w-1/2 md:w-1/3 flex-shrink-0 bg-gray-700 p-6 rounded-lg mx-2"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
                   >
-                    <div className="h-80 bg-gray-600 rounded-lg mb-4">
+                    <div className="h-60 sm:h-80 bg-gray-600 rounded-lg mb-4">
                       <img
                         src={item.image}
                         alt={item.title}
@@ -132,7 +134,7 @@ export const HomePage = () => {
       </section>
 
       {/* Hôtels Section */}
-      <section className="p-6 md:p-12 bg-gray-800">
+      <section className="p-6 md:p-12 bg-gray-800 mt-[80px]">
         <div className="container mx-auto">
           <motion.h2
             className="text-3xl font-bold mb-6 text-center"
@@ -142,7 +144,7 @@ export const HomePage = () => {
           >
             Nos Hôtels
           </motion.h2>
-          <div className="flex flex-col md:flex-row justify-center gap-6">
+          <div className="flex flex-col sm:flex-row justify-center gap-6">
             {hotels.map((hotel, index) => (
               <motion.div
                 key={index}
@@ -154,10 +156,9 @@ export const HomePage = () => {
                 <img
                   src={hotel.image}
                   alt={hotel.name}
-                  className="h-100 w-full object-cover rounded-lg mb-4"
+                  className="h-60 sm:h-80 w-full object-cover rounded-lg mb-4"
                 />
                 <h3 className="text-xl font-semibold mb-2">{hotel.name}</h3>
-                {/* Ajout des liens sous chaque hôtel */}
                 <Link
                   to={index === 0 ? "/refuge" : "/postapo"}
                   className="text-red-600 hover:underline"
@@ -170,34 +171,26 @@ export const HomePage = () => {
         </div>
       </section>
 
-        {/* Informations Section */}
-        <section className="bg-gray-800 text-white py-8">
-          <div className="container mx-auto flex flex-col items-center space-y-6 md:space-y-0 md:flex-row md:justify-center">
-            
-            {/* Liens */}
-            <div className="flex flex-col space-y-2 text-center md:text-left">
-              <a href="#" className="hover:underline">Nos engagements RSE</a>
-              <a href="#" className="hover:underline">Actualités</a>
-              <a href="#" className="hover:underline">CGV</a>
-              <a href="#" className="hover:underline">Mentions légales</a>
-            </div>
-            
-            {/* Coordonnées */}
-            <div className="text-center md:text-left md:mx-12">
-              <p className="font-semibold">Coordonnées</p>
-              <p>D619 – 10850 SAFEPLACE</p>
-              <p>Téléphone : 00 20 07 04 50</p>
-              <a href="mailto:survival-parc@survival.com" className="hover:underline">Contactez-nous</a>
-            </div>
-            
-            {/* Logo */}
-            <div className="flex items-center justify-center">
-              <img src="./src/assets/images/logo.png" alt="Logo Survival Parc" className="h-16" />
-            </div>
-            
+      {/* Informations Section */}
+      <section className="bg-gray-800 text-white py-8 mt-[80px]">
+        <div className="container mx-auto flex flex-col items-center space-y-6 md:space-y-0 md:flex-row md:justify-center">
+          <div className="flex flex-col space-y-2 text-center md:text-left">
+            <a href="#" className="hover:underline">Nos engagements RSE</a>
+            <a href="#" className="hover:underline">Actualités</a>
+            <a href="#" className="hover:underline">CGV</a>
+            <a href="#" className="hover:underline">Mentions légales</a>
           </div>
-        </section>
-
+          <div className="text-center md:text-left md:mx-12">
+            <p className="font-semibold">Coordonnées</p>
+            <p>D619 – 10850 SAFEPLACE</p>
+            <p>Téléphone : 00 20 07 04 50</p>
+            <a href="mailto:survival-parc@survival.com" className="hover:underline">Contactez-nous</a>
+          </div>
+          <div className="flex items-center justify-center">
+            <img src="./src/assets/images/logo.png" alt="Logo Survival Parc" className="h-16" />
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-4 text-center">

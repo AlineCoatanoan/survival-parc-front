@@ -31,19 +31,22 @@ export const Cinema = () => {
   }
 
   return (
-    <div className="bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937] text-white min-h-screen p-8 pt-40 flex flex-col items-center">
-      {/* Image en haut à gauche, plus bas et pivotée dans l'autre sens */}
-      <div className="absolute top-32 left-32 p-4 z-10">
+    <div className="bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937] text-white min-h-screen p-8 pt-20 flex flex-col items-center">
+      {/* Image en haut à gauche */}
+      <div className="absolute top-16 left-4 sm:top-32 sm:left-32 p-4 z-10">
         <img
           src="./src/assets/images/zonequarantaine.jpg"
           alt="Zone Infectée"
-          style={{ width: '350px', height: 'auto' }}
-          className="transform rotate-[-30deg]"
+          className="transform rotate-[-30deg] 
+            w-[100px]       // Mobile
+            sm:w-[200px]    // Tablet
+            lg:w-[300px]    // Desktop
+          "
         />
       </div>
 
-      {/* Conteneur général */}
-      <div className="max-w-6xl w-full space-y-16 mt-20 pt-50">
+      {/* Conteneur principal */}
+      <div className="max-w-6xl w-full space-y-16 mt-10 sm:mt-20">
         {/* Section titre */}
         <motion.div
           className="text-center space-y-8"
@@ -52,7 +55,7 @@ export const Cinema = () => {
           transition={{ duration: 0.6 }}
         >
           <motion.h1
-            className="text-5xl font-extrabold mb-4 text-gradient bg-clip-text bg-gradient-to-r from-green-400 to-yellow-500"
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 text-gradient bg-clip-text bg-gradient-to-r from-green-400 to-yellow-500"
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -60,9 +63,9 @@ export const Cinema = () => {
             {cinemaAnimation[0].name}
           </motion.h1>
 
-          {/* Texte de description avec interligne et centrage */}
+          {/* Texte descriptif */}
           <motion.p
-            className="text-lg mb-12 text-center max-w-2xl mx-auto leading-relaxed"
+            className="text-sm sm:text-lg mb-12 text-center max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -71,10 +74,10 @@ export const Cinema = () => {
           </motion.p>
         </motion.div>
 
-        {/* Section images avec mise en page améliorée */}
-        <div className="flex justify-center space-x-8">
+        {/* Images */}
+        <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-8 sm:space-y-0">
           <motion.div
-            className="relative"
+            className="relative w-full sm:w-1/2 px-4"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
@@ -82,12 +85,12 @@ export const Cinema = () => {
             <img
               src="./src/assets/images/cinema.png"
               alt="Cinéma"
-              className="w-full max-w-[800px] h-auto object-contain rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
+              className="w-full h-auto object-contain rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
             />
           </motion.div>
 
           <motion.div
-            className="relative"
+            className="relative w-full sm:w-1/2 px-4"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
@@ -95,7 +98,7 @@ export const Cinema = () => {
             <img
               src="./src/assets/images/cinema2.webp"
               alt="Cinéma 2"
-              className="w-full max-w-[800px] h-auto object-contain rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
+              className="w-full h-auto object-contain rounded-lg shadow-2xl transform hover:scale-105 transition-all duration-300"
             />
           </motion.div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { LoginModal } from './LoginModal';
 import { SignUpModal } from '../components/SignUpModal';
 import { useAuth } from '../features/auth/authContext';
@@ -7,13 +7,11 @@ import { useNavigate } from 'react-router-dom';
 export const FixedModal = () => {
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setSignupModalOpen] = useState(false);
-
-  // Définir les états pour loginCredentials et signUpCredentials
   const [loginCredentials, setLoginCredentials] = useState({ email: '', password: '' });
   const [signUpCredentials, setSignUpCredentials] = useState({ firstName: '', lastName: '', email: '', password: '' });
 
   const { loginUser, logoutUser, registerUser, isAuthenticated, userId } = useAuth();
-  const navigate = useNavigate(); // Utilisation de useNavigate pour rediriger
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("Authentification mise à jour:", isAuthenticated);
@@ -21,14 +19,14 @@ export const FixedModal = () => {
 
   const openLoginModal = () => {
     setLoginModalOpen(true);
-    setSignupModalOpen(false); // Fermer la modal d'inscription si elle est ouverte
+    setSignupModalOpen(false);
   };
 
   const closeLoginModal = () => setLoginModalOpen(false);
 
   const openSignupModal = () => {
     setSignupModalOpen(true);
-    setLoginModalOpen(false); // Fermer la modal de connexion si elle est ouverte
+    setLoginModalOpen(false);
   };
 
   const closeSignupModal = () => setSignupModalOpen(false);
@@ -65,20 +63,18 @@ export const FixedModal = () => {
   const handleLogout = async () => {
     try {
       await logoutUser();
-      // Redirection vers la page d'accueil après la déconnexion
-      navigate('/'); 
+      navigate('/');
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);
     }
   };
 
   const handleGoToProfile = () => {
-    // Rediriger vers la page du profil avec l'ID utilisateur
     navigate(`/mon-compte/${userId}`);
   };
 
   return (
-    <div className="fixed right-4 top-40 bg-gray-800 text-white p-4 rounded-lg shadow-lg z-10">
+    <div className="fixed bottom-4 inset-x-0 sm:inset-auto sm:right-4 sm:top-40 bg-gray-800 text-white p-4 rounded-lg shadow-lg z-10 mx-auto w-11/12 max-w-md sm:w-auto">
       {!isAuthenticated ? (
         <>
           <button
@@ -98,36 +94,34 @@ export const FixedModal = () => {
         <>
           <button
             onClick={handleLogout}
-            className="block w-full py-2 px-4 mb-2 text-center bg-primary hover:bg-primary-focus rounded text-white"
+            className="block w-full py-2 px-4 mb-2 text-center bg-[#075D2C] hover:bg-primary-focus rounded text-white"
           >
             Déconnexion
           </button>
           <button
-            onClick={handleGoToProfile} // Appel à la fonction de redirection vers le profil
-            className="block w-full py-2 px-4 text-center bg-secondary hover:bg-secondary-focus rounded text-white"
+            onClick={handleGoToProfile}
+            className="block w-full py-2 px-4 text-center bg-[#FF7828] hover:bg-secondary-focus rounded text-white"
           >
             Mon compte
           </button>
         </>
       )}
 
-      {/* Modale de Connexion */}
       {isLoginModalOpen && (
         <LoginModal
           isOpen={isLoginModalOpen}
           onClose={closeLoginModal}
-          onLoginSuccess={handleLoginSuccess} // Appel sans paramètres, juste la fonction de succès
-          setLoginCredentials={setLoginCredentials} // Passage de setLoginCredentials pour gérer les modifications d'email et password
+          onLoginSuccess={handleLoginSuccess}
+          setLoginCredentials={setLoginCredentials}
         />
       )}
 
-      {/* Modale d'Inscription */}
       {isSignupModalOpen && (
         <SignUpModal
           isOpen={isSignupModalOpen}
           onClose={closeSignupModal}
-          onSuccess={handleSignUpSuccess} // Appel sans paramètres, juste la fonction de succès
-          setSignUpCredentials={setSignUpCredentials} // Passage de setSignUpCredentials pour gérer les modifications d'email, password, etc.
+          onSuccess={handleSignUpSuccess}
+          setSignUpCredentials={setSignUpCredentials}
         />
       )}
     </div>
