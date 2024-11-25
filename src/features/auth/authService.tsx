@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { apiBaseUrl } from "../../services/config";
+import { apiBaseUrl } from "../../services/config"; 
 import { IUser, IProfile } from "../../@types";
 
 export interface LoginResponse {
@@ -23,35 +23,64 @@ export interface LogoutResponse {
   message: string;
 }
 
-//+++++AUTH+++++
+// Créer une instance Axios
+const api = axios.create({
+  baseURL: apiBaseUrl, // Base URL
+  headers: { "Content-Type": "application/json" }, // En-têtes par défaut
+  withCredentials: true,
+});
 
-// Fonction pour créer un compte utilisateur
+// Ajouter un intercepteur pour inclure le token dans les requêtes sortantes
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("authToken"); // Récupérer le token du localStorage
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`; // Ajouter le token dans les en-têtes
+    }
+    return config;
+  },
+  (error) => Promise.reject(error) // Gérer les erreurs
+);
+
+//+++++AUTH+++++
 export const createAccount = async (data: {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
 }): Promise<RegisterResponse> => {
   try {
-    const response = await axios.post<{
+    // Ne pas afficher le mot de passe, seulement les autres données sensibles
+    console.log('Données envoyées (sans mot de passe) :', {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+    });
+
+    // Envoie de la requête POST au backend pour créer l'utilisateur
+    const response = await api.post<{
       message: string;
       data: {
         id: number;
         email: string;
         role: string;
+        firstName?: string;
+        lastName?: string;
         createdAt: string;
         updatedAt: string;
-        token?: string; // Prévoit le token dans la réponse
       };
-    }>(`${apiBaseUrl}/api/user/register`, data, {
-      headers: { "Content-Type": "application/json" },
-      withCredentials: true,
-    });
+    }>(`/api/user/register`, data);
 
-    // Vérification si un token est présent dans la réponse
-    const token = response.data.data.token;
+    // Vérifie si le token est envoyé dans un cookie
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("authToken="))
+      ?.split("=")[1]; // Récupère le token à partir du cookie
+
+    // Si un token est trouvé dans le cookie, on le stocke aussi dans le localStorage
     if (token) {
-      localStorage.setItem("authToken", token); // Stocke le token dans localStorage (ou sessionStorage si temporaire)
+      // Ajouter un cookie avec un délai d'expiration (1h ici) si ce n'est pas déjà fait côté serveur
+      document.cookie = `authToken=${token}; max-age=3600; path=/`; // Cookie valable pendant 1 heure
+      localStorage.setItem("authToken", token); // Sauvegarde le token dans le localStorage
     }
 
     return {
@@ -61,16 +90,20 @@ export const createAccount = async (data: {
         user: {
           id: response.data.data.id,
           email: response.data.data.email,
+          firstName: response.data.data.firstName || '',
+          lastName: response.data.data.lastName || '',
           role: response.data.data.role,
           createdAt: new Date(response.data.data.createdAt),
           updatedAt: new Date(response.data.data.updatedAt),
         },
-        token: token, // Ajoute le token dans la réponse
+        token: token,  // Ajouter le token à la réponse
       },
     };
   } catch (error) {
     let errorMessage = "Une erreur est survenue, veuillez réessayer.";
     if (error instanceof AxiosError && error.response) {
+      // Afficher la réponse d'erreur dans la console
+      console.error('Erreur du serveur :', error.response);
       const validationErrors =
         error.response.data.errors || error.response.data.message || error.message;
       errorMessage = validationErrors;
@@ -87,22 +120,15 @@ export const loginUser = async (
   password: string
 ): Promise<LoginResponse> => {
   try {
-    // Avant d'envoyer les données, ajoutez une vérification que les valeurs sont bien présentes
-    if (!email.trim() || !password.trim()) {
-      throw new Error("Email et mot de passe sont requis.");
-    }
-
-
-    const response = await axios.post<LoginResponse>(
-      `${apiBaseUrl}/api/auth/login`,
-      { email, password },
-      { withCredentials: true }
+    const response = await api.post<LoginResponse>(
+      `/api/auth/login`,
+      { email, password }
     );
 
-    // Récupération et stockage du token si présent dans la réponse
+    // Récupérer le token et le stocker
     const token = response.data.data.token;
     if (token) {
-      localStorage.setItem("authToken", token); // Stocke le token pour la session de l'utilisateur
+      localStorage.setItem("authToken", token); // Stocke le token dans localStorage
     }
 
     return {
@@ -113,7 +139,6 @@ export const loginUser = async (
   } catch (error) {
     let errorMessage = "Une erreur inconnue s'est produite.";
 
-    // Si l'erreur est liée à Axios, on extrait les erreurs du serveur
     if (axios.isAxiosError(error)) {
       errorMessage = error.response?.data.message || "Erreur lors de la connexion";
       console.error("Erreur API :", error.response?.data);
@@ -121,24 +146,16 @@ export const loginUser = async (
       errorMessage = error.message;
     }
 
-    // Gestion de l'erreur personnalisée : Email et mot de passe manquants
-    if (errorMessage.includes("Email et mot de passe sont requis")) {
-      console.error("Erreur de validation : Email et mot de passe sont requis.");
-    }
-
     throw new Error(errorMessage);
   }
 };
 
-
-
 // Fonction pour déconnecter l'utilisateur
 export const logoutUser = async (): Promise<LogoutResponse> => {
   try {
-    const response = await axios.post(
-      `${apiBaseUrl}/api/auth/logout`,
-      {}, // corps de requette vide
-      { withCredentials: true }
+    const response = await api.post(
+      `/api/auth/logout`,
+      {} // Corps de requête vide
     );
 
     // Nettoyage du token dans le localStorage

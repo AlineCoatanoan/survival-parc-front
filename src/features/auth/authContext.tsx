@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await loginUserService(email, password);
       if (response.success && response.data) {
         setUser(response.data.user);
-        console.log("Connexion réussie:", response.data.user); // Vérifie si l'utilisateur est bien mis à jour
+        console.log("Connexion réussie:", response.data.user);
   
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
@@ -42,7 +42,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
   
-
   // Fonction de déconnexion
   const logoutUser = async () => {
     try {
@@ -86,20 +85,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   return (
     <AuthContext.Provider 
-  value={{ 
-    user, 
-    userId: user ? user.id.toString() : null,  // Conversion en chaîne de caractères
-    loginUser, 
-    logoutUser, 
-    registerUser, 
-    isAuthenticated: !!user, 
-    isAdmin, 
-    loading 
-  }}
->
-  {children}
-</AuthContext.Provider>
-
+      value={{ 
+        user, 
+        userId: user ? user.id.toString() : null,  // Conversion en chaîne de caractères
+        loginUser, 
+        logoutUser, 
+        registerUser, 
+        isAuthenticated: !!user, 
+        isAdmin, 
+        loading 
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 };
 

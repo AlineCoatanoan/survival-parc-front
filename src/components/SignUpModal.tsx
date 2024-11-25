@@ -29,7 +29,6 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
   password.current = watch("password", "");
 
   const onSubmit: SubmitHandler<ISignUpFormData> = async (data: ISignUpFormData) => {
-    console.log('Form Data:', data);  // Vérifie ce qui est envoyé
     setLoading(true);
     setError(null);
     setSuccessMessage(null);

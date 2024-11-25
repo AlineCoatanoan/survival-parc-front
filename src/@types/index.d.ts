@@ -19,7 +19,7 @@ export interface IProfile {
   userId: number;
   firstName: string;
   lastName: string;
-  birthDate: Date;
+  birthDate: string;
   phone: string;
   address: string;
   postalCode: string;

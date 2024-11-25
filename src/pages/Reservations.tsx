@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import { IReservation } from '../@types';
+import axios from 'axios';
 import { FaTrashAlt } from 'react-icons/fa';
 
 export function Reservations() {
@@ -10,37 +11,58 @@ export function Reservations() {
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
   const [reservationToDelete, setReservationToDelete] = useState<number | null>(null);
+  const [profileExists, setProfileExists] = useState<boolean>(false); // Vérification du profil
 
+  // Fonction pour vérifier si le profil existe
+  const checkProfileExists = useCallback(async () => {
+    if (!userId) {
+      setError("User ID non trouvé dans l'URL");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://localhost:3000/api/profile/${userId}`);
+      if (response.data.success) {
+        setProfileExists(true);
+      } else {
+        setProfileExists(false);
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError("Erreur lors de la vérification du profil: " + err.message);
+      } else {
+        setError("Erreur inconnue lors de la vérification du profil.");
+      }
+      setProfileExists(false);
+    }
+  }, [userId]);
+
+  // Fonction pour récupérer les réservations de l'utilisateur
   const fetchReservations = useCallback(async () => {
     if (!userId) {
       setError("User ID non trouvé dans l'URL");
       setLoading(false);
       return;
     }
-  
+
+    if (!profileExists) {
+      setError("Aucun profil trouvé pour cet utilisateur.");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
-  
+
     try {
-      const response = await fetch(`http://localhost:3000/api/reservation/${userId}`);
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP : ${response.status}`);
-      }
-  
-      const data = await response.json();
+      const response = await axios.get(`http://localhost:3000/api/reservation/${userId}`);  // Correction ici
+      const data = response.data;
       if (data.success) {
-        // Récupérer les réservations et ajouter le nom de l'hôtel
         const reservationsWithHotelName = await Promise.all(
           data.data.map(async (reservation: IReservation) => {
-            // Récupérer le nom de l'hôtel en utilisant l'hotelId
-            const hotelResponse = await fetch(`http://localhost:3000/api/hotel/${reservation.hotelId}`);
-            if (!hotelResponse.ok) {
-              throw new Error(`Erreur lors de la récupération du nom de l'hôtel : ${hotelResponse.status}`);
-            }
-            const hotelData = await hotelResponse.json();
-            const hotelName = hotelData.name; // Supposons que le nom de l'hôtel soit dans la clé 'name'
-  
-            // Retourner la réservation avec l'ajout du nom de l'hôtel
+            const hotelResponse = await axios.get(`http://localhost:3000/api/hotel/${reservation.hotelId}`);
+            const hotelName = hotelResponse.data.name;
             return { ...reservation, hotelName };
           })
         );
@@ -49,13 +71,17 @@ export function Reservations() {
         throw new Error(data.message || 'Erreur lors de la récupération des réservations');
       }
     } catch (err: unknown) {
-      setError((err as Error).message || 'Une erreur s\'est produite lors de la récupération des réservations.');
+      if (err instanceof Error) {
+        setError(err.message || 'Une erreur s\'est produite lors de la récupération des réservations.');
+      } else {
+        setError('Erreur inconnue lors de la récupération des réservations.');
+      }
     } finally {
       setLoading(false);
     }
-  }, [userId]);
-  
+  }, [userId, profileExists]);
 
+  // Fonction de suppression de réservation
   const handleDeleteRequest = (reservationId: number) => {
     setReservationToDelete(reservationId);
     setWarning('Cliquez ici pour confirmer la suppression de la réservation');
@@ -65,15 +91,11 @@ export function Reservations() {
     if (!reservationToDelete || !userId) return;
 
     try {
-      const response = await fetch(`http://localhost:3000/api/reservation/${reservationToDelete}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: userId }),
+      const response = await axios.delete(`http://localhost:3000/api/reservation/${reservationToDelete}`, {
+        data: { userId: userId },
       });
 
-      const data = await response.json();
+      const data = response.data;
       if (data.success) {
         setReservations(reservations.filter(reservation => reservation.id !== reservationToDelete));
         setWarning('Réservation supprimée avec succès');
@@ -81,15 +103,25 @@ export function Reservations() {
         throw new Error(data.message || 'Erreur lors de la suppression de la réservation');
       }
     } catch (err: unknown) {
-      setError((err as Error).message || 'Une erreur s\'est produite lors de la suppression de la réservation.');
+      if (err instanceof Error) {
+        setError(err.message || 'Une erreur s\'est produite lors de la suppression de la réservation.');
+      } else {
+        setError('Erreur inconnue lors de la suppression de la réservation.');
+      }
     } finally {
       setReservationToDelete(null);
     }
   };
 
   useEffect(() => {
-    fetchReservations();
-  }, [fetchReservations]);
+    checkProfileExists(); // Vérifier si le profil existe
+  }, [checkProfileExists]);
+
+  useEffect(() => {
+    if (profileExists) {
+      fetchReservations(); // Si le profil existe, récupérer les réservations
+    }
+  }, [profileExists, fetchReservations]);
 
   if (loading) return <div className="text-center text-lg text-gray-600">Chargement...</div>;
   if (error) return (
@@ -116,7 +148,6 @@ export function Reservations() {
         </div>
       )}
 
-      {/* Section pour les tickets sans hôtels */}
       <div className="ml-0">
         <h2 className="text-xl font-bold text-gray-800 mb-4 mt-10 mr-2 ml-60">Tickets sans hôtels</h2>
         {reservations.length > 0 ? (
@@ -133,7 +164,6 @@ export function Reservations() {
                     {reservation.person} personne(s)
                     {reservation.isHotelIncluded === false && " (Ticket sans hôtel)"}
                   </span>
-                  {/* Afficher le nom de l'hôtel */}
                   <span className="text-sm text-gray-600">Hôtel: {reservation.hotelName}</span>
                 </div>
                 <span className="text-xl font-semibold text-gray-800">{reservation.price} €</span>
@@ -142,8 +172,6 @@ export function Reservations() {
                 </button>
               </li>
             ))}
-
-
           </ul>
         ) : (
           <p className="text-lg text-gray-600 mt-4">Aucune réservation trouvée</p>

@@ -6,12 +6,24 @@ import { useAuth } from '../features/auth/authContext';
 import { useCart } from '../features/auth/cartContext';
 import axios from 'axios';
 
+// Définir les types pour les props
 interface CalendrierPickerProps {
   selectedDate: Date | Date[] | null;
   handleDateChange: (date: Date | Date[] | null) => void;
   isReservationPage?: boolean;
   pricePerPerson?: number;
-  hotelId: string | number;  // Ajout d'un hotelId en prop pour récupérer l'ID de l'hôtel
+  hotelId: string | number;
+  onReservationSuccess?: (reservation: IReservation) => void;
+}
+
+interface IReservation {
+  id: number;
+  startDate: string;
+  endDate: string;
+  price: number;
+  person: number;
+  hotelId: number | null; // Peut être null si sans hôtel
+  hotelName?: string;
 }
 
 export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
@@ -19,15 +31,20 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
   handleDateChange,
   isReservationPage = false,
   pricePerPerson = 25,
-  hotelId, // Récupération de l'ID d'hôtel en prop
+  hotelId,
+  onReservationSuccess,
 }) => {
   const { user, isAuthenticated } = useAuth();
   const { addItemToCart } = useCart();
 
   const [numberOfPeople, setNumberOfPeople] = useState(1);
-  const totalPrice = numberOfPeople * pricePerPerson;
+  const [withHotel, setWithHotel] = useState(true); // Par défaut, avec hôtel
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+
+  const totalPrice = withHotel
+    ? numberOfPeople * pricePerPerson // Prix avec hôtel
+    : numberOfPeople * 15; // Exemple : tarif sans hôtel
 
   const handlePeopleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumberOfPeople(Number(e.target.value));
@@ -39,15 +56,15 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       setTimeout(() => setShowWarning(false), 3000);
       return;
     }
-  
+
     if (!selectedDate || numberOfPeople <= 0) {
       console.log('Veuillez remplir tous les champs nécessaires.');
       return;
     }
-  
+
     let startDate: Date | null = null;
     let endDate: Date | null = null;
-  
+
     if (Array.isArray(selectedDate)) {
       startDate = selectedDate[0];
       endDate = selectedDate[1];
@@ -55,69 +72,66 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       startDate = selectedDate;
       endDate = null;
     }
-  
+
     if (!startDate || (endDate && startDate.getTime() === endDate.getTime())) {
       console.log('Les dates doivent être distinctes.');
       return;
     }
-  
+
     if (!endDate) {
       endDate = new Date(startDate.getTime());
       endDate.setDate(startDate.getDate() + 1); // Ajoute un jour
     }
-  
+
     const nights = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
     if (nights <= 0) {
       console.log('Le nombre de nuits doit être supérieur à 0.');
       return;
     }
-  
-    // Ajout de la vérification de `userId` pour s'assurer qu'il n'est pas `null`
+
     const userId = user ? user.id : null;
     if (!userId) {
       console.log('Utilisateur non connecté. Impossible de procéder à la réservation.');
       return;
     }
-  
-    // Utilisation de l'hotelId récupéré depuis les props
+
+    const formattedStartDate = `${startDate.getFullYear()}-${(startDate.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${startDate.getDate().toString().padStart(2, '0')}`;
+    const formattedEndDate = `${endDate.getFullYear()}-${(endDate.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${endDate.getDate().toString().padStart(2, '0')}`;
+
+    const formattedPrice = totalPrice.toFixed(2);
+
     const reservationData = {
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-      nights,
+      profileId: userId,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
       person: numberOfPeople,
-      price: totalPrice,
-      userId: userId,
-      hotelId: hotelId,  // Utilisation de l'ID de l'hôtel passé en prop
+      price: formattedPrice,
+      hotelId: withHotel ? hotelId.toString() : null,
     };
 
-    console.log("Données envoyées à l'API :", reservationData); // Ajout du log pour vérifier les données envoyées
-  
     try {
-      const response = await axios.post('http://localhost:3000/api/reservation', reservationData);
-      console.log("Réservation enregistrée avec succès :", response.data);
+      const response = await axios.post(`http://localhost:3000/api/reservation/${userId}`, reservationData);
+      console.log('Réservation enregistrée avec succès :', response.data);
+
       addItemToCart(response.data.data);
+
       setShowConfirmation(true);
       setTimeout(() => setShowConfirmation(false), 3000);
-  
-      // Réinitialisation des champs après succès
+
       setNumberOfPeople(1);
       handleDateChange(null);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          console.error("Erreur lors de l'enregistrement de la réservation :", error.response.data);
-          console.log("Détails de l'erreur:", error.response);
-        } else {
-          console.error("Erreur Axios sans réponse :", error.message);
-        }
-      } else if (error instanceof Error) {
-        console.error("Erreur générale:", error.message);
-      } else {
-        console.error("Erreur inconnue :", error);
+
+      if (onReservationSuccess) {
+        onReservationSuccess(response.data.data);
       }
+    } catch (error) {
+      console.error('Erreur lors de la réservation', error.response ? error.response.data : error.message);
     }
   };
-  
 
   return (
     <motion.div
@@ -126,7 +140,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
     >
       {showWarning && (
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-warning text-white p-4 rounded-lg shadow-lg z-20">
-          <p>Merci de vous connecter pour effectuer une réservation !</p>
+          <p>Merci de vous connecter et de créer un profil pour effectuer une réservation !</p>
         </div>
       )}
 
@@ -154,6 +168,34 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
 
       {isReservationPage && selectedDate && (
         <div className="mt-4 w-full">
+          <div className="mb-4">
+            <label className={`block text-lg font-medium mb-2 ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
+              Type de réservation
+            </label>
+            <div className="flex space-x-4">
+              <label>
+                <input
+                  type="radio"
+                  value="true"
+                  checked={withHotel}
+                  onChange={() => setWithHotel(true)}
+                  className="mr-2"
+                />
+                Avec hôtel
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="false"
+                  checked={!withHotel}
+                  onChange={() => setWithHotel(false)}
+                  className="mr-2"
+                />
+                Sans hôtel
+              </label>
+            </div>
+          </div>
+
           <label className={`block text-lg font-medium mb-2 ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
             Nombre de personnes
           </label>
@@ -167,24 +209,6 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
           <p className={`text-lg font-semibold mt-2 ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
             Prix total : {totalPrice} €
           </p>
-
-          {Array.isArray(selectedDate) && selectedDate[0] && selectedDate[1] && (
-            <div className="mt-4 text-lg text-gray-700">
-              <p className={`font-medium ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
-                Plage de dates sélectionnée :
-              </p>
-              <p>{formatDate(selectedDate[0])} - {formatDate(selectedDate[1])}</p>
-            </div>
-          )}
-
-          {selectedDate instanceof Date && (
-            <div className="mt-4 text-lg text-gray-700">
-              <p className={`font-medium ${isReservationPage ? 'text-yellow-400' : 'text-black'}`} >
-                Date sélectionnée:
-              </p>
-              <p>{formatDate(selectedDate)}</p>
-            </div>
-          )}
 
           <button
             onClick={handleReservation}
