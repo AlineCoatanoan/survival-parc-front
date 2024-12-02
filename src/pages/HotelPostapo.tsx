@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { HotelService } from "../services/hotelService";
 import { IHotel } from "../@types";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 export const Postapo = () => {
   const [postapoHotel, setPostapoHotels] = useState<IHotel[]>([]);
@@ -66,6 +67,15 @@ export const Postapo = () => {
             {postapoHotel[0].name}
           </h1>
         </motion.div>
+
+        {/* Bouton "Réserver" */}
+        <div className="flex items-center justify-center mt-0 mb-0">  {/* Suppression des marges */}
+          <Link to="/ReservationHotel">
+            <button className="px-6 py-3 bg-red-600 text-white font-bold text-xl rounded-lg hover:bg-red-700 transition duration-300">
+              Réserver
+            </button>
+          </Link>
+        </div>
 
         {/* Description avec ajustement pour mobile */}
         <div className="flex flex-col sm:flex-row gap-6">

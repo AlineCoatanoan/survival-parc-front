@@ -1,63 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { IProfile, IReservation } from '../@types';  // Assurez-vous d'avoir un type IReservation
+import { IProfile, IReservation } from '../@types';
 import { FormCreateProfile } from '../components/FormCreateProfile';
+
 
 export const Profile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
+  const profileId = userId;
   const [createdProfile, setCreatedProfile] = useState<IProfile | null>(null);
-  const [reservations, setReservations] = useState<IReservation[]>([]); // Nouveau state pour les réservations
+  const [reservations, setReservations] = useState<IReservation[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  // Charger les données de profil
   useEffect(() => {
     const loadProfile = async () => {
       if (!userId) {
         setError("Aucun identifiant utilisateur fourni dans l'URL.");
         return;
       }
-
+    
       try {
-        // Charger le profil
+        // Récupération du profil
         const response = await axios.get(`http://localhost:3000/api/profile/${userId}`);
         if (response.data.success) {
-          setCreatedProfile(response.data.data); // Charger les données du profil
+          setCreatedProfile(response.data.data);
         } else {
           setError("Impossible de récupérer le profil de l'utilisateur.");
+          return;
         }
-
-        // Charger les réservations de l'utilisateur
-        const reservationResponse = await axios.get(`http://localhost:3000/api/reservations/${userId}`);
+    
+        // Récupération des réservations
+        const reservationResponse = await axios.get(`http://localhost:3000/api/reservation/${profileId}`);
         if (reservationResponse.data.success) {
-          setReservations(reservationResponse.data.data); // Charger les réservations
+          setReservations(reservationResponse.data.data);
         } else {
           setError("Impossible de récupérer les réservations de l'utilisateur.");
         }
       } catch (err) {
-        console.error('Erreur lors du chargement des données:', err);
-        setError("Erreur lors de la récupération des données.");
+        if (axios.isAxiosError(err)) {
+          console.error('Erreur Axios:', err.response?.data || err.message);
+          setError(err.response?.data?.message || "Erreur lors de la récupération des données.");
+        } else if (err instanceof Error) {
+          console.error('Erreur standard:', err.message);
+          setError("Erreur lors de la récupération des données.");
+        } else {
+          console.error('Erreur inconnue:', err);
+          setError("Une erreur inattendue s'est produite.");
+        }
       }
     };
-
     loadProfile();
-  }, [userId]);
+  }, [userId, profileId]);
 
-  // Mise à jour après la création ou modification du profil
   const handleProfileCreated = (profile: IProfile) => {
-    setCreatedProfile(profile); // Mettre à jour l'état avec les nouvelles données du profil
-    setShowForm(false); // Fermer le formulaire
+    setCreatedProfile(profile);
+    setShowForm(false);
   };
 
-  // Fonction de soumission du formulaire (mise à jour du profil)
   const handleProfileUpdate = async (updatedProfile: IProfile) => {
     try {
       const response = await axios.put(`http://localhost:3000/api/profile/${userId}`, updatedProfile);
 
       if (response.data.success) {
-        setCreatedProfile(response.data.data); // Mettre à jour l'état avec les nouvelles données du profil
-        setShowForm(false); // Fermer le formulaire
+        setCreatedProfile(response.data.data);
+        setShowForm(false);
       } else {
         setError("Impossible de mettre à jour le profil.");
       }
@@ -68,76 +75,112 @@ export const Profile: React.FC = () => {
   };
 
   const handleCloseForm = () => {
-    setShowForm(false); // Fermer le formulaire
+    setShowForm(false);
   };
 
-  return (
-    <div className="bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937] min-h-screen p-6">
-      <h1 className="text-center text-2xl font-semibold mb-6 text-white">Votre Profil</h1>
+  // Déterminer la valeur de padding en fonction de l'état de la modale
+  const paddingBottom = showForm ? 'pb-32' : 'pb-6';
 
-      {/* Affichage des erreurs */}
+  return (
+    <div className={`bg-gradient-to-b from-black via-gray-800 to-gray-800 min-h-screen p-6 ${paddingBottom}`}>
+      <h1 className="text-center text-2xl md:text-3xl font-semibold mb-6 text-white">
+        Votre Profil
+      </h1>
+
       {error && (
         <div className="text-red-500 text-center p-4">
           <p>{error}</p>
         </div>
       )}
 
-      {/* Affichage du profil si existant */}
       {!userId ? (
-  <p className="text-center text-white">Chargement des informations utilisateur...</p>
-) : createdProfile ? (
-  <div className="profile-info p-6 bg-[#374151] rounded-lg shadow-lg w-96 ml-16 mt-40">
-    <h2 className="text-2xl font-semibold text-white mb-6">Votre Profil</h2>
-    <p><strong>Prénom :</strong> {createdProfile.firstName}</p>
-    <p><strong>Nom :</strong> {createdProfile.lastName}</p>
-    <p><strong>Date de naissance :</strong> {createdProfile.birthDate.split('T')[0]}</p>
-    <p><strong>Téléphone :</strong> {createdProfile.phone}</p>
-    <p><strong>Adresse :</strong> {createdProfile.address}</p>
-    <p><strong>Code Postal :</strong> {createdProfile.postalCode}</p>
-    <p><strong>Ville :</strong> {createdProfile.city}</p>
+        <p className="text-center text-white">Chargement des informations utilisateur...</p>
+      ) : createdProfile ? (
+        <div className="profile-info p-6 bg-gray-700 rounded-lg shadow-lg mx-auto mt-10 max-w-md sm:max-w-lg">
+          <h2 className="text-xl md:text-2xl font-semibold text-white mb-6">
+            Informations du Profil
+          </h2>
+          <p>
+            <strong>Prénom :</strong> {createdProfile.firstName}
+          </p>
+          <p>
+            <strong>Nom :</strong> {createdProfile.lastName}
+          </p>
+          <p>
+            <strong>Date de naissance :</strong>{' '}
+            {createdProfile.birthDate.split('T')[0]}
+          </p>
+          <p>
+            <strong>Téléphone :</strong> {createdProfile.phone}
+          </p>
+          <p>
+            <strong>Adresse :</strong> {createdProfile.address}
+          </p>
+          <p>
+            <strong>Code Postal :</strong> {createdProfile.postalCode}
+          </p>
+          <p>
+            <strong>Ville :</strong> {createdProfile.city}
+          </p>
 
-    {/* Bouton Modifier */}
-    <div className="mt-6 text-center">
-      <button onClick={() => setShowForm(true)} className="bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700">
-        Modifier
-      </button>
-    </div>
-  </div>
-) : (
-  <div className="text-white text-center p-6">
-    <p>Aucun profil trouvé. Veuillez en créer un.</p>
-    {/* Bouton pour créer un profil */}
-    <button onClick={() => setShowForm(true)} className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">
-      Créer un profil
-    </button>
-  </div>
-)}
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => setShowForm(true)}
+              className="bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700 transition"
+            >
+              Modifier
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="text-white text-center p-6">
+          <p>Aucun profil trouvé. Veuillez en créer un.</p>
+          <button
+            onClick={() => setShowForm(true)}
+            className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition"
+          >
+            Créer un profil
+          </button>
+        </div>
+      )}
 
-
-      {/* Affichage des réservations */}
       {reservations.length > 0 && (
-        <div className="mt-12 text-white">
-          <h3 className="text-xl font-semibold mb-4">Vos Réservations</h3>
+        <div className="mt-12 text-white max-w-4xl mx-auto">
+          <h3 className="text-lg md:text-xl font-semibold mb-4 text-center">
+            Vos Réservations
+          </h3>
           <ul className="space-y-4">
             {reservations.map((reservation) => (
-              <li key={reservation.id} className="bg-[#374151] p-4 rounded-lg shadow-md">
-                <h4 className="text-lg font-semibold">{reservation.hotelName}</h4>
-                <p><strong>Réservé le :</strong> {new Date(reservation.startDate).toLocaleDateString()}</p>
+              <li
+                key={reservation.id}
+                className="bg-gray-700 p-4 rounded-lg shadow-md"
+              >
+                <h4 className="text-md md:text-lg font-semibold">
+                  {reservation.description}
+                </h4>
+                <p>
+                  <strong>Réservé le :</strong>{' '}
+                  {new Date(reservation.startDate).toLocaleDateString()}
+                </p>
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      {/* Formulaire de création ou modification */}
       {showForm && userId && (
         <FormCreateProfile
           userId={userId}
           onProfileCreated={handleProfileCreated}
           onClose={handleCloseForm}
-          initialData={createdProfile} // Passer les données du profil pour pré-remplir le formulaire
-          onSubmit={handleProfileUpdate} // Passer la fonction pour soumettre la mise à jour
+          initialData={createdProfile}
+          onSubmit={handleProfileUpdate}
         />
+      )}
+
+      {showForm && (
+        <div className="fixed bottom-0 left-0 w-full bg-gray-800 p-4 shadow-lg">
+        </div>
       )}
     </div>
   );

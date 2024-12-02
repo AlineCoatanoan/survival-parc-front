@@ -3,28 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Ajuste le padding ou d'autres propriétés pour la page d'accueil */
-.home-page {
-  width: 100% !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-}
-
-/* Si tu veux couper la vidéo en bas pour les petits écrans */
-.clip-bottom {
-  clip-path: inset(0 0 10% 0); /* Ajuste la valeur pour couper la vidéo en bas */
-}
 
 /* Ajuste la marge en haut de la page */
 main {
   padding-top: 80px; /* Ajuste cette valeur en fonction de la hauteur de ton header */
-}
-
-/* Responsive pour mobile */
-@media (max-width: 768px) {
-  .home-page {
-    width: 100% !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-  }
 }

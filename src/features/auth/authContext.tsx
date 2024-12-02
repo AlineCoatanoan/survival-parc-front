@@ -21,18 +21,40 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);  // Initialiser l'état de chargement à true
 
+  function isTokenExpired(token: string): boolean {
+    try {
+      const base64Payload = token.split(".")[1]; // Récupérer la partie payload
+      const payload = JSON.parse(atob(base64Payload)); // Décoder le payload en JSON
+      const currentTime = Math.floor(Date.now() / 1000); // Temps actuel en secondes
+      return payload.exp < currentTime; // Vérifier si le token est expiré
+    } catch (error) {
+      console.error("Erreur lors de la vérification du token:", error);
+      return true; // Considérer le token comme expiré en cas d'erreur
+    }
+  }
+  
+
   // Fonction de connexion
   const loginUser = async (email: string, password: string) => {
     try {
       const response = await loginUserService(email, password);
       if (response.success && response.data) {
+        const token = response.data.token;
+        const base64Payload = token.split(".")[1];
+        const payload = JSON.parse(atob(base64Payload));
+        const expirationTime = payload.exp * 1000; // Convertir en millisecondes
+        const currentTime = Date.now();
+        const timeout = expirationTime - currentTime;
+  
+        if (timeout > 0) {
+          setTimeout(() => {
+            logoutUser(); // Déconnexion automatique
+          }, timeout);
+        }
+  
         setUser(response.data.user);
-        console.log("Connexion réussie:", response.data.user);
-  
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
-  
-        console.log("Token et utilisateur enregistrés dans localStorage");
       } else {
         throw new Error(response.message || "Échec de la connexion");
       }
@@ -41,6 +63,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw error;
     }
   };
+  
+  
   
   // Fonction de déconnexion
   const logoutUser = async () => {
@@ -77,11 +101,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
+  
     if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
+      if (isTokenExpired(token)) {
+        console.log("Token expiré. Suppression des données utilisateur.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      } else {
+        setUser(JSON.parse(storedUser)); // Définir l'utilisateur uniquement si le token est valide
+      }
     }
-    setLoading(false);  // Une fois que l'état utilisateur est initialisé, on peut arrêter le chargement
+  
+    setLoading(false); // L'état de chargement peut être défini une fois la validation terminée
   }, []);
+  
+  
 
   return (
     <AuthContext.Provider 

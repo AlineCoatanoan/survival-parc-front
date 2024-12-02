@@ -41,7 +41,7 @@ export const Labyrinthe = () => {
                 />
             </div>
 
-            {/* Conteneur général, descendu mais pas trop avec pt-56 */}
+            {/* Conteneur général*/}
             <div className="max-w-6xl w-full space-y-12 sm:space-y-16 mt-16 sm:mt-20 pt-8 sm:pt-12">
                 {/* Section titre */}
                 <motion.div

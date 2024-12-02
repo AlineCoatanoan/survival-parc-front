@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { IHotel, IPass } from "../@types";
-import { CalendarPass } from "../components/CalendarPass";
+import { CalendarPass } from "../components/CalendarHotel";
 
-export const Pass = () => {
+export const ReservationHotel = () => {
   const [hotels, setHotels] = useState<IHotel[]>([]);
-  const [selectedPass, setSelectedPass] = useState<IPass | null>(null);
+  const [selectedReservationHotel, setSelectedReservationHotel] = useState<IPass | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [showModal, setShowModal] = useState(false);
   const [calendarPrice, setCalendarPrice] = useState(80);
@@ -29,7 +29,7 @@ export const Pass = () => {
     console.log("Prix défini :", price);
     console.log("Nom de l'hôtel défini :", hotelName);
 
-    setSelectedPass(pass);
+    setSelectedReservationHotel(pass);
     setCalendarPrice(price); // Définir le prix du calendrier en fonction du pass
     setShowModal(true);
     setHotelName(hotelName); // Enregistrer le nom de l'hôtel pour l'afficher dans le calendrier
@@ -78,7 +78,7 @@ export const Pass = () => {
               <button
                 type="button"
                 className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md w-full max-w-[48%]"
-                onClick={() => setSelectedPass(null)}
+                onClick={() => setSelectedReservationHotel(null)}
               >
                 Annuler
               </button>

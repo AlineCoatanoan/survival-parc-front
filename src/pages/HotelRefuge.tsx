@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { HotelService } from "../services/hotelService";
 import { IHotel } from "../@types";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 export const Refuge = () => {
   const [refugeHotel, setRefugeHotel] = useState<IHotel | null>(null);
@@ -63,13 +64,22 @@ export const Refuge = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-500">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-500 pb-4">
             {refugeHotel.name}
           </h1>
         </motion.div>
 
+        {/* Conteneur du bouton "Réserver", sans marges */}
+        <div className="flex items-center justify-center mt-0 mb-0">  {/* Suppression des marges */}
+          <Link to="/ReservationHotel">
+            <button className="px-6 py-3 bg-red-500 text-white font-bold text-xl rounded-lg hover:bg-red-700 transition duration-300">
+              Réserver
+            </button>
+          </Link>
+        </div>
+
         {/* Description */}
-        <div className="flex flex-col sm:flex-row gap-6 sm:gap-12">
+        <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 pt-20">
           <motion.p
             className="text-sm sm:text-lg leading-relaxed flex-1 text-justify"
             initial={{ opacity: 0, y: -30 }}
@@ -106,8 +116,6 @@ export const Refuge = () => {
             </motion.div>
           ))}
         </div>
-
-
       </div>
     </div>
   );

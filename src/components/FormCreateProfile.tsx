@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { IProfile } from '../@types';
+import { MdCheck, MdClose } from 'react-icons/md';
 
 interface FormCreateProfileProps {
   userId: string;
-  initialData?: IProfile; // initialData est optionnel, utilisé pour la modification du profil
-  onProfileCreated: (profile: IProfile) => void; // Fonction callback pour transmettre le profil créé ou modifié
-  onClose: () => void;
+  initialData?: IProfile | null; // Profil initial pour modification ou null
+  onProfileCreated: (profile: IProfile) => void; // Callback pour profil créé ou modifié
+  onClose: () => void; // Fonction pour fermer le formulaire
+  onSubmit: (updatedProfile: IProfile) => Promise<void>; // Fonction pour soumettre le profil mis à jour
 }
+
+
 
 export const FormCreateProfile: React.FC<FormCreateProfileProps> = ({
   userId,
@@ -117,7 +121,7 @@ export const FormCreateProfile: React.FC<FormCreateProfileProps> = ({
 
   return (
     <div className="pt-20 relative">
-      <form onSubmit={handleSubmit} className="bg-[#374151] p-6 rounded-lg shadow-lg w-96 mx-auto">
+      <form onSubmit={handleSubmit} className="bg-[#374151] p-6 rounded-lg shadow-lg max-w-lg mx-auto sm:w-full">
         <h2 className="text-2xl font-semibold text-center text-white mb-6">{initialData?.id ? 'Modifier votre profil' : 'Créer votre profil'}</h2>
 
         {/* Prénom */}
@@ -218,24 +222,31 @@ export const FormCreateProfile: React.FC<FormCreateProfileProps> = ({
           />
         </div>
 
-        {/* Zone des boutons : Soumettre et Fermer */}
-        <div className="flex space-x-4 justify-center mt-6">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
-          >
-            {isSubmitting ? 'Soumission...' : 'Soumettre'}
-          </button>
+{/* Zone des boutons : Soumettre et Fermer */}
+<div className="flex justify-center gap-4 mt-6">
+  <button
+    type="submit"
+    disabled={isSubmitting}
+    className="bg-transparent text-green-600 py-2 px-4 rounded-md hover:bg-green-100 w-full sm:w-auto flex justify-center items-center"
+  >
+    {isSubmitting ? (
+      <span>Soumission...</span>
+    ) : (
+      <MdCheck size={24} />
+    )}
+  </button>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
-          >
-            Fermer
-          </button>
-        </div>
+  <button
+    type="button"
+    onClick={onClose}
+    className="bg-transparent text-red-600 py-2 px-4 rounded-md hover:bg-red-100 w-full sm:w-auto flex justify-center items-center"
+  >
+    <MdClose size={24} />
+  </button>
+</div>
+
+
+
 
         {errorMessage && (
           <div className="mt-4 text-red-600 text-sm">{errorMessage}</div>

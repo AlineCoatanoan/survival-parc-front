@@ -47,16 +47,16 @@ export const createAccount = async (data: {
   firstName: string;
   lastName: string;
   email: string;
+  password: string; // Ajoutez un champ 'password'
 }): Promise<RegisterResponse> => {
   try {
-    // Ne pas afficher le mot de passe, seulement les autres données sensibles
     console.log('Données envoyées (sans mot de passe) :', {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
     });
 
-    // Envoie de la requête POST au backend pour créer l'utilisateur
+    // Envoie de la requête pour créer l'utilisateur
     const response = await api.post<{
       message: string;
       data: {
@@ -68,20 +68,14 @@ export const createAccount = async (data: {
         createdAt: string;
         updatedAt: string;
       };
-    }>(`/api/user/register`, data);
+    }>(`/api/user/register`, {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+    });
 
-    // Vérifie si le token est envoyé dans un cookie
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("authToken="))
-      ?.split("=")[1]; // Récupère le token à partir du cookie
-
-    // Si un token est trouvé dans le cookie, on le stocke aussi dans le localStorage
-    if (token) {
-      // Ajouter un cookie avec un délai d'expiration (1h ici) si ce n'est pas déjà fait côté serveur
-      document.cookie = `authToken=${token}; max-age=3600; path=/`; // Cookie valable pendant 1 heure
-      localStorage.setItem("authToken", token); // Sauvegarde le token dans le localStorage
-    }
+    // Effectuer un login automatique après l'inscription
+    const loginResponse = await loginUser(data.email, data.password);  // Utiliser le mot de passe ici
 
     return {
       success: true,
@@ -96,13 +90,12 @@ export const createAccount = async (data: {
           createdAt: new Date(response.data.data.createdAt),
           updatedAt: new Date(response.data.data.updatedAt),
         },
-        token: token,  // Ajouter le token à la réponse
+        token: loginResponse.data.token,  // Utilisez le token renvoyé par la connexion
       },
     };
   } catch (error) {
     let errorMessage = "Une erreur est survenue, veuillez réessayer.";
     if (error instanceof AxiosError && error.response) {
-      // Afficher la réponse d'erreur dans la console
       console.error('Erreur du serveur :', error.response);
       const validationErrors =
         error.response.data.errors || error.response.data.message || error.message;
@@ -112,9 +105,7 @@ export const createAccount = async (data: {
   }
 };
 
-
-
-// Fonction pour connecter un utilisateur
+// Fonction de connexion (inchangée)
 export const loginUser = async (
   email: string,
   password: string
@@ -149,6 +140,8 @@ export const loginUser = async (
     throw new Error(errorMessage);
   }
 };
+
+
 
 // Fonction pour déconnecter l'utilisateur
 export const logoutUser = async (): Promise<LogoutResponse> => {

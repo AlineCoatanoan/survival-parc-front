@@ -10,7 +10,7 @@ import { Refuge } from '../pages/HotelRefuge';
 import { Plan } from '../pages/Plan';
 import { Calendrier } from '../pages/Calendrier';
 import { Ticket } from '../pages/Ticket';
-import { Pass } from '../pages/Pass';
+import { ReservationHotel } from '../pages/ReservationHotel';
 import { Profile } from '../pages/Profile';
 import { Dashboard } from '../pages/Dashboard';
 import { Reservations } from '../pages/Reservations';
@@ -41,7 +41,7 @@ export function AppRouter() {
                 <Route path="/plan" element={<Plan />} />
                 <Route path="/calendrier" element={<Calendrier />} />
                 <Route path="/Ticket" element={<Ticket />} />
-                <Route path="/Pass" element={<Pass />} />
+                <Route path="/ReservationHotel" element={<ReservationHotel />} />
 
                 {/* Routes protégées */}
                 <Route element={<PrivateRoute />}>

@@ -136,21 +136,22 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
-      className={`border rounded-lg overflow-hidden p-4 ${isReservationPage ? 'bg-gray-800' : 'bg-white'} flex items-start justify-between`}
+      className={`border rounded-lg overflow-hidden p-4 ${isReservationPage ? 'bg-gray-800' : 'bg-white'} flex flex-col sm:flex-row items-start justify-between space-y-4 sm:space-y-0`}
     >
       {showWarning && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-warning text-white p-4 rounded-lg shadow-lg z-20">
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-warning text-white p-4 rounded-lg shadow-lg z-20 max-h-[80vh] overflow-y-auto">
           <p>Merci de vous connecter et de créer un profil pour effectuer une réservation !</p>
         </div>
       )}
 
       {showConfirmation && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white p-4 rounded-lg shadow-lg z-20">
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white p-4 rounded-lg shadow-lg z-20 max-h-[80vh] overflow-y-auto">
           <p>Votre réservation a bien été ajoutée au panier !</p>
         </div>
       )}
 
-      <div className="w-[60%]">
+      {/* Section du calendrier défilable */}
+      <div className="w-full sm:w-[60%] max-h-[60vh] sm:max-h-full overflow-y-auto">
         <DatePicker
           selected={selectedDate instanceof Date ? selectedDate : undefined}
           onChange={handleDateChange}
@@ -166,8 +167,9 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
         />
       </div>
 
+      {/* Section de réservation */}
       {isReservationPage && selectedDate && (
-        <div className="mt-4 w-full">
+        <div className="w-full sm:w-[35%] mt-4 sm:mt-0">
           <div className="mb-4">
             <label className={`block text-lg font-medium mb-2 ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
               Type de réservation

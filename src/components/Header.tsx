@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FiShoppingCart, FiSearch, FiMenu, FiX } from 'react-icons/fi';
 import { SearchBar } from './SearchBar';
 import { useAuth } from '../features/auth/authContext';
+import logo from '../assets/images/logo.png';
 
 interface LinkItem {
   to: string;
@@ -59,14 +60,14 @@ export const Header = () => {
   return (
     <header className="fixed top-0 left-0 w-full bg-[black] text-white py-4 shadow-lg z-50">
       <div className="container mx-auto flex justify-between items-center px-4 pt-4 max-w-screen-xl relative">
-      <div className="fixed top-[10px] left-1/2 transform -translate-x-1/2 md:left-0 md:ml-[120px]">
+      <div className="fixed top-[10px] left-1/2 transform -translate-x-1/2 md:left-0 md:ml-[110px]">
         <Link to="/" className="flex w-full h-full" onClick={handleLogoClick}>
           <div className="w-[100px] h-[auto]">
-            <img
-              src="./src/assets/images/logo.png"
-              alt="Survival Parc Logo"
-              className="w-[100px] h-auto"
-            />
+          <img
+            src={logo}
+            alt="Survival Parc Logo"
+            className="w-[100px] h-auto"
+          />
           </div>
         </Link>
       </div>
@@ -113,7 +114,7 @@ export const Header = () => {
             handleMouseLeave={handleMouseLeave}
             links={[
               { to: "/Ticket", label: "Ticket journée(s)" },
-              { to: "/Pass", label: "Pass" },
+              { to: "/ReservationHotel", label: "Reservation hôtel" },
             ]}
           />
         </nav>
@@ -123,35 +124,37 @@ export const Header = () => {
           {isMobileMenuOpen ? <FiX /> : <FiMenu />}
         </button>
 
-        {/* Icones de recherche et panier */}
-        <div className="flex items-center">
-          {userId && (
-            <Link to={`/reservations/${userId}`} className="relative">
-              <FiShoppingCart className="text-2xl" />
+        {/* Icônes de recherche et panier */}
+<div className="flex items-center">
+  {userId && (
+    <Link to={`/reservations/${userId}`} className="relative">
+      <FiShoppingCart className="text-2xl" />
+    </Link>
+  )}
+
+        {/* Loupe visible en mobile et desktop */}
+        <div className="relative flex items-center">
+          <button
+            onClick={toggleSearch}
+            className="flex items-center ml-4 md:ml-6 md:pl-2"
+            aria-expanded={showSearch}
+            aria-controls="search-bar"
+          >
+            <FiSearch className="text-2xl hover:text-[#FF7828]" />
+          </button>
+          {showSearch && (
+            <div className="absolute left-0 mt-20 w-40">
+              <SearchBar showSearch={showSearch} setShowSearch={setShowSearch} />
+            </div>
+          )}
+          {isAuthenticated && isAdmin && (
+            <Link to="/dashboard" className="ml-4 text-[#FF7828]">
+              Dashboard
             </Link>
           )}
-          {/* Loupe visible en mobile et desktop */}
-          <div className="relative flex items-center">
-            <button
-              onClick={toggleSearch}
-              className="flex items-center ml-4 md:ml-0"
-              aria-expanded={showSearch}
-              aria-controls="search-bar"
-            >
-              <FiSearch className="text-2xl hover:text-[#FF7828]" />
-            </button>
-            {showSearch && (
-              <div className="absolute left-0 mt-20 w-40">
-                <SearchBar showSearch={showSearch} setShowSearch={setShowSearch} />
-              </div>
-            )}
-            {isAuthenticated && isAdmin && (
-              <Link to="/dashboard" className="ml-4 text-[#FF7828]">
-                Dashboard
-              </Link>
-            )}
-          </div>
         </div>
+      </div>
+
       </div>
 
       {/* Menu mobile */}
