@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { HomePage } from '../pages/HomePage';
+import { Acces } from "../pages/Acces"
 import { Animations } from '../pages/Animations';
 import { Attraction } from '../pages/Attractions';
 import { Labyrinthe } from '../pages/Labyrinthe';
@@ -15,6 +16,7 @@ import { Profile } from '../pages/Profile';
 import { Dashboard } from '../pages/Dashboard';
 import { Reservations } from '../pages/Reservations';
 import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
 import { FixedModal } from '../components/SideBar';  
 import { AuthProvider } from '../features/auth/authContext';
 import { CartProvider } from '../features/auth/cartContext'; // Importez votre CartProvider
@@ -39,6 +41,7 @@ export function AppRouter() {
                 <Route path="/postapo" element={<Postapo />} />
                 <Route path="/refuge" element={<Refuge />} />
                 <Route path="/plan" element={<Plan />} />
+                <Route path="/acces" element={<Acces />} />
                 <Route path="/calendrier" element={<Calendrier />} />
                 <Route path="/Ticket" element={<Ticket />} />
                 <Route path="/ReservationHotel" element={<ReservationHotel />} />
@@ -57,6 +60,7 @@ export function AppRouter() {
                   <Route path="/Dashboard" element={<Dashboard />} />
                 </Route>
               </Routes>
+              <Footer />
             </div>
 
             {/* Sidebar fixe à droite */}

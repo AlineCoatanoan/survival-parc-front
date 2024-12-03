@@ -216,6 +216,6 @@ const MobileMenu = ({ closeMenu }: MobileMenuProps) => (
     <Link to="/calendrier" className="hover:text-[#FF7828]" onClick={closeMenu}>Dates et horaires d'ouverture</Link>
     <Link to="/acces" className="hover:text-[#FF7828]" onClick={closeMenu}>Accès</Link>
     <Link to="/Ticket" className="hover:text-[#FF7828]" onClick={closeMenu}>Ticket journée(s)</Link>
-    <Link to="/Pass" className="hover:text-[#FF7828]" onClick={closeMenu}>Pass</Link>
+    <Link to="/ReservationHotel" className="hover:text-[#FF7828]" onClick={closeMenu}>Réservation Hotel</Link>
   </>
 );

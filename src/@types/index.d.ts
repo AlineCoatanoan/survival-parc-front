@@ -69,6 +69,8 @@ interface IHotel {
 export interface IHotelReservation {
   id: number;
   hotel: {
+    id: number;
+    description: string;
     name: string;
     priceByNight: number;
   };

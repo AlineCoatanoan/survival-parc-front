@@ -78,99 +78,117 @@ export const HomePage = () => {
 
       {/* Attractions Section (Carrousel supprimé pour mobile) */}
       <section className="p-6 md:p-12 bg-gray-800 relative mt-[80px]">
-      <div className="container mx-auto">
-        <motion.h2
-          className="text-3xl font-bold mb-6 text-center"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+  <div className="container mx-auto">
+    <motion.h2
+      className="text-3xl font-bold mb-6 text-center"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      Nos Animations
+    </motion.h2>
+
+    {/* Carrousel visible uniquement sur desktop */}
+    <div className="relative hidden md:flex items-center">
+      <button
+        onClick={handlePrev}
+        className="absolute left-0 z-10 p-3 bg-gray-700 rounded-full hover:bg-gray-600"
+      >
+        &#10094;
+      </button>
+
+      <div className="overflow-hidden w-full flex justify-center">
+        <div
+          className="flex transition-transform duration-500 ease-in-out"
+          style={{ transform: `translateX(-${index * (100 / 3)}%)` }}
         >
-          Nos Animations
-        </motion.h2>
-
-        {/* Carrousel visible uniquement sur desktop */}
-        <div className="relative hidden md:flex items-center">
-          <button
-            onClick={handlePrev}
-            className="absolute left-0 z-10 p-3 bg-gray-700 rounded-full hover:bg-gray-600"
-          >
-            &#10094;
-          </button>
-
-          <div className="overflow-hidden w-full flex justify-center">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${index * (100 / 3)}%)` }}
+          {items.map((item, i) => (
+            <motion.div
+              key={i}
+              className="w-full sm:w-1/2 md:w-1/3 flex-shrink-0 bg-gray-700 p-4 sm:p-6 rounded-lg mx-2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
             >
-              {items.map((item, i) => (
-                <motion.div
-                  key={i}
-                  className="w-full sm:w-1/2 md:w-1/3 flex-shrink-0 bg-gray-700 p-4 sm:p-6 rounded-lg mx-2"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-                >
-                  <div className="h-40 sm:h-60 md:h-80 bg-gray-600 rounded-lg mb-4">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2">{item.title}</h3>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          <button
-            onClick={handleNext}
-            className="absolute right-0 z-10 p-3 bg-gray-700 rounded-full hover:bg-gray-600"
-          >
-            &#10095;
-          </button>
-        </div>
-
-        {/* Carrousel pour petits écrans (avec affichage différent si sur mobile) */}
-        <div className="md:hidden">
-          {/* Bouton au-dessus des images */}
-          <div className="flex justify-center mt-6">
-            <Link to="/animations">
-              <motion.button
-                className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                Découvrez Toutes Les Animations
-              </motion.button>
-            </Link>
-          </div>
-
-          {/* Affichage des images restantes */}
-          <div className="grid grid-cols-1 gap-6 mt-6">
-            {items.slice(0, 2).map((item, i) => (
-              <motion.div
-                key={i}
-                className="bg-gray-700 p-4 sm:p-6 rounded-lg text-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.2 }}
-              >
-                <div className="h-40 bg-gray-600 rounded-lg mb-4">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">{item.title}</h3>
-              </motion.div>
-            ))}
-          </div>
+              <div className="h-40 sm:h-60 md:h-80 bg-gray-600 rounded-lg mb-4">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">{item.title}</h3>
+            </motion.div>
+          ))}
         </div>
       </div>
-      </section>
+
+      <button
+        onClick={handleNext}
+        className="absolute right-0 z-10 p-3 bg-gray-700 rounded-full hover:bg-gray-600"
+      >
+        &#10095;
+      </button>
+    </div>
+
+    {/* Bouton sous le carrousel, visible uniquement sur desktop */}
+    <div className="hidden md:flex justify-center mt-6 md:mt-12">
+      <Link to="/animations">
+        <motion.button
+          className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          Découvrez Toutes Les Animations
+        </motion.button>
+      </Link>
+    </div>
+
+    {/* Carrousel pour petits écrans */}
+    <div className="md:hidden">
+      {/* Bouton au-dessus des images, visible uniquement sur mobile */}
+      <div className="flex justify-center mt-6">
+        <Link to="/animations">
+          <motion.button
+            className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            Découvrez Toutes Les Animations
+          </motion.button>
+        </Link>
+      </div>
+
+      {/* Affichage des images restantes */}
+      <div className="grid grid-cols-1 gap-6 mt-6">
+        {items.slice(0, 2).map((item, i) => (
+          <motion.div
+            key={i}
+            className="bg-gray-700 p-4 sm:p-6 rounded-lg text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: i * 0.2 }}
+          >
+            <div className="h-40 bg-gray-600 rounded-lg mb-4">
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">{item.title}</h3>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
 
 
       {/* Hôtels Section */}
@@ -213,17 +231,15 @@ export const HomePage = () => {
        {/* Informations Section */}
        <section className="bg-gray-800 text-white py-8 mt-[80px]">
         <div className="container mx-auto flex flex-col items-center space-y-6 md:space-y-0 md:flex-row md:justify-center">
-          <div className="flex flex-col space-y-2 text-center md:text-left">
-            <a href="#" className="hover:underline">Nos engagements RSE</a>
-            <a href="#" className="hover:underline">Actualités</a>
-            <a href="#" className="hover:underline">CGV</a>
-            <a href="#" className="hover:underline">Mentions légales</a>
-          </div>
           <div className="text-center md:text-left md:mx-12">
             <p className="font-semibold">Coordonnées</p>
-            <p>D619 – 10850 SAFEPLACE</p>
+            <p>Route de l'Aventure, 1234<br />
+                Z.A. des Montagnes Sauvages,<br />
+                Région de Bourgogne,<br />
+                71300 Montbeau-sur-Loire, France
+            </p>
             <p>Téléphone : 00 20 07 04 50</p>
-            <a href="mailto:survival-parc@survival.com" className="hover:underline">Contactez-nous</a>
+            <a href="mailto:survival-parc@survival.com" className="hover:underline text-red-500">Contactez-nous</a>
           </div>
           <div className="flex items-center justify-center">
             <img src="./src/assets/images/logo.png" alt="Logo Survival Parc" className="h-16" />
@@ -231,12 +247,7 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="p-6 md:p-12 bg-gray-800 relative mt-[80px] pb-20 sm:pb-24 md:pb-16 flex justify-center items-center">
-        <div className="text-center">
-          <p className="text-white">&copy; 2024 Survival Parc. Tous droits réservés.</p>
-        </div>
-      </footer>
+    
 
     </div>
   );

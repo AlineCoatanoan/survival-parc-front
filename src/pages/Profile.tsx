@@ -87,6 +87,73 @@ export const Profile: React.FC = () => {
     setShowForm(false);
   };
 
+  // Fonction d'annulation pour une réservation classique
+  const handleCancelReservation = async (reservationId: number) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/reservation/${reservationId}`,
+        {
+          data: { profileId: profileId }  // Envoi du profilId dans le corps de la requête
+        }
+      );
+  
+      if (response.data.success) {
+        // Mise à jour de l'état local pour retirer la réservation annulée
+        setReservations(reservations.filter((res) => res.id !== reservationId));
+        setError(null); // Réinitialiser les erreurs si la suppression est réussie
+      } else {
+        setError("Erreur lors de l'annulation de la réservation.");
+      }
+    } catch (err) {
+      setError("Une erreur s'est produite lors de l'annulation.");
+      console.error(err);
+    }
+  };
+  
+  
+  
+  
+// Fonction pour supprimer une réservation d'hôtel
+const handleCancelHotelReservation = async (profileHotelId: number, hotelId: number) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/api/profilehotel/${profileHotelId}`, // L'ID de la réservation dans l'URL
+      {
+        data: { // Profil et ID de l'hôtel dans le corps de la requête
+          profileId: profileId,  // L'ID du profil de l'utilisateur
+          hotelId: hotelId,      // L'ID de l'hôtel associé à la réservation
+        }
+      }
+    );
+
+    if (response.data.success) {
+      // Mise à jour de l'état pour refléter la suppression
+      setHotelReservations(hotelReservations.filter((res) => res.id !== profileHotelId));  // Utilisation de profileHotelId pour la suppression
+      setError(null);
+    } else {
+      setError("Erreur lors de l'annulation de la réservation d'hôtel.");
+    }
+  } catch (err) {
+    console.error('Erreur lors de l\'annulation:', err);
+    if (axios.isAxiosError(err)) {
+      setError(`Erreur: ${err.response?.data.message || 'Une erreur s\'est produite.'}`);
+    } else {
+      setError("Une erreur s'est produite lors de l'annulation.");
+    }
+  }
+};
+
+
+
+
+
+
+  
+  
+  
+  
+  
+
   // Déterminer la valeur de padding en fonction de l'état de la modale
   const paddingBottom = showForm ? 'pb-32' : 'pb-6';
 
@@ -171,6 +238,12 @@ export const Profile: React.FC = () => {
                   <strong>Réservé le :</strong>{' '}
                   {new Date(reservation.startDate).toLocaleDateString()}
                 </p>
+                <button
+                  onClick={() => handleCancelReservation(reservation.id)}
+                  className="mt-2 bg-red-600 text-white py-1 px-3 rounded-md hover:bg-red-700"
+                >
+                  Annuler la réservation
+                </button>
               </li>
             ))}
           </ul>
@@ -184,28 +257,35 @@ export const Profile: React.FC = () => {
       Vos Réservations d'Hôtel
     </h3>
     <ul className="space-y-4">
-      {hotelReservations.map((hotelReservation) => (
-        <li key={hotelReservation.id} className="bg-gray-700 p-4 rounded-lg shadow-md">
-          <h4 className="text-md md:text-lg font-semibold">{hotelReservation.hotel.name}</h4>
-          <p>
-            <strong>Réservé du :</strong> {new Date(hotelReservation.startDate).toLocaleDateString()} 
-            <strong> au </strong> {new Date(hotelReservation.endDate).toLocaleDateString()}
-          </p>
-          <p>
-            <strong>Nombre de personnes :</strong> {hotelReservation.numberOfPeople || 'Non précisé'}
-          </p>
-          <p>
-            <strong>Prix par nuit :</strong> {hotelReservation.priceByNight} €
-          </p>
-          <p>
-            <strong>Prix total :</strong> 
-            {hotelReservation.totalPrice && !isNaN(Number(hotelReservation.totalPrice)) 
-              ? Number(hotelReservation.totalPrice).toFixed(2) + ' €' 
-              : 'Prix non disponible'}
-          </p>
+    {hotelReservations.map((hotelReservation) => (
+  <li key={hotelReservation.id} className="bg-gray-700 p-4 rounded-lg shadow-md">
+    <h4 className="text-md md:text-lg font-semibold">{hotelReservation.hotel.name}</h4>
+    <p>
+      <strong>Réservé du :</strong> {new Date(hotelReservation.startDate).toLocaleDateString()} 
+      <strong> au </strong> {new Date(hotelReservation.endDate).toLocaleDateString()}
+    </p>
+    <p>
+      <strong>Nombre de personnes :</strong> {hotelReservation.numberOfPeople || 'Non précisé'}
+    </p>
+    <p>
+      <strong>Prix par nuit :</strong> {hotelReservation.priceByNight} €
+    </p>
+    <p>
+      <strong>Prix total :</strong> 
+      {hotelReservation.totalPrice && !isNaN(Number(hotelReservation.totalPrice)) 
+        ? Number(hotelReservation.totalPrice).toFixed(2) + ' €' 
+        : 'Prix non disponible'}
+    </p>
+    <button
+      onClick={() => handleCancelHotelReservation(hotelReservation.id, hotelReservation.hotel.id)} // Assurez-vous que `hotelReservation.hotel.id` est bien défini
+      className="mt-2 bg-red-600 text-white py-1 px-3 rounded-md hover:bg-red-700"
+    >
+      Annuler la réservation d'hôtel
+    </button>
+  </li>
+))}
 
-        </li>
-      ))}
+
     </ul>
   </div>
 ) : (
