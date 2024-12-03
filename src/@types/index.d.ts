@@ -52,17 +52,37 @@ export interface IReservation {
   updatedAt?: Date;
 }
 
-export interface IHotel {
+// Interface pour l'hôtel
+interface IHotel {
   id: number;
   name: string;
   description: string;
   address: string;
   postalCode: string;
   city: string;
-  priceByNight?: number;
-  reservations?: IReservation[]; // Association vers plusieurs Reservations
-  createdAt?: Date;
-  updatedAt?: Date;
+  priceByNight: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Interface pour la réservation d'hôtel
+export interface IHotelReservation {
+  id: number;
+  hotel: {
+    name: string;
+    priceByNight: number;
+  };
+  profileId: number;
+  hotelId: number;
+  startDate: string;
+  endDate: string;
+  status: string;
+  priceByNight: number;
+  totalPrice: number;
+  numberOfPeople: number;
+  createdAt: string;
+  updatedAt: string;
+  hotel: IHotel; // Détails de l'hôtel associé à la réservation
 }
 
 export interface IAnimation {

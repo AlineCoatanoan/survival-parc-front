@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { IProfile, IReservation } from '../@types';
+import { IProfile, IReservation, IHotelReservation } from '../@types'; // Importer IHotelReservation
 import { FormCreateProfile } from '../components/FormCreateProfile';
-
 
 export const Profile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const profileId = userId;
   const [createdProfile, setCreatedProfile] = useState<IProfile | null>(null);
-  const [reservations, setReservations] = useState<IReservation[]>([]);
+  const [reservations, setReservations] = useState<IReservation[]>([]); // Initialiser comme tableau vide
+  const [hotelReservations, setHotelReservations] = useState<IHotelReservation[]>([]); // Initialiser comme tableau vide
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -19,7 +19,7 @@ export const Profile: React.FC = () => {
         setError("Aucun identifiant utilisateur fourni dans l'URL.");
         return;
       }
-    
+
       try {
         // Récupération du profil
         const response = await axios.get(`http://localhost:3000/api/profile/${userId}`);
@@ -29,13 +29,21 @@ export const Profile: React.FC = () => {
           setError("Impossible de récupérer le profil de l'utilisateur.");
           return;
         }
-    
-        // Récupération des réservations
+
+        // Récupération des réservations classiques
         const reservationResponse = await axios.get(`http://localhost:3000/api/reservation/${profileId}`);
         if (reservationResponse.data.success) {
-          setReservations(reservationResponse.data.data);
+          setReservations(reservationResponse.data.data || []); // Assurez-vous que c'est un tableau
         } else {
-          setError("Impossible de récupérer les réservations de l'utilisateur.");
+          setError("Impossible de récupérer les réservations classiques de l'utilisateur.");
+        }
+
+        // Récupération des réservations d'hôtel
+        const hotelReservationResponse = await axios.get(`http://localhost:3000/api/profilehotel/${profileId}`);
+        if (hotelReservationResponse.data.success) {
+          setHotelReservations(hotelReservationResponse.data.message || []); // Assurez-vous que c'est un tableau
+        } else {
+          setError("Impossible de récupérer les réservations d'hôtel.");
         }
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -50,6 +58,7 @@ export const Profile: React.FC = () => {
         }
       }
     };
+
     loadProfile();
   }, [userId, profileId]);
 
@@ -144,7 +153,7 @@ export const Profile: React.FC = () => {
         </div>
       )}
 
-      {reservations.length > 0 && (
+      {reservations && reservations.length > 0 && (
         <div className="mt-12 text-white max-w-4xl mx-auto">
           <h3 className="text-lg md:text-xl font-semibold mb-4 text-center">
             Vos Réservations
@@ -168,6 +177,47 @@ export const Profile: React.FC = () => {
         </div>
       )}
 
+      {/* Affichage des réservations d'hôtel */}
+      {hotelReservations && hotelReservations.length > 0 ? (
+  <div className="mt-6 text-white max-w-4xl mx-auto">
+    <h3 className="text-lg md:text-xl font-semibold mb-4 text-center">
+      Vos Réservations d'Hôtel
+    </h3>
+    <ul className="space-y-4">
+      {hotelReservations.map((hotelReservation) => (
+        <li key={hotelReservation.id} className="bg-gray-700 p-4 rounded-lg shadow-md">
+          <h4 className="text-md md:text-lg font-semibold">{hotelReservation.hotel.name}</h4>
+          <p>
+            <strong>Réservé du :</strong> {new Date(hotelReservation.startDate).toLocaleDateString()} 
+            <strong> au </strong> {new Date(hotelReservation.endDate).toLocaleDateString()}
+          </p>
+          <p>
+            <strong>Nombre de personnes :</strong> {hotelReservation.numberOfPeople || 'Non précisé'}
+          </p>
+          <p>
+            <strong>Prix par nuit :</strong> {hotelReservation.priceByNight} €
+          </p>
+          <p>
+            <strong>Prix total :</strong> 
+            {hotelReservation.totalPrice && !isNaN(Number(hotelReservation.totalPrice)) 
+              ? Number(hotelReservation.totalPrice).toFixed(2) + ' €' 
+              : 'Prix non disponible'}
+          </p>
+
+        </li>
+      ))}
+    </ul>
+  </div>
+) : (
+  <div className="text-white text-center p-6">
+    <p>Aucune réservation d'hôtel trouvée.</p>
+  </div>
+)}
+
+
+
+
+
       {showForm && userId && (
         <FormCreateProfile
           userId={userId}
@@ -179,8 +229,7 @@ export const Profile: React.FC = () => {
       )}
 
       {showForm && (
-        <div className="fixed bottom-0 left-0 w-full bg-gray-800 p-4 shadow-lg">
-        </div>
+        <div className="fixed bottom-0 left-0 w-full bg-gray-800 p-4 shadow-lg"></div>
       )}
     </div>
   );

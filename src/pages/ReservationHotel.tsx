@@ -5,6 +5,7 @@ import { CalendarPass } from "../components/CalendarHotel";
 
 export const ReservationHotel = () => {
   const [hotels, setHotels] = useState<IHotel[]>([]);
+  const [hotelId, setHotelId] = useState<number | null>(null); 
   const [selectedReservationHotel, setSelectedReservationHotel] = useState<IPass | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [showModal, setShowModal] = useState(false);
@@ -24,15 +25,16 @@ export const ReservationHotel = () => {
     fetchHotels();
   }, []);
 
-  const handlePassSelection = (pass: IPass, price: number, hotelName: string) => {
+  const handlePassSelection = (pass: IPass, price: number, hotelName: string, hotelId: number) => {
     console.log("Sélection du pass :", pass);
     console.log("Prix défini :", price);
     console.log("Nom de l'hôtel défini :", hotelName);
-
+  
     setSelectedReservationHotel(pass);
-    setCalendarPrice(price); // Définir le prix du calendrier en fonction du pass
-    setShowModal(true);
-    setHotelName(hotelName); // Enregistrer le nom de l'hôtel pour l'afficher dans le calendrier
+    setCalendarPrice(price); // Définir le prix du calendrier
+    setHotelName(hotelName); // Nom de l'hôtel
+    setHotelId(hotelId); // Enregistrer l'ID de l'hôtel
+    setShowModal(true); // Ouvrir la modale
   };
 
   const handleDateChange = (dates: [Date | null, Date | null] | null) => {
@@ -63,17 +65,20 @@ export const ReservationHotel = () => {
             </div>
 
             <div className="flex justify-between">
-              <button
+            <button
                 type="button"
                 className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md w-full max-w-[48%]"
-                onClick={() => handlePassSelection(
+                onClick={() =>
+                  handlePassSelection(
                     { id: hotel.id, name: hotel.name, description: hotel.description, price: hotel.priceByNight || 0 },
                     index === 0 ? 80 : 60,
-                    hotel.name
-                  )}
+                    hotel.name,
+                    hotel.id // Passer l'ID ici
+                  )
+                }
               >
                 Réserver Maintenant
-              </button>
+            </button>
 
               <button
                 type="button"
