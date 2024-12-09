@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { motion } from 'framer-motion';
@@ -34,17 +34,39 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
   hotelId,
   onReservationSuccess,
 }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated, userId } = useAuth();
   const { addItemToCart } = useCart();
-
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [withHotel, setWithHotel] = useState(true); // Par défaut, avec hôtel
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  const [profileId, setProfileId] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const totalPrice = withHotel
     ? numberOfPeople * pricePerPerson // Prix avec hôtel
     : numberOfPeople * 15; // Exemple : tarif sans hôtel
+
+  // Récupération du profileId via l'userId
+  const fetchProfileId = async (userId: string) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/profile/${userId}`);
+      if (response.data.success) {
+        setProfileId(response.data.data.id);
+      } else {
+        setError("Impossible de récupérer le profil utilisateur.");
+      }
+    } catch (error) {
+      const err = error as Error;
+      setError(err.message || "Erreur de connexion au serveur.");
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchProfileId(userId);
+    }
+  }, [userId]);
 
   const handlePeopleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumberOfPeople(Number(e.target.value));
@@ -89,8 +111,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       return;
     }
 
-    const userId = user ? user.id : null;
-    if (!userId) {
+    if (!profileId) {
       console.log('Utilisateur non connecté. Impossible de procéder à la réservation.');
       return;
     }
@@ -105,7 +126,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
     const formattedPrice = totalPrice.toFixed(2);
 
     const reservationData = {
-      profileId: userId,
+      profileId: profileId,  // Vous utilisez ici profileId
       startDate: formattedStartDate,
       endDate: formattedEndDate,
       person: numberOfPeople,
@@ -114,7 +135,8 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
     };
 
     try {
-      const response = await axios.post(`http://localhost:3000/api/reservation/${userId}`, reservationData);
+      // Utilisez profileId dans l'URL
+      const response = await axios.post(`http://localhost:3000/api/reservation/${profileId}`, reservationData);
       console.log('Réservation enregistrée avec succès :', response.data);
 
       addItemToCart(response.data.data);
@@ -128,8 +150,8 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       if (onReservationSuccess) {
         onReservationSuccess(response.data.data);
       }
-    } catch (error) {
-      console.error('Erreur lors de la réservation', error.response ? error.response.data : error.message);
+    } catch (error: unknown) {
+      console.error('Erreur lors de la réservation', error);
     }
   };
 
@@ -156,7 +178,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
           selected={selectedDate instanceof Date ? selectedDate : undefined}
           onChange={handleDateChange}
           inline
-          selectsRange={pricePerPerson === 40}
+          selectsRange={Boolean(pricePerPerson === 40)}
           startDate={Array.isArray(selectedDate) ? selectedDate[0] : undefined}
           endDate={Array.isArray(selectedDate) ? selectedDate[1] : undefined}
           className={`border-0 p-4 w-full ${isReservationPage ? 'text-white' : 'text-black'}`}
@@ -181,7 +203,6 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
                   value="true"
                   checked={withHotel}
                   onChange={() => setWithHotel(true)}
-                  className="mr-2"
                 />
                 Avec hôtel
               </label>
@@ -191,39 +212,32 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
                   value="false"
                   checked={!withHotel}
                   onChange={() => setWithHotel(false)}
-                  className="mr-2"
                 />
                 Sans hôtel
               </label>
             </div>
           </div>
-
-          <label className={`block text-lg font-medium mb-2 ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
-            Nombre de personnes
-          </label>
-          <input
-            type="number"
-            min="1"
-            value={numberOfPeople}
-            onChange={handlePeopleChange}
-            className={`w-full p-2 border rounded-md ${isReservationPage ? 'text-black bg-yellow-100' : 'text-black'}`}
-          />
-          <p className={`text-lg font-semibold mt-2 ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
-            Prix total : {totalPrice} €
-          </p>
-
-          <button
-            onClick={handleReservation}
-            className={`mt-4 px-6 py-2 rounded-md ${isReservationPage ? 'bg-yellow-400 text-black' : 'bg-black text-white'}`}
-          >
-            Réserver
-          </button>
+          <div className="mb-4">
+            <label className="block text-lg font-medium mb-2">Nombre de personnes</label>
+            <input
+              type="number"
+              value={numberOfPeople}
+              onChange={handlePeopleChange}
+              min={1}
+              className="border p-2 w-full"
+            />
+          </div>
+          <div className="flex justify-between items-center">
+            <span>Total : {totalPrice.toFixed(2)} €</span>
+            <button
+              onClick={handleReservation}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            >
+              Réserver
+            </button>
+          </div>
         </div>
       )}
     </motion.div>
   );
 };
-
-function formatDate(date: Date) {
-  return date.toLocaleDateString('fr-FR');
-}

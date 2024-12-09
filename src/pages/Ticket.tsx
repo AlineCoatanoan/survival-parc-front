@@ -32,7 +32,7 @@ export const Ticket = () => {
     }
   
     // Vérification de la validité de la date
-    if (!selectedDate || (Array.isArray(selectedDate) && selectedDate.some(date => isNaN(date.getTime())))) {
+    if (!selectedDate || isNaN(selectedDate.getTime())) {
       console.log('Veuillez sélectionner une date valide.');
       return;
     }
@@ -149,13 +149,13 @@ export const Ticket = () => {
           <div className="bg-gray-800 p-4 rounded-lg w-[70%] max-w-2xl max-h-[70vh] overflow-hidden">
             <h2 className="text-2xl font-semibold text-center mb-4">Sélectionnez une date</h2>
             <div className="w-full rounded-md overflow-hidden">
-            <CalendrierPicker
-              selectedDate={selectedDate}
-              handleDateChange={handleDateChange}
-              isReservationPage={true}
-              pricePerPerson={pricePerPerson} // Passe le prix mis à jour
-              hotelId={1} // Remplacez `1` par l'ID de l'hôtel réel si disponible
-            />
+              <CalendrierPicker
+                selectedDate={selectedDate}
+                handleDateChange={handleDateChange}
+                isReservationPage={true}
+                pricePerPerson={pricePerPerson} // Passe le prix mis à jour
+                hotelId={1} // Remplacez `1` par l'ID de l'hôtel réel si disponible
+              />
             </div>
             <div className="flex justify-between mt-4">
               <button

@@ -29,22 +29,23 @@ export const SignUpModal = forwardRef<HTMLDivElement, SignUpModalProps>(({ onClo
   password.current = watch("password", "");
 
   const onSubmit: SubmitHandler<ISignUpFormData> = async (data: ISignUpFormData) => {
+    console.log(data); // Ajoute cette ligne pour vérifier les données envoyées
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
-
+  
     if (data.password !== data.confirmPassword) {
       setError("Les mots de passe ne correspondent pas");
       setLoading(false);
       return;
     }
-
+  
     try {
       const response: RegisterResponse = await createAccount({
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
-        password: data.password,
+        password: data.password,  
       });
 
       if (response.success) {

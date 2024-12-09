@@ -1,6 +1,7 @@
 import React, { createContext, useState, ReactNode, useEffect, useContext } from "react";
 import { loginUser as loginUserService, logoutUser as logoutUserService, createAccount as registerUserService } from "./authService";
 import { IUser } from "../../@types";
+import { jwtDecode } from "jwt-decode";
 
 // Export de AuthContextType
 export interface AuthContextType {
@@ -21,49 +22,41 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);  // Initialiser l'état de chargement à true
 
+  // Vérifie si le token est expiré
   function isTokenExpired(token: string): boolean {
     try {
-      const base64Payload = token.split(".")[1]; // Récupérer la partie payload
-      const payload = JSON.parse(atob(base64Payload)); // Décoder le payload en JSON
-      const currentTime = Math.floor(Date.now() / 1000); // Temps actuel en secondes
-      return payload.exp < currentTime; // Vérifier si le token est expiré
+      const decoded: { exp: number } = jwtDecode(token); 
+      const currentTime = Math.floor(Date.now() / 1000); 
+      return decoded.exp < currentTime; 
     } catch (error) {
       console.error("Erreur lors de la vérification du token:", error);
-      return true; // Considérer le token comme expiré en cas d'erreur
+      return true; 
     }
   }
   
 
-  // Fonction de connexion
-  const loginUser = async (email: string, password: string) => {
-    try {
-      const response = await loginUserService(email, password);
-      if (response.success && response.data) {
-        const token = response.data.token;
-        const base64Payload = token.split(".")[1];
-        const payload = JSON.parse(atob(base64Payload));
-        const expirationTime = payload.exp * 1000; // Convertir en millisecondes
-        const currentTime = Date.now();
-        const timeout = expirationTime - currentTime;
-  
-        if (timeout > 0) {
-          setTimeout(() => {
-            logoutUser(); // Déconnexion automatique
-          }, timeout);
-        }
-  
-        setUser(response.data.user);
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+ // Fonction de connexion
+ const loginUser = async (email: string, password: string) => {
+  try {
+    const response = await loginUserService(email, password);
+    if (response.success && response.data) {
+      const token = response.data.token;
+
+      if (!isTokenExpired(token)) {
+        setUser(response.data.user); // Mettre à jour l'utilisateur
+        localStorage.setItem("token", token); // Stocker le token
+        localStorage.setItem("user", JSON.stringify(response.data.user)); // Stocker les données utilisateur
       } else {
-        throw new Error(response.message || "Échec de la connexion");
+        throw new Error("Token expiré");
       }
-    } catch (error) {
-      console.error("Erreur lors de la connexion:", error);
-      throw error;
+    } else {
+      throw new Error(response.message || "Échec de la connexion");
     }
+  } catch (error) {
+    console.error("Erreur lors de la connexion:", error);
+    throw error;
+  }
   };
-  
   
   
   // Fonction de déconnexion

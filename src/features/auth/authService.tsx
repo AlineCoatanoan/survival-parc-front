@@ -47,14 +47,10 @@ export const createAccount = async (data: {
   firstName: string;
   lastName: string;
   email: string;
-  password: string; // Ajoutez un champ 'password'
+  password: string;  // Ajout du champ "password"
 }): Promise<RegisterResponse> => {
   try {
-    console.log('Données envoyées (sans mot de passe) :', {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-    });
+    console.log('Données envoyées :');  // Afficher toutes les données envoyées
 
     // Envoie de la requête pour créer l'utilisateur
     const response = await api.post<{
@@ -72,6 +68,7 @@ export const createAccount = async (data: {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
+      password: data.password,  // Assurer que le mot de passe est inclus
     });
 
     // Effectuer un login automatique après l'inscription
@@ -104,6 +101,7 @@ export const createAccount = async (data: {
     return { success: false, message: errorMessage, data: null };
   }
 };
+
 
 // Fonction de connexion (inchangée)
 export const loginUser = async (

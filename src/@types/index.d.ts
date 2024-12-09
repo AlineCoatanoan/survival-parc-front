@@ -7,8 +7,8 @@ export interface IUser {
   role: string;
   profile?: IProfile; 
   reservations?: IReservation[]; 
-  hotelId?: number;    // Ajout de la propriété hotelId
-  passId?: number;     // Ajout de la propriété passId
+  hotelId?: number;   
+  passId?: number;     
   hotelName?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -43,11 +43,11 @@ export interface IReservation {
   hotelId?: number;
   passId?: number;
   animationId?: number;
-  user?: IUser; // Association vers User
-  hotel?: IHotel; // Association vers Hotel
+  user?: IUser; 
+  hotel?: IHotel; 
   hotelName?: string;
-  pass?: IPass; // Association vers Pass
-  animation?: IAnimation; // Association vers Animation
+  pass?: IPass; 
+  animation?: IAnimation; 
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -84,7 +84,7 @@ export interface IHotelReservation {
   numberOfPeople: number;
   createdAt: string;
   updatedAt: string;
-  hotel: IHotel; // Détails de l'hôtel associé à la réservation
+  hotel: IHotel; 
 }
 
 export interface IAnimation {
@@ -92,7 +92,7 @@ export interface IAnimation {
   name: string;
   description: string;
   type: string;
-  reservations?: IReservation[]; // Association vers plusieurs Reservations
+  reservations?: IReservation[]; 
   createdAt?: Date;
   updatedAt?: Date;
 }
