@@ -14,6 +14,10 @@ export const Profile: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
+    if (createdProfile && reservations.length > 0 && hotelReservations.length > 0) {
+      return; // Si les données sont déjà chargées, on ne refait pas la requête
+    }
+  
     const loadProfile = async () => {
       if (!userId) {
         setError("Aucun identifiant utilisateur fourni dans l'URL.");
@@ -28,12 +32,12 @@ export const Profile: React.FC = () => {
           setCreatedProfile(profile);
           
           // Récupération du profileId à partir du profil
-          const profileId = profile.id;  // profile.id est votre profileId
+          const profileId = profile.id;
   
           // Récupération des réservations classiques avec le profileId
           const reservationResponse = await axios.get(`http://localhost:3000/api/reservation/${profileId}`);
           if (reservationResponse.data.success) {
-            setReservations(reservationResponse.data.data || []);  // Réservations classiques
+            setReservations(reservationResponse.data.data || []);
           } else {
             setError("Impossible de récupérer les réservations.");
           }
@@ -41,7 +45,7 @@ export const Profile: React.FC = () => {
           // Récupération des réservations d'hôtel avec le profileId
           const hotelReservationResponse = await axios.get(`http://localhost:3000/api/profilehotel/${profileId}`);
           if (hotelReservationResponse.data.success) {
-            setHotelReservations(hotelReservationResponse.data.message || []);  // Réservations d'hôtel
+            setHotelReservations(hotelReservationResponse.data.message || []);
           } else {
             setError("Impossible de récupérer les réservations d'hôtel.");
           }
@@ -54,7 +58,8 @@ export const Profile: React.FC = () => {
     };
   
     loadProfile();
-  }, [userId]);
+  }, [userId, createdProfile, reservations, hotelReservations]);  // Assurez-vous que les dépendances sont bien gérées
+  
   
   // Fonction de gestion des erreurs API
   const handleApiError = (err, customMessage) => {

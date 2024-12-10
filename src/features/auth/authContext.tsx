@@ -43,9 +43,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const token = response.data.token;
 
       if (!isTokenExpired(token)) {
-        setUser(response.data.user); // Mettre à jour l'utilisateur
-        localStorage.setItem("token", token); // Stocker le token
-        localStorage.setItem("user", JSON.stringify(response.data.user)); // Stocker les données utilisateur
+        setUser(response.data.user); 
       } else {
         throw new Error("Token expiré");
       }

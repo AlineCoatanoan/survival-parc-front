@@ -61,7 +61,13 @@ export const FormCreateProfile: React.FC<FormCreateProfileProps> = ({
     setErrorMessage('');
 
     const requiredFields: (keyof IProfile)[] = [
-      'firstName', 'lastName', 'phone', 'address', 'postalCode', 'city', 'birthDate',
+      'firstName',
+      'lastName',
+      'phone',
+      'address',
+      'postalCode',
+      'city',
+      'birthDate',
     ];
 
     // Vérification des champs obligatoires
@@ -74,41 +80,37 @@ export const FormCreateProfile: React.FC<FormCreateProfileProps> = ({
     }
 
     const birthDate = formData.birthDate;
-    if (!birthDate || birthDate.trim() === '') {
-      setErrorMessage('La date de naissance est obligatoire.');
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!/\d{4}-\d{2}-\d{2}/.test(birthDate)) {
-      setErrorMessage('Le format de la date de naissance est invalide.');
+    if (!birthDate || !/\d{4}-\d{2}-\d{2}/.test(birthDate)) {
+      setErrorMessage('La date de naissance est invalide.');
       setIsSubmitting(false);
       return;
     }
 
     try {
       const apiUrl = 'http://localhost:3000';
+      const endpoint = initialData?.id
+        ? `${apiUrl}/api/profile/${userId}`
+        : `${apiUrl}/api/profile`;
 
-      // Si initialData existe, nous faisons une requête PUT (modification), sinon une requête POST (création)
-      const response = initialData?.id
-        ? await axios.put(`${apiUrl}/api/profile/${userId}`, {
-            ...formData,
-            birthDate,
-          }, { headers: { 'Content-Type': 'application/json' } })
-        : await axios.post(`${apiUrl}/api/profile/${userId}`, {
-            ...formData,
-            birthDate,
-          }, { headers: { 'Content-Type': 'application/json' } });
+      const method = initialData?.id ? 'put' : 'post';
+
+      const response = await axios[method](endpoint, {
+        ...formData,
+        birthDate,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (response.data.success) {
-        // Passer le profil créé ou modifié à onProfileCreated
-        onProfileCreated(response.data.data);  // <-- Passer le profil à la fonction
+        // Callback pour notifier le parent
+        onProfileCreated(response.data.data); // Passe le profil au parent
         alert('Profil créé/modifié avec succès');
       } else {
         setErrorMessage(response.data.message || 'Une erreur est survenue.');
       }
     } catch (error) {
-      console.error('Erreur lors de la soumission:', error);
       if (axios.isAxiosError(error)) {
         setErrorMessage(error.response?.data?.message || 'Erreur réseau.');
       } else {
@@ -222,28 +224,28 @@ export const FormCreateProfile: React.FC<FormCreateProfileProps> = ({
           />
         </div>
 
-{/* Zone des boutons : Soumettre et Fermer */}
-<div className="flex justify-center gap-4 mt-6">
-  <button
-    type="submit"
-    disabled={isSubmitting}
-    className="bg-transparent text-green-600 py-2 px-4 rounded-md hover:bg-green-100 w-full sm:w-auto flex justify-center items-center"
-  >
-    {isSubmitting ? (
-      <span>Soumission...</span>
-    ) : (
-      <MdCheck size={24} />
-    )}
-  </button>
+          {/* Zone des boutons : Soumettre et Fermer */}
+          <div className="flex justify-center gap-4 mt-6">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-transparent text-green-600 py-2 px-4 rounded-md hover:bg-green-100 w-full sm:w-auto flex justify-center items-center"
+            >
+              {isSubmitting ? (
+                <span>Soumission...</span>
+              ) : (
+                <MdCheck size={24} />
+              )}
+            </button>
 
-  <button
-    type="button"
-    onClick={onClose}
-    className="bg-transparent text-red-600 py-2 px-4 rounded-md hover:bg-red-100 w-full sm:w-auto flex justify-center items-center"
-  >
-    <MdClose size={24} />
-  </button>
-</div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-transparent text-red-600 py-2 px-4 rounded-md hover:bg-red-100 w-full sm:w-auto flex justify-center items-center"
+            >
+              <MdClose size={24} />
+            </button>
+          </div>
 
 
 
