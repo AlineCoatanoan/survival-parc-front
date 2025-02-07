@@ -125,7 +125,7 @@ export const ReservationHotel = () => {
           className="fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={closeModal}
         >
-          <div className="bg-white p-6 rounded-lg max-w-[1000px] mx-auto mt-24">
+          <div className="bg-[#1F2937] p-6 rounded-lg max-w-[1000px] mx-auto mt-24">
             <h3 className="text-2xl mb-4">Choisir la plage de dates pour {hotelName}</h3>
             <CalendarPass
               selectedDate={selectedDateRange}
@@ -137,19 +137,21 @@ export const ReservationHotel = () => {
 
             <button
               type="button"
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md"
+              className="mt-4 bg-red-500 text-white py-2 px-4 rounded-md"
+              onClick={() => setShowModal(false)}
+            >
+              Fermer
+            </button>
+
+            <button
+              type="button"
+              className="mt-4 bg-red-500 text-white py-2 px-4 rounded-md ml-72"
               onClick={handleReservationSubmit} // Soumettre la réservation
             >
               Confirmer la réservation
             </button>
 
-            <button
-              type="button"
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md"
-              onClick={() => setShowModal(false)}
-            >
-              Fermer
-            </button>
+           
           </div>
         </div>
       )}

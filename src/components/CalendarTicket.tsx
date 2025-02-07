@@ -10,7 +10,7 @@ import { apiBaseUrl } from '../services/config';
 // Définir les types pour les props
 interface CalendrierPickerProps {
   selectedDate: Date | Date[] | null;
-  handleDateChange: (date: Date | Date[] | null) => void;
+  handleDateChange: (date: [Date | null, Date | null]) => void;
   isReservationPage?: boolean;
   pricePerPerson?: number;
   hotelId: string | number;
@@ -61,7 +61,6 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       const err = error as Error;
       setError(err.message || "Erreur de connexion au serveur.");
     }
-    
   };
 
   useEffect(() => {
@@ -147,7 +146,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       setTimeout(() => setShowConfirmation(false), 3000);
 
       setNumberOfPeople(1);
-      handleDateChange(null);
+      handleDateChange([null, null]);
 
       if (onReservationSuccess) {
         onReservationSuccess(response.data.data);
@@ -174,20 +173,18 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
         </div>
       )}
 
-      {/* Affichage du message d'erreur */}
-    {error && (
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-4 rounded-lg shadow-lg z-20 max-h-[80vh] overflow-y-auto">
-        <p>{error}</p>
-      </div>
-    )}
+      {error && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-4 rounded-lg shadow-lg z-20 max-h-[80vh] overflow-y-auto">
+          <p>{error}</p>
+        </div>
+      )}
 
-      {/* Section du calendrier défilable */}
       <div className="w-full sm:w-[60%] max-h-[60vh] sm:max-h-full overflow-y-auto">
         <DatePicker
-          selected={selectedDate instanceof Date ? selectedDate : undefined}
-          onChange={handleDateChange}
+          selected={Array.isArray(selectedDate) ? selectedDate[0] : selectedDate}
+          onChange={handleDateChange} // OnChange attend maintenant un tableau de dates
           inline
-          selectsRange={Boolean(pricePerPerson === 40)}
+          selectsRange
           startDate={Array.isArray(selectedDate) ? selectedDate[0] : undefined}
           endDate={Array.isArray(selectedDate) ? selectedDate[1] : undefined}
           className={`border-0 p-4 w-full ${isReservationPage ? 'text-white' : 'text-black'}`}
@@ -198,11 +195,10 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
         />
       </div>
 
-      {/* Section de réservation */}
       {isReservationPage && selectedDate && (
         <div className="w-full sm:w-[35%] mt-4 sm:mt-0">
           <div className="mb-4">
-            <label className={`block text-lg font-medium mb-2 ${isReservationPage ? 'text-yellow-400' : 'text-black'}`}>
+            <label className={`block text-lg font-medium mb-2 ${isReservationPage ? 'text-[#FF7828]' : 'text-black'}`}>
               Type de réservation
             </label>
             <div className="flex space-x-4">
@@ -226,21 +222,25 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
               </label>
             </div>
           </div>
-          <div className="mb-4">
+          <div>
             <label className="block text-lg font-medium mb-2">Nombre de personnes</label>
             <input
               type="number"
               value={numberOfPeople}
               onChange={handlePeopleChange}
-              min={1}
-              className="border p-2 w-full"
+              min="1"
+              max="10"
+              className="border p-2 rounded w-full"
             />
           </div>
-          <div className="flex justify-between items-center">
-            <span>Total : {totalPrice.toFixed(2)} €</span>
+
+          <div className="flex justify-between items-center pt-2">
+            <div className="text-lg">
+              <span className="font-bold">Prix total:</span> {totalPrice}€
+            </div>
             <button
               onClick={handleReservation}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              className="bg-[#FF7828] text-white p-2 rounded hover:bg-[#FF7828]"
             >
               Réserver
             </button>

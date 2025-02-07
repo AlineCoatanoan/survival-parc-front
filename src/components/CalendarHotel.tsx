@@ -139,7 +139,7 @@ export const CalendarPass: React.FC<CalendrierHotelProps> = ({
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
-      className={`border rounded-lg p-4 ${isReservationPage ? 'bg-gray-800' : 'bg-white'}`}
+      className={`border rounded-lg p-4 ${isReservationPage ? 'bg-gray-800' : 'bg-white'} mx-auto max-w-xl`}
     >
       {showWarning && (
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-3 rounded-md shadow-lg max-w-xs">
@@ -158,19 +158,21 @@ export const CalendarPass: React.FC<CalendrierHotelProps> = ({
         </div>
       )}
 
-      <h3 className="text-xl font-semibold mb-4">Réservation pour {hotelNameState}</h3>
-      <p className="text-lg text-gray-700 mb-4"><strong>Prix par nuit :</strong> {pricePerNight} €</p>
+      <h3 className="text-xl font-semibold mb-4 text-center">Réservation pour {hotelNameState}</h3>
+      <p className="text-lg text-white mb-4 text-center"><strong>Prix par nuit :</strong> {pricePerNight} €</p>
 
-      <DatePicker
-        selected={selectedDate?.[0] || undefined}
-        onChange={handleDateChange}
-        startDate={selectedDate?.[0] || undefined}
-        endDate={selectedDate?.[1] || undefined}
-        selectsRange
-        inline
-        minDate={new Date()}
-        className="w-full"
-      />
+      <div className="flex justify-center">
+        <DatePicker
+          selected={selectedDate?.[0] || undefined}
+          onChange={handleDateChange}
+          startDate={selectedDate?.[0] || undefined}
+          endDate={selectedDate?.[1] || undefined}
+          selectsRange
+          inline
+          minDate={new Date()}
+          className="w-full max-w-sm"
+        />
+      </div>
 
       {isReservationPage && (
         <div className="mt-4">
@@ -192,7 +194,7 @@ export const CalendarPass: React.FC<CalendrierHotelProps> = ({
           )}
           <button
             onClick={handleReservation}
-            className="mt-4 py-2 px-4 bg-blue-500 text-white rounded-md"
+            className="mt-4 py-2 px-4 bg-[#FF7828] text-white rounded-md w-full"
           >
             Réserver maintenant
           </button>
