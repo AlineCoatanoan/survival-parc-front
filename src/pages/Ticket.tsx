@@ -4,15 +4,15 @@ import { CalendrierPicker } from '../components/CalendarTicket'; // Utilisation 
 // Définir un type pour la réservation
 interface Reservation {
   numberOfPeople: number;
-  selectedDate: Date | [Date | null, Date | null] | null;
+  selectedDate: Date | Date[] | null;
   totalPrice: number;
 }
 
 export const Ticket = () => {
   const [showCalendrier, setShowCalendrier] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | [Date | null, Date | null] | null>(null);
-  const [numberOfPeople, setNumberOfPeople] = useState(1);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | Date[] | null>(null);
+  const [numberOfPeople] = useState(1);
+  const [isAuthenticated] = useState(false);
   const [pricePerPerson, setPricePerPerson] = useState(25); // État pour gérer le prix par personne
 
   // Fonction pour ajouter une réservation au panier
@@ -60,18 +60,12 @@ export const Ticket = () => {
     }
   };
 
-  const handleDateChange = (date: Date | [Date | null, Date | null] | null) => {
-    if (Array.isArray(date)) {
-      // Si un tableau de 2 dates est sélectionné (plage de dates)
-      setSelectedDate(date);
-    } else {
-      // Sinon, une seule date sélectionnée
-      setSelectedDate(date);
-    }
+  const handleDateChange = (date: Date | Date[] | null) => {
+    setSelectedDate(date);
   };
-
+  
   // Fonction pour formater la date
-  const formatSelectedDate = (date: Date | [Date | null, Date | null] | null) => {
+  const formatSelectedDate = (date: Date | Date[] | null) => {
     if (!date) return 'Aucune date sélectionnée';
     if (Array.isArray(date)) {
       // Si une plage de dates est sélectionnée
@@ -182,7 +176,13 @@ export const Ticket = () => {
             </div>
             <div className="flex justify-between mt-4">
               <button
-                className="bg-red-500 text-white py-2 px-4 rounded-md"
+                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md"
+                onClick={handleReserve}
+              >
+                Confirmer la réservation
+              </button>
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md"
                 onClick={handleCloseCalendrier}
               >
                 Fermer

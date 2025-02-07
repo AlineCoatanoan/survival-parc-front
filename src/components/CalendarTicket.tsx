@@ -8,9 +8,10 @@ import axios from 'axios';
 import { apiBaseUrl } from '../services/config';
 
 // Définir les types pour les props
+// Correction du type pour selectedDate et handleDateChange
 interface CalendrierPickerProps {
-  selectedDate: Date | Date[] | null;
-  handleDateChange: (date: [Date | null, Date | null]) => void;
+  selectedDate: Date | Date[] | null; // autoriser aussi null
+  handleDateChange: (date: Date | Date[] | null) => void;
   isReservationPage?: boolean;
   pricePerPerson?: number;
   hotelId: string | number;
@@ -146,7 +147,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       setTimeout(() => setShowConfirmation(false), 3000);
 
       setNumberOfPeople(1);
-      handleDateChange([null, null]);
+      handleDateChange(null); // Mettre à jour le state après la réservation
 
       if (onReservationSuccess) {
         onReservationSuccess(response.data.data);
@@ -182,7 +183,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       <div className="w-full sm:w-[60%] max-h-[60vh] sm:max-h-full overflow-y-auto">
         <DatePicker
           selected={Array.isArray(selectedDate) ? selectedDate[0] : selectedDate}
-          onChange={handleDateChange} // OnChange attend maintenant un tableau de dates
+          onChange={(date: [Date | null, Date | null] | Date | null) => handleDateChange(date)} // Changer le type ici
           inline
           selectsRange
           startDate={Array.isArray(selectedDate) ? selectedDate[0] : undefined}
@@ -240,7 +241,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
             </div>
             <button
               onClick={handleReservation}
-              className="bg-[#FF7828] text-white p-2 rounded hover:bg-[#FF7828]"
+              className="text-white bg-blue-500 py-2 px-6 rounded"
             >
               Réserver
             </button>
