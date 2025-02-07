@@ -13,27 +13,25 @@ export const Ticket = () => {
   const [selectedDate, setSelectedDate] = useState<Date | [Date | null, Date | null] | null>(null);
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [cart, setCart] = useState<Reservation[]>([]);
-  const [showWarning, setShowWarning] = useState(false);
   const [pricePerPerson, setPricePerPerson] = useState(25); // État pour gérer le prix par personne
 
   // Fonction pour ajouter une réservation au panier
   const addToCart = (reservation: Reservation) => {
-    setCart((prevCart) => [...prevCart, reservation]);
+    // Appeler la fonction de mise à jour du panier qui peut être gérée dans un autre composant
+    console.log('Réservation ajoutée:', reservation);
   };
 
   // Fonction de gestion de la fermeture de la modale et de la réservation
   const handleReserve = () => {
     // Si l'utilisateur n'est pas authentifié, afficher l'alerte
     if (!isAuthenticated) {
-      setShowWarning(true);
-      setTimeout(() => setShowWarning(false), 3000);
+      alert('Veuillez vous connecter avant de réserver.');
       return;
     }
   
     // Vérification de la validité de la date
     if (!selectedDate || (Array.isArray(selectedDate) && !selectedDate[0])) {
-      console.log('Veuillez sélectionner une date valide.');
+      alert('Veuillez sélectionner une date valide.');
       return;
     }
   

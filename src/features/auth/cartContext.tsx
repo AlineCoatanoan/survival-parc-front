@@ -48,7 +48,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // Calculer le prix total du panier
-  const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // Calculer le prix total du panier
+const totalPrice = cartItems.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
+
 
   return (
     <CartContext.Provider value={{ cartItems, addItemToCart, removeItemFromCart, clearCart, totalPrice }}>
