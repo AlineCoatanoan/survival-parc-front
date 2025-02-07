@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { IReservation } from '../@types';
 import axios from 'axios';
 import { FaTrashAlt } from 'react-icons/fa';
-import { apiBaseUrl } from 'services/config';
+import { apiBaseUrl } from '../services/config';
 
 export function Reservations() {
   const { userId } = useParams<{ userId: string }>();

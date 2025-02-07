@@ -61,6 +61,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
       const err = error as Error;
       setError(err.message || "Erreur de connexion au serveur.");
     }
+    
   };
 
   useEffect(() => {
@@ -172,6 +173,13 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
           <p>Votre réservation a bien été ajoutée au panier !</p>
         </div>
       )}
+
+      {/* Affichage du message d'erreur */}
+    {error && (
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-4 rounded-lg shadow-lg z-20 max-h-[80vh] overflow-y-auto">
+        <p>{error}</p>
+      </div>
+    )}
 
       {/* Section du calendrier défilable */}
       <div className="w-full sm:w-[60%] max-h-[60vh] sm:max-h-full overflow-y-auto">

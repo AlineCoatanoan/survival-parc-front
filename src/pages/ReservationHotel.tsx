@@ -30,12 +30,16 @@ export const ReservationHotel = () => {
     console.log("Sélection du pass :", pass);
     console.log("Prix défini :", price);
     console.log("Nom de l'hôtel défini :", hotelName);
-  
+
     setSelectedReservationHotel(pass);
     setCalendarPrice(price); // Définir le prix du calendrier
     setHotelName(hotelName); // Nom de l'hôtel
     setHotelId(hotelId); // Enregistrer l'ID de l'hôtel
     setShowModal(true); // Ouvrir la modale
+
+    // Ajout d'un console.log pour vérifier l'état après mise à jour
+    console.log("Hotel ID après sélection:", hotelId);
+    console.log("Pass sélectionné après mise à jour:", selectedReservationHotel);
   };
 
   const handleDateChange = (dates: [Date | null, Date | null] | null) => {
@@ -46,6 +50,27 @@ export const ReservationHotel = () => {
   const closeModal = (event: React.MouseEvent) => {
     if (event.target === event.currentTarget) {
       setShowModal(false);
+    }
+  };
+
+  const handleReservationSubmit = async () => {
+    if (hotelId && selectedReservationHotel && selectedDateRange[0] && selectedDateRange[1]) {
+      try {
+        const reservationData = {
+          hotelId,
+          passId: selectedReservationHotel.id,
+          startDate: selectedDateRange[0],
+          endDate: selectedDateRange[1],
+        };
+
+        await axios.post(`${apiBaseUrl}/api/reservation`, reservationData);
+        console.log("Réservation réussie !");
+        setShowModal(false); // Fermer la modale après la soumission
+      } catch (error) {
+        console.error("Erreur de réservation", error);
+      }
+    } else {
+      console.log("Données manquantes pour la réservation");
     }
   };
 
@@ -66,12 +91,12 @@ export const ReservationHotel = () => {
             </div>
 
             <div className="flex justify-between">
-            <button
+              <button
                 type="button"
                 className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md w-full max-w-[48%]"
                 onClick={() =>
                   handlePassSelection(
-                    { id: hotel.id, name: hotel.name, description: hotel.description, price: hotel.priceByNight || 0 },
+                    { id: hotel.id, name: hotel.name, description: hotel.description, price: Number(hotel.priceByNight) || 0 },
                     index === 0 ? 80 : 60,
                     hotel.name,
                     hotel.id // Passer l'ID ici
@@ -79,7 +104,7 @@ export const ReservationHotel = () => {
                 }
               >
                 Réserver Maintenant
-            </button>
+              </button>
 
               <button
                 type="button"
@@ -109,6 +134,14 @@ export const ReservationHotel = () => {
               pricePerNight={calendarPrice}
               hotelName={hotelName}  // Le nom de l'hôtel est transmis ici
             />
+
+            <button
+              type="button"
+              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md"
+              onClick={handleReservationSubmit} // Soumettre la réservation
+            >
+              Confirmer la réservation
+            </button>
 
             <button
               type="button"

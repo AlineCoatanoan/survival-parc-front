@@ -38,7 +38,7 @@ export interface IReservation {
   nights: number;
   isHotelIncluded: boolean;
   person: number;
-  price: number;
+  price: string | number;
   userId?: number;
   hotelId?: number;
   passId?: number;

@@ -4,13 +4,13 @@ import { CalendrierPicker } from '../components/CalendarTicket'; // Utilisation 
 // Définir un type pour la réservation
 interface Reservation {
   numberOfPeople: number;
-  selectedDate: Date | null;
+  selectedDate: Date | [Date | null, Date | null] | null;
   totalPrice: number;
 }
 
 export const Ticket = () => {
   const [showCalendrier, setShowCalendrier] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | [Date | null, Date | null] | null>(null);
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [cart, setCart] = useState<Reservation[]>([]);
@@ -32,7 +32,7 @@ export const Ticket = () => {
     }
   
     // Vérification de la validité de la date
-    if (!selectedDate || isNaN(selectedDate.getTime())) {
+    if (!selectedDate || (Array.isArray(selectedDate) && !selectedDate[0])) {
       console.log('Veuillez sélectionner une date valide.');
       return;
     }
@@ -62,8 +62,27 @@ export const Ticket = () => {
     }
   };
 
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
+  const handleDateChange = (date: Date | [Date | null, Date | null] | null) => {
+    if (Array.isArray(date)) {
+      // Si un tableau de 2 dates est sélectionné (plage de dates)
+      setSelectedDate(date);
+    } else {
+      // Sinon, une seule date sélectionnée
+      setSelectedDate(date);
+    }
+  };
+
+  // Fonction pour formater la date
+  const formatSelectedDate = (date: Date | [Date | null, Date | null] | null) => {
+    if (!date) return 'Aucune date sélectionnée';
+    if (Array.isArray(date)) {
+      // Si une plage de dates est sélectionnée
+      const start = date[0] ? date[0].toLocaleDateString() : '';
+      const end = date[1] ? date[1].toLocaleDateString() : '';
+      return `${start} - ${end}`;
+    }
+    // Si une seule date est sélectionnée
+    return date.toLocaleDateString();
   };
 
   return (
@@ -89,7 +108,7 @@ export const Ticket = () => {
           <div className="flex justify-between">
             <button
               type="button"
-              className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md w-full max-w-[48%]"
+              className="bg-[#075D2C] hover:bg-[#075D2C] text-white py-2 px-4 rounded-md w-full max-w-[48%]"
               onClick={() => handleShowCalendrier(25)} // Définit le prix à 25
             >
               Réserver Maintenant
@@ -118,7 +137,7 @@ export const Ticket = () => {
           <div className="flex justify-between">
             <button
               type="button"
-              className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md w-full max-w-[48%]"
+              className="bg-[#075D2C] hover:bg-[#075D2C] text-white py-2 px-4 rounded-md w-full max-w-[48%]"
               onClick={() => handleShowCalendrier(40)} // Définit le prix à 40
             >
               Réserver Maintenant
@@ -153,9 +172,15 @@ export const Ticket = () => {
                 selectedDate={selectedDate}
                 handleDateChange={handleDateChange}
                 isReservationPage={true}
-                pricePerPerson={pricePerPerson} // Passe le prix mis à jour
+                pricePerPerson={pricePerPerson}
                 hotelId={1} // Remplacez `1` par l'ID de l'hôtel réel si disponible
               />
+            </div>
+            {/* Afficher les dates sélectionnées */}
+            <div className="mt-4 text-center">
+              <p className="text-lg text-white">
+                <strong>Date(s) sélectionnée(s): </strong> {formatSelectedDate(selectedDate)}
+              </p>
             </div>
             <div className="flex justify-between mt-4">
               <button

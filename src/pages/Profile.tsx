@@ -63,20 +63,21 @@ export const Profile: React.FC = () => {
   
   
   // Fonction de gestion des erreurs API
-  const handleApiError = (err, customMessage) => {
+  const handleApiError = (err: unknown, customMessage: string) => {
     if (axios.isAxiosError(err)) {
+      // Ici, on sait que l'erreur est une AxiosError
       console.error('Erreur Axios:', err.response?.data || err.message);
       setError(err.response?.data?.message || customMessage);
     } else if (err instanceof Error) {
+      // Si l'erreur est une instance d'Error
       console.error('Erreur standard:', err.message);
       setError(customMessage);
     } else {
+      // Cas où l'erreur est inconnue
       console.error('Erreur inconnue:', err);
       setError("Une erreur inattendue s'est produite.");
     }
-  };
-
-  
+  };  
 
   const handleProfileCreated = (profile: IProfile) => {
     setCreatedProfile(profile);
