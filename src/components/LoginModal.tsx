@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../features/auth/authContext'; // Assurez-vous que le chemin est correct
+import { apiBaseUrl } from '../services/config';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose,
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/auth/login',
+        `${apiBaseUrl}/api/auth/login`,
         { email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );

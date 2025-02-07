@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IAnimation, IHotel, IReservation, IHotelReservation } from '../@types'; // Assurez-vous que IHotel est bien défini
 import axios from 'axios';
 import { FaEdit, FaTrashAlt, FaPlusCircle } from 'react-icons/fa';
+import { apiBaseUrl } from '../services/config';
 
 export const Dashboard = () => {
   const [animations, setAnimations] = useState<IAnimation[]>([]);
@@ -16,7 +17,7 @@ export const Dashboard = () => {
   // Fonction pour récupérer les animations depuis l'API
   const fetchAnimations = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/animations');
+      const response = await axios.get(`${apiBaseUrl}/api/animations`);
       const animationsData = response.data?.data || response.data;
       if (Array.isArray(animationsData)) {
         setAnimations(animationsData);
@@ -31,7 +32,7 @@ export const Dashboard = () => {
   // Fonction pour récupérer les hôtels depuis l'API
   const fetchHotels = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/hotel');
+      const response = await axios.get(`${apiBaseUrl}/api/hotel`);
       const hotelsData = response.data?.data || response.data;
       if (Array.isArray(hotelsData)) {
         setHotels(hotelsData);
@@ -46,7 +47,7 @@ export const Dashboard = () => {
   // Fonction pour récupérer les réservations depuis l'API
   const fetchReservations = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/reservation');
+      const response = await axios.get(`${apiBaseUrl}/api/reservation`);
       const reservationsData = response.data?.data || response.data;
       if (Array.isArray(reservationsData)) {
         setReservations(reservationsData);
@@ -60,7 +61,7 @@ export const Dashboard = () => {
 
   const fetchHotelReservation = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/profilehotel');
+      const response = await axios.get(`${apiBaseUrl}/api/profilehotel`);
       const hotelReservationData = response.data?.data || response.data;
   
       // Vérifie que l'API renvoie un tableau de réservations d'hôtel
@@ -90,7 +91,7 @@ export const Dashboard = () => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:3000/api/animations', newAnimation);
+      const response = await axios.post(`${apiBaseUrl}/api/animations`, newAnimation);
       setAnimations((prevAnimations) => [...prevAnimations, response.data]);
       setNewAnimation({ name: '', type: '', description: '' });
     } catch (error) {
@@ -106,7 +107,7 @@ export const Dashboard = () => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:3000/api/hotel', newHotel);
+      const response = await axios.post(`${apiBaseUrl}/api/hotel`, newHotel);
       setHotels((prevHotels) => [...prevHotels, response.data]);
       setNewHotel({ name: '', description: '', address: '', priceByNight: '' });
     } catch (error) {
@@ -117,7 +118,7 @@ export const Dashboard = () => {
   // Fonction pour supprimer une animation
   const handleDeleteAnimation = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:3000/api/animations/${id}`);
+      await axios.delete(`${apiBaseUrl}/api/animations/${id}`);
       fetchAnimations();
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'animation:', error);
@@ -127,7 +128,7 @@ export const Dashboard = () => {
   // Fonction pour supprimer un hôtel
   const handleDeleteHotel = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:3000/api/hotel/${id}`);
+      await axios.delete(`${apiBaseUrl}/api/hotel/${id}`);
       fetchHotels();
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'hôtel:', error);
@@ -149,7 +150,7 @@ export const Dashboard = () => {
     e.preventDefault();
     if (!editingAnimation) return;
     try {
-      await axios.put(`http://localhost:3000/api/animations/${editingAnimation.id}`, editingAnimation);
+      await axios.put(`${apiBaseUrl}/api/animations/${editingAnimation.id}`, editingAnimation);
       fetchAnimations();
       setEditingAnimation(null);
     } catch (error) {
@@ -162,7 +163,7 @@ export const Dashboard = () => {
     e.preventDefault();
     if (!editingHotel) return;
     try {
-      await axios.put(`http://localhost:3000/api/hotel/${editingHotel.id}`, editingHotel);
+      await axios.put(`${apiBaseUrl}/api/hotel/${editingHotel.id}`, editingHotel);
       fetchHotels();
       setEditingHotel(null);
     } catch (error) {

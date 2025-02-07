@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { motion } from 'framer-motion';
 import { useAuth } from '../features/auth/authContext';
 import axios from 'axios';
+import { apiBaseUrl } from '../services/config';
 
 interface ReservationDetails {
   startDate: string;
@@ -42,7 +43,7 @@ export const CalendarPass: React.FC<CalendrierHotelProps> = ({
   // Fetching Profile ID
   const fetchProfileId = async (userId: string) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/profile/${userId}`);
+      const response = await axios.get(`${apiBaseUrl}/api/profile/${userId}`);
       if (response.data.success) {
         setProfileId(response.data.data.id);
       } else {
@@ -105,7 +106,7 @@ export const CalendarPass: React.FC<CalendrierHotelProps> = ({
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/profilehotel/${profileId}`,  // L'URL est correcte ici ?
+        `${apiBaseUrl}/api/profilehotel/${profileId}`,  // L'URL est correcte ici ?
         reservationData,
         { headers: { 'Content-Type': 'application/json' } }
       );

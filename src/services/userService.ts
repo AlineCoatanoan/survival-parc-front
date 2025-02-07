@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { IUser } from '../@types';
+import { apiBaseUrl } from './config';
 
-const API_URL = 'http://localhost:3000/api/user'; // Remplacez par l'URL de votre API
+const API_URL = `${apiBaseUrl}/api/user`; // Remplacez par l'URL de votre API
 
 // Récupérer tous les utilisateurs
 export const getAllUsers = async (): Promise<IUser[]> => {

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../features/auth/authContext';
 import { useCart } from '../features/auth/cartContext';
 import axios from 'axios';
+import { apiBaseUrl } from '../services/config';
 
 // Définir les types pour les props
 interface CalendrierPickerProps {
@@ -50,7 +51,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
   // Récupération du profileId via l'userId
   const fetchProfileId = async (userId: string) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/profile/${userId}`);
+      const response = await axios.get(`${apiBaseUrl}/api/profile/${userId}`);
       if (response.data.success) {
         setProfileId(response.data.data.id);
       } else {
@@ -136,7 +137,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
 
     try {
       // Utilisez profileId dans l'URL
-      const response = await axios.post(`http://localhost:3000/api/reservation/${profileId}`, reservationData);
+      const response = await axios.post(`${apiBaseUrl}/api/reservation/${profileId}`, reservationData);
       console.log('Réservation enregistrée avec succès :', response.data);
 
       addItemToCart(response.data.data);

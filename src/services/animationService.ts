@@ -1,7 +1,8 @@
 import axios from "axios";
 import { IAnimation } from "../@types";
+import { apiBaseUrl } from "./config";
 
-const API_URL = "http://localhost:3000/api/animations"; // Remplacez par l'URL de l'API
+const API_URL = `${apiBaseUrl}/api/animations`;
 
 export const AnimationService = {
   // Récupère toutes les animations

@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { IReservation } from '../@types';
 import axios from 'axios';
 import { FaTrashAlt } from 'react-icons/fa';
+import { apiBaseUrl } from 'services/config';
 
 export function Reservations() {
   const { userId } = useParams<{ userId: string }>();
@@ -22,7 +23,7 @@ export function Reservations() {
     }
 
     try {
-      const response = await axios.get(`http://localhost:3000/api/profile/${userId}`);
+      const response = await axios.get(`${apiBaseUrl}/api/profile/${userId}`);
       if (response.data.success) {
         setProfileExists(true);
       } else {
@@ -56,12 +57,12 @@ export function Reservations() {
     setError(null);
 
     try {
-      const response = await axios.get(`http://localhost:3000/api/reservation/${userId}`);  // Correction ici
+      const response = await axios.get(`${apiBaseUrl}/api/reservation/${userId}`);  // Correction ici
       const data = response.data;
       if (data.success) {
         const reservationsWithHotelName = await Promise.all(
           data.data.map(async (reservation: IReservation) => {
-            const hotelResponse = await axios.get(`http://localhost:3000/api/hotel/${reservation.hotelId}`);
+            const hotelResponse = await axios.get(`${apiBaseUrl}/api/hotel/${reservation.hotelId}`);
             const hotelName = hotelResponse.data.name;
             return { ...reservation, hotelName };
           })
@@ -91,7 +92,7 @@ export function Reservations() {
     if (!reservationToDelete || !userId) return;
 
     try {
-      const response = await axios.delete(`http://localhost:3000/api/reservation/${reservationToDelete}`, {
+      const response = await axios.delete(`${apiBaseUrl}/api/reservation/${reservationToDelete}`, {
         data: { userId: userId },
       });
 

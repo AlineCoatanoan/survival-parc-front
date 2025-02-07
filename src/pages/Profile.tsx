@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { IProfile, IReservation, IHotelReservation } from '../@types'; // Importer IHotelReservation
 import { FormCreateProfile } from '../components/FormCreateProfile';
+import { apiBaseUrl } from '../services/config';
 
 export const Profile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -26,7 +27,7 @@ export const Profile: React.FC = () => {
   
       try {
         // Récupération du profil pour obtenir profileId
-        const response = await axios.get(`http://localhost:3000/api/profile/${userId}`);
+        const response = await axios.get(`${apiBaseUrl}/api/profile/${userId}`);
         if (response.data.success) {
           const profile = response.data.data;
           setCreatedProfile(profile);
@@ -35,7 +36,7 @@ export const Profile: React.FC = () => {
           const profileId = profile.id;
   
           // Récupération des réservations classiques avec le profileId
-          const reservationResponse = await axios.get(`http://localhost:3000/api/reservation/${profileId}`);
+          const reservationResponse = await axios.get(`${apiBaseUrl}/api/reservation/${profileId}`);
           if (reservationResponse.data.success) {
             setReservations(reservationResponse.data.data || []);
           } else {
@@ -43,7 +44,7 @@ export const Profile: React.FC = () => {
           }
   
           // Récupération des réservations d'hôtel avec le profileId
-          const hotelReservationResponse = await axios.get(`http://localhost:3000/api/profilehotel/${profileId}`);
+          const hotelReservationResponse = await axios.get(`${apiBaseUrl}/api/profilehotel/${profileId}`);
           if (hotelReservationResponse.data.success) {
             setHotelReservations(hotelReservationResponse.data.message || []);
           } else {
@@ -84,7 +85,7 @@ export const Profile: React.FC = () => {
 
   const handleProfileUpdate = async (updatedProfile: IProfile) => {
     try {
-      const response = await axios.put(`http://localhost:3000/api/profile/${userId}`, updatedProfile);
+      const response = await axios.put(`${apiBaseUrl}/api/profile/${userId}`, updatedProfile);
 
       if (response.data.success) {
         setCreatedProfile(response.data.data);
@@ -121,7 +122,7 @@ const handleCancelReservation = async (reservationId: number, startDate: string 
 
     // Si l'annulation est possible, envoyer la demande au backend
     const response = await axios.delete(
-      `http://localhost:3000/api/reservation/${reservationId}`,
+      `${apiBaseUrl}/api/reservation/${reservationId}`,
       {
         data: { profileId: profileId } // L'ID du profil dans le corps de la requête
       }
@@ -167,7 +168,7 @@ const handleCancelHotelReservation = async (profileHotelId: number, hotelId: num
 
     // Si l'annulation est possible, envoyer la demande au backend
     const response = await axios.delete(
-      `http://localhost:3000/api/profilehotel/${profileHotelId}`, // L'ID de la réservation dans l'URL
+      `${apiBaseUrl}/api/profilehotel/${profileHotelId}`, // L'ID de la réservation dans l'URL
       {
         data: { // Profil et ID de l'hôtel dans le corps de la requête
           profileId: profileId,  // L'ID du profil de l'utilisateur

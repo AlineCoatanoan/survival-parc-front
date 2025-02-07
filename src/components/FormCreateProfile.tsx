@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { IProfile } from '../@types';
 import { MdCheck, MdClose } from 'react-icons/md';
+import { apiBaseUrl } from '../services/config';
 
 interface FormCreateProfileProps {
   userId: string;
@@ -87,10 +88,9 @@ export const FormCreateProfile: React.FC<FormCreateProfileProps> = ({
     }
 
     try {
-      const apiUrl = 'http://localhost:3000';
       const endpoint = initialData?.id
-        ? `${apiUrl}/api/profile/${userId}`
-        : `${apiUrl}/api/profile`;
+    ? `${apiBaseUrl}/api/profile/${userId}`  // Utilise l'URL de l'API définie
+    : `${apiBaseUrl}/api/profile`;
 
       const method = initialData?.id ? 'put' : 'post';
 

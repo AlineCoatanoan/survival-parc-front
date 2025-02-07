@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { IHotel, IPass } from "../@types";
 import { CalendarPass } from "../components/CalendarHotel";
+import { apiBaseUrl } from "../services/config";
 
 export const ReservationHotel = () => {
   const [hotels, setHotels] = useState<IHotel[]>([]);
@@ -16,7 +17,7 @@ export const ReservationHotel = () => {
   useEffect(() => {
     const fetchHotels = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/hotel");
+        const response = await axios.get(`${apiBaseUrl}/api/hotel`);
         setHotels(response.data.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des hôtels", error);

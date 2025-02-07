@@ -1,7 +1,8 @@
 import axios from "axios";
 import { IHotel } from "../@types";
+import { apiBaseUrl } from "./config";
 
-const API_URL = "http://localhost:3000/api/hotel"; // Remplacez par l'URL de l'API
+const API_URL = `${apiBaseUrl}/api/hotels`;
 
 export const HotelService = {
   // Récupère tous les hôtels

@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { IProfile } from '../@types';
+import { apiBaseUrl } from './config';
 
-const API_URL = 'http://localhost:3000/api/profile';
+const API_URL = `${apiBaseUrl}/api/profile`;
 
 // Récupérer tous les profils
 export const getAllProfiles = async (): Promise<IProfile[]> => {
