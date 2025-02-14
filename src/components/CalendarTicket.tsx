@@ -7,11 +7,9 @@ import { useCart } from '../features/auth/cartContext';
 import axios from 'axios';
 import { apiBaseUrl } from '../services/config';
 
-// Définir les types pour les props
-// Correction du type pour selectedDate et handleDateChange
 interface CalendrierPickerProps {
-  selectedDate: Date | Date[] | null; // autoriser aussi null
-  handleDateChange: (date: Date | Date[] | null) => void;
+  selectedDate: Date | Date[] | null;
+  handleDateChange: (date: Date | [Date | null, Date | null] | null) => void;
   isReservationPage?: boolean;
   pricePerPerson?: number;
   hotelId: string | number;
@@ -24,7 +22,7 @@ interface IReservation {
   endDate: string;
   price: number;
   person: number;
-  hotelId: number | null; // Peut être null si sans hôtel
+  hotelId: number | null;
   hotelName?: string;
 }
 
@@ -39,17 +37,14 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
   const { isAuthenticated, userId } = useAuth();
   const { addItemToCart } = useCart();
   const [numberOfPeople, setNumberOfPeople] = useState(1);
-  const [withHotel, setWithHotel] = useState(true); // Par défaut, avec hôtel
+  const [withHotel, setWithHotel] = useState(true);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [profileId, setProfileId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const totalPrice = withHotel
-    ? numberOfPeople * pricePerPerson // Prix avec hôtel
-    : numberOfPeople * 15; // Exemple : tarif sans hôtel
+  const totalPrice = withHotel ? numberOfPeople * pricePerPerson : numberOfPeople * 15;
 
-  // Récupération du profileId via l'userId
   const fetchProfileId = async (userId: string) => {
     try {
       const response = await axios.get(`${apiBaseUrl}/api/profile/${userId}`);
@@ -128,7 +123,7 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
     const formattedPrice = totalPrice.toFixed(2);
 
     const reservationData = {
-      profileId: profileId,  // Vous utilisez ici profileId
+      profileId: profileId,
       startDate: formattedStartDate,
       endDate: formattedEndDate,
       person: numberOfPeople,
@@ -137,10 +132,8 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
     };
 
     try {
-      // Utilisez profileId dans l'URL
       const response = await axios.post(`${apiBaseUrl}/api/reservation/${profileId}`, reservationData);
       console.log('Réservation enregistrée avec succès :', response.data);
-
       addItemToCart(response.data.data);
 
       setShowConfirmation(true);
@@ -182,17 +175,15 @@ export const CalendrierPicker: React.FC<CalendrierPickerProps> = ({
 
       <div className="w-full sm:w-[60%] max-h-[60vh] sm:max-h-full overflow-y-auto">
         <DatePicker
-          selected={Array.isArray(selectedDate) ? selectedDate[0] : selectedDate}
-          onChange={(date: [Date | null, Date | null] | Date | null) => handleDateChange(date)} // Changer le type ici
+          selected={selectedDate ? (Array.isArray(selectedDate) ? selectedDate[0] : selectedDate) : undefined}
+          onChange={(date: [Date | null, Date | null] | Date | null) => handleDateChange(date)}
           inline
           selectsRange
           startDate={Array.isArray(selectedDate) ? selectedDate[0] : undefined}
           endDate={Array.isArray(selectedDate) ? selectedDate[1] : undefined}
           className={`border-0 p-4 w-full ${isReservationPage ? 'text-white' : 'text-black'}`}
           calendarClassName="bg-gray-200"
-          dayClassName={(date) =>
-            date.getDay() === 0 || date.getDay() === 6 ? 'bg-gray-300' : ''
-          }
+          dayClassName={(date) => (date.getDay() === 0 || date.getDay() === 6 ? 'bg-gray-300' : '')}
         />
       </div>
 
