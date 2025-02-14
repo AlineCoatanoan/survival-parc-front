@@ -60,9 +60,17 @@ export const Ticket = () => {
     }
   };
 
-  const handleDateChange = (date: Date | Date[] | null) => {
-    setSelectedDate(date);
+  const handleDateChange = (date: Date | [Date | null, Date | null] | null) => {
+    if (Array.isArray(date)) {
+      // Filtrer pour retirer les valeurs null et s'assurer que TypeScript comprend bien que c'est un `Date[]`
+      const validDates = date.filter((d): d is Date => d !== null);
+      setSelectedDate(validDates.length > 0 ? validDates : null);
+    } else {
+      setSelectedDate(date);
+    }
   };
+  
+  
   
   // Fonction pour formater la date
   const formatSelectedDate = (date: Date | Date[] | null) => {
