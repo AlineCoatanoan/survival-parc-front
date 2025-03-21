@@ -2,7 +2,7 @@ import axios from "axios";
 import { IHotel } from "../@types";
 import { apiBaseUrl } from "./config";
 
-const API_URL = `${apiBaseUrl}/api/hotels`;
+const API_URL = `${apiBaseUrl}/api/hotel`;
 
 export const HotelService = {
   // Récupère tous les hôtels

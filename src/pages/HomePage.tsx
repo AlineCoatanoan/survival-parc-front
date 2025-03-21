@@ -57,7 +57,7 @@ export const HomePage = () => {
 
       <div className="relative p-6 rounded-lg z-10">
         <motion.h1
-          className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4"
+          className="bg-[rgba(0,0,0,0.6)] text-3xl text-[#FF7828] sm:text-4xl md:text-8xl mb-4 font-metal"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -65,7 +65,7 @@ export const HomePage = () => {
           Bienvenue à Survival Parc
         </motion.h1>
         <motion.p
-          className="text-base sm:text-lg md:text-2xl mb-6"
+          className="bg-[rgba(0,0,0,0.6)] font-bold sm:text-lg md:text-2xl mb-6 text-[#FF7828]"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -80,7 +80,7 @@ export const HomePage = () => {
       <section className="p-6 md:p-12 bg-gray-800 relative mt-[80px]">
   <div className="container mx-auto">
     <motion.h2
-      className="text-3xl font-bold mb-6 text-center"
+      className="text-3xl mb-6 text-center font-metal"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -195,7 +195,7 @@ export const HomePage = () => {
       <section className="p-6 md:p-12 bg-gray-800 mt-[80px]">
         <div className="container mx-auto">
           <motion.h2
-            className="text-3xl font-bold mb-6 text-center"
+            className="text-3xl font-metal mb-6 text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}

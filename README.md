@@ -1,50 +1,173 @@
-# React + TypeScript + Vite
+# Survival Parc - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🚀 Présentation du projet
 
-Currently, two official plugins are available:
+**Survival Parc** vous plonge dans une expérience immersive au sein d'un univers post-apocalyptique ravagé par un virus zombie. Inspiré de sagas comme *The Last of Us*, le parc recrée une zone de quarantaine réaliste où chaque détail transporte les visiteurs dans un monde hostile et captivant.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Le parc est réservé aux visiteurs de plus de 16 ans pour préserver l'intensité de l'expérience. Les billets sont disponibles à la journée, avec la possibilité de réserver un séjour dans l'un des deux hôtels au décor apocalyptique.
 
-## Expanding the ESLint configuration
+L'objectif du site est de permettre aux visiteurs :
+- Créer un compte utilisateur
+- Gérer leur profil
+- Réserver leurs billets et hébergements
+- Consulter les informations du parc, attractions et hôtels
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Le back-office permet au gérant de :
+- Gérer les attractions, événements et hôtels
+- Consulter les réservations
+- Modifier les informations du site
 
-- Configure the top-level `parserOptions` property like this:
+---
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 🎯 Fonctionnalités du frontend
+
+### 🔥 Pour les utilisateurs
+- **Accueil immersif et responsive** sur le thème du parc
+- **Création de compte et connexion utilisateur** (avec formulaire validé)
+- **Gestion du profil** (adresse, historique des réservations)
+- **Réservation simplifiée** (choix du pass et de l'hôtel)
+- **Affichage des attractions et hôtels** (images, descriptions)
+- **Redirection automatique vers la page de profil après connexion**
+- **Interface fluide et animée** (Framer Motion)
+
+### 🔧 Pour les administrateurs
+- **Connexion admin dédiée**
+- **Interface de gestion du contenu** (attractions, événements, hôtels)
+- **Accès à la liste des réservations**
+
+### 📌 Évolutions possibles
+- **Mode sombre** pour une immersion renforcée
+- **Système de notifications en direct** (par exemple, alerte d'infection imminente 🎯)
+
+---
+
+## 🛠️ Technologies utilisées
+
+### 🌟 Front-end
+- Vite 
+- React
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- DaisyUI
+- Axios
+- React Router
+- React Hook Form
+
+### 🔥 Back-end
+- Node.js
+- Express
+- Sequelize
+- PostgreSQL
+- Joi (validation des données)
+- JWT (authentification)
+- Bcrypt (hachage des mots de passe)
+- dotenv (gestion des variables d'environnement)
+
+### 🔒 Sécurité
+- Validation des champs (Joi)
+- JWT Token
+- Cookies sécurisés (anti-XSS/CSRF)
+- Hachage des mots de passe (bcrypt)
+
+---
+
+## ⚙️ Installation du projet
+
+### 🚀 Backend
+
+1. **Cloner le projet** :
+   ```bash
+   git clone https://github.com/votre-repo/survival-parc-back.git
+   cd survival-parc-back
+   ```
+
+2. **Installer les dépendances** :
+   ```bash
+   pnpm install
+   ```
+
+3. **Configurer les variables d'environnement** :
+   Créez un fichier `.env` à la racine avec :
+   ```env
+   DB_HOST=localhost
+   DB_USER=postgres
+   DB_PASSWORD=votre_mot_de_passe
+   DB_NAME=survival_parc
+   JWT_SECRET=unSecretTresSecret
+   PORT=3001
+   ```
+
+4. **Lancer le serveur en développement** :
+   ```bash
+   pnpm dev
+   ```
+
+5. **Reset et seed de la base de données (si nécessaire)** :
+   ```bash
+   pnpm db:reset
+   pnpm db:seed
+   ```
+
+### 💻 Frontend
+
+1. **Cloner le projet front** :
+   ```bash
+   git clone https://github.com/votre-repo/survival-parc-front.git
+   cd survival-parc-front
+   ```
+
+2. **Installer les dépendances** :
+   ```bash
+   pnpm install
+   ```
+
+3. **Lancer le serveur de développement** :
+   ```bash
+   pnpm dev
+   ```
+
+4. **Accéder au site** :
+   Le site tourne sur `http://localhost:5173`
+
+---
+
+## 🧠 Test du backend
+
+### 🔬 Lancer les tests
+
+```bash
+pnpm test
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+---
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## 📌 Routes principales
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+(les routes backend restent inchangées)
+
+---
+
+## 🎟️ Dossier de présentation complet en PDF dans le back
+
+Un dossier complet regroupant tous les éléments essentiels du projet est disponible en PDF dans le backend. Il inclut :
+- Les wireframes détaillés des pages principales
+- Les user stories décrivant les parcours utilisateurs
+- Les schémas de la base de données
+- Les spécifications techniques
+- Une maquette visuelle du site
+
+---
+
+## 🔍 Veille technologique
+
+- Suivi des mises à jour de sécurité (Node.js, Sequelize, PostgreSQL)
+- Surveillance des failles XSS/CSRF
+- Mise à jour des bonnes pratiques en gestion d'authentification
+
+---
+
+## Projet réalisé par **Aline** en autonomie pour le passage devant le jury au TP DWWM
+
+✨ **Survival Parc - Parce que survivre, c'est déjà une aventure !**
+

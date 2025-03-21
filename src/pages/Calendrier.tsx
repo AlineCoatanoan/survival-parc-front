@@ -3,7 +3,7 @@ import React from 'react';
 export const Calendrier: React.FC = () => {
   return (
     <div className="flex flex-col items-center p-8 bg-gray-800 text-white min-h-screen pt-[200px]">
-      <h1 className="text-4xl font-bold mb-6 animate-bounce">
+      <h1 className="text-6xl font-metal mb-6 animate-bounce">
         Calendrier d'ouverture du parc
       </h1>
       <div className="flex flex-col w-full max-w-5xl shadow-lg bg-gray-900 rounded-lg overflow-hidden">

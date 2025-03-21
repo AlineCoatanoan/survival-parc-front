@@ -51,7 +51,7 @@ export const Labyrinthe = () => {
                     transition={{ duration: 0.6 }}
                 >
                     <motion.h1
-                        className="text-3xl sm:text-5xl font-extrabold mb-4 text-gradient bg-clip-text bg-gradient-to-r from-green-400 to-yellow-500"
+                        className="text-3xl sm:text-5xl mb-4 text-gradient font-metal bg-clip-text bg-gradient-to-r from-green-400 to-yellow-500"
                         initial={{ opacity: 0, y: -50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}

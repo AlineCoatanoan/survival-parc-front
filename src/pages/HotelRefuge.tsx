@@ -64,7 +64,7 @@ export const Refuge = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-500 pb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-metal bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-500 pb-4">
             {refugeHotel.name}
           </h1>
         </motion.div>

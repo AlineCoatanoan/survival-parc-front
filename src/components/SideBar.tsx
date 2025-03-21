@@ -79,13 +79,13 @@ export const FixedModal = () => {
         <>
           <button
             onClick={openLoginModal}
-            className="block w-full py-2 px-4 mb-2 text-center bg-[#FF7828] hover:bg-[#FF7828]-focus rounded text-white"
+            className="block w-full py-2 px-4 mb-2 text-center bg-[#FF7828] hover:bg-[#FF7828]-focus rounded text-white font-metal text-xl"
           >
             Connexion
           </button>
           <button
             onClick={openSignupModal}
-            className="block w-full py-2 px-4 text-center bg-[#075D2C] hover:bg-[#075D2C]-focus rounded text-white"
+            className="block w-full py-2 px-4 text-center bg-[#075D2C] hover:bg-[#075D2C]-focus rounded text-white font-metal text-xl"
           >
             Inscription
           </button>
@@ -94,13 +94,13 @@ export const FixedModal = () => {
         <>
           <button
             onClick={handleLogout}
-            className="block w-full py-2 px-4 mb-2 text-center bg-[#075D2C] hover:bg-primary-focus rounded text-white"
+            className="block w-full py-2 px-4 mb-2 text-center bg-[#075D2C] hover:bg-primary-focus rounded text-white font-metal text-xl"
           >
             Déconnexion
           </button>
           <button
             onClick={handleGoToProfile}
-            className="block w-full py-2 px-4 text-center bg-[#FF7828] hover:bg-secondary-focus rounded text-white"
+            className="block w-full py-2 px-4 text-center bg-[#FF7828] hover:bg-secondary-focus rounded text-red-600 font-metal text-xl"
           >
             Mon compte
           </button>

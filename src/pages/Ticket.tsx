@@ -87,7 +87,7 @@ export const Ticket = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-[#1F2937] to-[#1F2937] text-white p-6 pt-[200px]">
-      <h1 className="text-4xl font-bold text-center mb-6">Billetterie</h1>
+      <h1 className="text-6xl font-metal text-center mb-6">Billetterie</h1>
       <p className="text-center text-lg mb-6">
         Retrouvez nos offres disponibles en ligne et/ou en caisse pour une exploration adaptée à vos besoins !
       </p>

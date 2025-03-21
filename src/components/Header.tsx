@@ -125,12 +125,12 @@ export const Header = () => {
         </button>
 
         {/* Icônes de recherche et panier */}
-<div className="flex items-center">
-  {userId && (
-    <Link to={`/reservations/${userId}`} className="relative">
-      <FiShoppingCart className="text-2xl" />
-    </Link>
-  )}
+        <div className="flex items-center">
+          {userId && (
+            <Link to={`/reservations/${userId}`} className="relative">
+              <FiShoppingCart className="text-2xl" />
+            </Link>
+          )}
 
         {/* Loupe visible en mobile et desktop */}
         <div className="relative flex items-center">
@@ -183,7 +183,7 @@ const DropdownMenu = ({ label, activeMenu, handleMouseEnter, handleMouseLeave, l
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
-      className="hover:text-[#FF7828] cursor-pointer"
+      className="hover:text-[#FF7828] cursor-pointer font-metal text-2xl" 
     >
       <h1 className="mx-6">{label}</h1>
     </motion.div>
